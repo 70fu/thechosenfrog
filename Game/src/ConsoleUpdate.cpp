@@ -12,7 +12,7 @@
 #include <ISimpleSerializer.h>
 
 class ConsoleUpdate : public Updateable{
-    std::string name="Fred";
+    std::string name="Derrick";
 public:
     void Serialize(ISimpleSerializer* pSerializer) override
     {
