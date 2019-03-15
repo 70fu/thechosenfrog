@@ -1,6 +1,9 @@
 #include <iostream>
+#include "ConsoleGame.h"
 
 int main() {
-    std::cout << "Hello, Frog!" << std::endl;
+    ConsoleGame game = ConsoleGame();
+    game.Init();
+    game.Run();
     return 0;
 }
