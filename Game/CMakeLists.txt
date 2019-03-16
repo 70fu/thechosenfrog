@@ -11,6 +11,9 @@ include_directories(${CMAKE_SOURCE_DIR}/RuntimeCompiledCPlusPlus/RuntimeCompiler
 include_directories(${CMAKE_SOURCE_DIR}/RuntimeCompiledCPlusPlus/RuntimeObjectSystem)
 target_link_libraries(thechosenfrog RuntimeObjectSystem)
 
+#glm
+include_directories(libs/glm)
+
 #GLAD
 set(GLAD_DIR "libs/glad")
 add_library("glad" "${GLAD_DIR}/src/glad.c")
