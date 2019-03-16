@@ -3,4 +3,5 @@ project(cgue19_thechosenfrog)
 
 add_subdirectory(glfw)
 add_subdirectory(RuntimeCompiledCPlusPlus)
+add_subdirectory(soloud)
 add_subdirectory(Game)
