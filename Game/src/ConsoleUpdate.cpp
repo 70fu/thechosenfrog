@@ -22,7 +22,7 @@ public:
 
     void Update(float delta) override
     {
-        std::cout<<"Hello I'm "<<name<<std::endl;
+        std::cout<<"Hello "<<name<<std::endl;
     }
 };
 REGISTERCLASS(ConsoleUpdate);

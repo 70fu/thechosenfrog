@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 project(cgue19_thechosenfrog)
 
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build the GLFW example programs" FORCE)#disable exporters
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build the GLFW test programs" FORCE)#disable exporters
+
 add_subdirectory(glfw)
 add_subdirectory(RuntimeCompiledCPlusPlus)
 add_subdirectory(soloud)
