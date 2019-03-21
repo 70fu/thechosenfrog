@@ -128,7 +128,7 @@ std::shared_ptr<const PropertyTable> GetPropertyTable(const Document& doc,
     }
     return std::make_shared<const PropertyTable>(*Properties70,templateProps);
 }
-} // !Util
+} // !util
 } // !FBX
 } // !Assimp
 

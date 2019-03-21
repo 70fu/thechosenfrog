@@ -1,9 +1,268 @@
-#include <iostream>
-#include "ConsoleGame.h"
+/*
+* Copyright 2018 Vienna University of Technology.
+* Institute of Computer Graphics and Algorithms.
+* This file is part of the ECG Lab Framework and must not be redistributed.
+*/
 
-int main() {
-    ConsoleGame game = ConsoleGame();
-    game.Init();
-    game.Run();
+#include <sstream>
+#include <string>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include "util/INIReader.h"
+#include "Game.h"
+
+static Game game;
+
+//helper method to generate an error message from the debug callback arguments
+static std::string formatDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, const char* msg)
+{
+    std::stringstream stringStream;
+    std::string sourceString;
+    std::string typeString;
+    std::string severityString;
+
+    switch (source) {
+        case GL_DEBUG_SOURCE_API: {
+            sourceString = "API";
+            break;
+        }
+        case GL_DEBUG_SOURCE_APPLICATION: {
+            sourceString = "Application";
+            break;
+        }
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM: {
+            sourceString = "Window System";
+            break;
+        }
+        case GL_DEBUG_SOURCE_SHADER_COMPILER: {
+            sourceString = "Shader Compiler";
+            break;
+        }
+        case GL_DEBUG_SOURCE_THIRD_PARTY: {
+            sourceString = "Third Party";
+            break;
+        }
+        case GL_DEBUG_SOURCE_OTHER: {
+            sourceString = "Other";
+            break;
+        }
+        default: {
+            sourceString = "Unknown";
+            break;
+        }
+    }
+
+    switch (type) {
+        case GL_DEBUG_TYPE_ERROR: {
+            typeString = "Error";
+            break;
+        }
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: {
+            typeString = "Deprecated Behavior";
+            break;
+        }
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: {
+            typeString = "Undefined Behavior";
+            break;
+        }
+        /*case GL_DEBUG_TYPE_PORTABILITY_ARB: {
+            typeString = "Portability";
+            break;
+        }*///TODO why is that not working
+        case GL_DEBUG_TYPE_PERFORMANCE: {
+            typeString = "Performance";
+            break;
+        }
+        case GL_DEBUG_TYPE_OTHER: {
+            typeString = "Other";
+            break;
+        }
+        default: {
+            typeString = "Unknown";
+            break;
+        }
+    }
+
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH: {
+            severityString = "High";
+            break;
+        }
+        case GL_DEBUG_SEVERITY_MEDIUM: {
+            severityString = "Medium";
+            break;
+        }
+        case GL_DEBUG_SEVERITY_LOW: {
+            severityString = "Low";
+            break;
+        }
+        default: {
+            severityString = "Unknown";
+            break;
+        }
+    }
+
+    stringStream << "OpenGL Error: " << msg;
+    stringStream << " [Source = " << sourceString;
+    stringStream << ", Type = " << typeString;
+    stringStream << ", Severity = " << severityString;
+    stringStream << ", ID = " << id << "]";
+
+    return stringStream.str();
+}
+
+/* --------------------------------------------- */
+// Prototypes & callbacks
+/* --------------------------------------------- */
+static void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
+{
+    std::string error = formatDebugOutput(source, type, id, severity, message);
+    std::cout << error << std::endl;
+}
+
+static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    //TODO
+}
+
+static void mousePosCallback(GLFWwindow* window, double x, double y)
+{
+    //TODO
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    //TODO
+}
+
+/* --------------------------------------------- */
+// Main
+/* --------------------------------------------- */
+
+int main(int argc, char** argv)
+{
+    /* --------------------------------------------- */
+    // Load settings.ini
+    /* --------------------------------------------- */
+
+    INIReader reader("assets/settings.ini");
+
+    // load values from ini file
+    // first param: section [window], second param: property name, third param: default value
+    int width = reader.GetInteger("window", "width", 800);
+    int height = reader.GetInteger("window", "height", 800);
+    float fov = reader.GetReal("camera", "fov",60);
+    float nearParam = reader.GetReal("camera", "near", 0.1);
+    float farParam = reader.GetReal("camera", "far", 100);
+    std::string window_title = reader.Get("window", "title", "ECG");
+
+    /* --------------------------------------------- */
+    // Initialize Window and OpenGL context with GLFW
+    /* --------------------------------------------- */
+
+    if (glfwInit() != GLFW_TRUE)
+    {
+        std::cerr<<"GLFW Initialization failed"<<std::endl;
+        return 1;
+    }
+
+    //set window hints
+
+    //set version
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    //disable fixed function pipeline
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //prevent window from being resized
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+#ifndef NDEBUG
+    //activate debug context
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+
+    //create window
+    GLFWwindow* window = glfwCreateWindow(width, height, window_title.c_str(), nullptr, nullptr);
+    if (window == nullptr)
+    {
+        glfwTerminate();
+        std::cerr<<"GLFW Window Initialization failed"<<std::endl;
+        return 2;
+    }
+
+    //make context active
+    glfwMakeContextCurrent(window);
+
+    //load openGL functions
+    int gladInitRes = gladLoadGL();
+    if (!gladInitRes) {
+        std::cerr << "Unable to initialize glad" << std::endl;
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return 3;
+    }
+
+    /* --------------------------------------------- */
+    // Initialize Game
+    /* --------------------------------------------- */
+    game = Game();
+    game.init();
+
+    /* --------------------------------------------- */
+    // Register callback functions (input, opengl errors, ...)
+    /* --------------------------------------------- */
+#ifndef NDEBUG
+    //register debug callback function
+	glDebugMessageCallback(debugCallback, &game);
+
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
+
+    //register key callback
+    glfwSetKeyCallback(window, keyCallback);
+
+    //setup mouse callbacks
+    glfwSetCursorPosCallback(window, mousePosCallback);
+    //glfwSetScrollCallback(window, scrollCallback);
+    glfwSetMouseButtonCallback(window,mouseButtonCallback);
+
+    //setup joystick callbacks
+    //TODO
+
+    //TODO do we need that?
+    //activate depth testing
+    //glEnable(GL_DEPTH_TEST);
+
+    //enable back-face culling
+    //glEnable(GL_CULL_FACE);
+
+    /* --------------------------------------------- */
+    // Update/Render Loop
+    /* --------------------------------------------- */
+    bool anotherUpdate = true;
+    //render loop
+    while (!glfwWindowShouldClose(window) && anotherUpdate)
+    {
+        //poll input
+        glfwPollEvents();
+
+        anotherUpdate = game.update();
+
+        game.render();
+    }
+
+    /* --------------------------------------------- */
+    // Cleanup
+    /* --------------------------------------------- */
+
+    //cleanup game
+    game.cleanup();
+
+    //destroy window and context
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
     return 0;
 }
+
+
+

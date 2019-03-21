@@ -113,7 +113,7 @@ std::string AddTokenText(const std::string& prefix, const std::string& text, con
         text) );
 }
 
-} // !Util
+} // !util
 } // !FBX
 } // !Assimp
 
