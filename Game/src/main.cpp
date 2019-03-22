@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 #include "util/INIReader.h"
 #include "Game.h"
+#include "Constants.h"
 
 static Game game;
 
@@ -236,16 +237,38 @@ int main(int argc, char** argv)
     //glEnable(GL_CULL_FACE);
 
     /* --------------------------------------------- */
-    // Update/Render Loop
+    // Update/Render Loop (using fixed time step), used https://medium.com/@tglaiel/how-to-make-your-game-run-at-60fps-24c61210fe75 for some design decisions
     /* --------------------------------------------- */
-    bool anotherUpdate = true;
     //render loop
+    bool anotherUpdate = true;
+    double lastTime = glfwGetTime();
+    double currentTime;
+    double accumulator = FIXED_DELTA;
+    double delta;
+
     while (!glfwWindowShouldClose(window) && anotherUpdate)
     {
-        //poll input
-        glfwPollEvents();
+        //calculate delta time
+        currentTime = glfwGetTime();
+        delta = currentTime-lastTime;
+        lastTime = currentTime;
+        
+        //increase accumulator
+        accumulator +=delta;
+        //cap accumulator to a maximum to prevent "spiral of doom"
+        if(accumulator>UPDATE_TIME_ACCUM_MAX)
+            accumulator = UPDATE_TIME_ACCUM_MAX;
 
-        anotherUpdate = game.update();
+        //do update if necessary
+        while(accumulator>=FIXED_DELTA)
+        {
+            //poll input
+            glfwPollEvents();
+
+            anotherUpdate = game.update();
+
+            accumulator-=FIXED_DELTA;
+        }
 
         game.render();
     }
