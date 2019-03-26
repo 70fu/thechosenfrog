@@ -18,3 +18,7 @@ external, content folder
 .sdf - Intellisens Database
 .suo, .user - User settings
 bin/build
+
+## Links
+
+- [GLFW Input Key] (https://www.glfw.org/docs/latest/input_guide.html#input_key)
