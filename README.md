@@ -21,4 +21,4 @@ bin/build
 
 ## Links
 
-- [GLFW Input Key](https://www.glfw.org/docs/latest/input_guide.html#input_key) - How to set up Input
+- [GLFW Input Key](https://www.glfw.org/docs/latest/input_guide.html#input_key) - How to set up Key & Mouse Input
