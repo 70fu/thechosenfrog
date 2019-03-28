@@ -30,7 +30,7 @@ class MusicList;
 //calculate array sizes at compile time
 static constexpr size_t SOUNDS_SIZE = SoundIds::SOUND_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MUSIC_SIZE = MusicIds::MUSIC_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max({SOUNDS_SIZE,MUSIC_SIZE});
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE});
 
 class AssetManager : public IObjectFactoryListener
 {

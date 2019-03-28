@@ -11,6 +11,7 @@
 #include "util/INIReader.h"
 #include "Game.h"
 #include "Constants.h"
+#include "IEventManager.h"
 
 static Game game;
 
@@ -123,17 +124,15 @@ static void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    //TODO
+	game.getEventManager()->keyCallback(window, key, scancode, action, mods);
 }
 
 static void mousePosCallback(GLFWwindow* window, double x, double y)
 {
-    //TODO
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-    //TODO
 }
 
 /* --------------------------------------------- */
@@ -248,7 +247,7 @@ int main(int argc, char** argv)
 
     while (!glfwWindowShouldClose(window) && anotherUpdate)
     {
-        //calculate delta time
+		//calculate delta time
         currentTime = glfwGetTime();
         delta = currentTime-lastTime;
         lastTime = currentTime;

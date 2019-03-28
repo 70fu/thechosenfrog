@@ -6,6 +6,8 @@
 #include "Game.h"
 #include "StdioLogSystem.h"
 #include "Constants.h"
+#include "util/RuntimeCompileUtils.h"
+#include "RuntimeClasses.h"
 
 Game::Game():assetManager(),soloud() {
 
@@ -27,6 +29,12 @@ void Game::init()
     }
     runtimeObjectSystem->GetObjectFactorySystem()->AddListener(this);
 
+	// specify include directories
+	FileSystemUtils::Path basePath = runtimeObjectSystem->FindFile((__FILE__));
+	FileSystemUtils::Path GLFW_includePath = basePath.ParentPath().ParentPath().ParentPath() / "glfw" / "include";
+	runtimeObjectSystem->AddIncludeDir(GLFW_includePath.c_str());
+
+
     //init audio module
     soloud.init();
 
@@ -34,6 +42,7 @@ void Game::init()
     assetManager.init(runtimeObjectSystem);
 
     //TODO construct runtime swappable members, e.g. EventManager
+	eventManagerID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::EVENT_MANAGER, &eventManager);
 }
 
 bool Game::update(){
@@ -81,5 +90,12 @@ void Game::cleanup()
 
 void Game::OnConstructorsAdded()
 {
-    //TODO reload runtime swappable members e.g. EventManager
+    //reload runtime swappable members e.g. EventManager
+	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
+
+}
+
+IEventManager* Game::getEventManager() const
+{
+	return eventManager;
 }

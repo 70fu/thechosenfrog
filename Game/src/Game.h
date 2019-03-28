@@ -7,17 +7,24 @@
 
 
 #include "assets/AssetManager.h"
+#include "IEventManager.h"
 
 class Game : public IObjectFactoryListener {
 private:
     AssetManager assetManager;
-
+	
     //audio module
     SoLoud::Soloud soloud;
 
     //runtime compiled cpp systems
     IRuntimeObjectSystem* runtimeObjectSystem;
     ICompilerLogger* compilerLogger;
+
+	//swappable classes
+	IEventManager* eventManager;
+	ObjectId eventManagerID;
+
+
 public:
     Game();
     virtual ~Game();
@@ -30,7 +37,10 @@ public:
     void render();
     void cleanup();
 
+
     void OnConstructorsAdded();
+	IEventManager* getEventManager() const;
+
 };
 
 
