@@ -8,6 +8,9 @@
 #include <RuntimeInclude.h>
 RUNTIME_MODIFIABLE_INCLUDE
 
+/**
+ * Contains ids of sound assets
+ */
 namespace SoundIds {
     enum SoundIds : unsigned char {
         DEFAULT,

@@ -8,9 +8,13 @@
 #include <RuntimeInclude.h>
 RUNTIME_MODIFIABLE_INCLUDE
 
+/**
+ * Contains Ids of music assets
+ */
 namespace MusicIds {
     enum MusicIds : unsigned char {
         DEFAULT,
+
         MUSIC_COUNT
     };
 }

@@ -32,6 +32,9 @@ static constexpr size_t SOUNDS_SIZE = SoundIds::SOUND_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MUSIC_SIZE = MusicIds::MUSIC_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE});
 
+/**
+ * Class that loads and manages assets, assets are hotswappable
+ */
 class AssetManager : public IObjectFactoryListener
 {
 private:
@@ -42,6 +45,7 @@ private:
     //asset paths & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
 
+    //Asset manager is not responsible for this
     IRuntimeObjectSystem* runtimeObjectSystem;
 
     //assets lists
@@ -50,23 +54,52 @@ private:
     AssetList<MusicAsset,AssetType::MUSIC>* musicList;
     ObjectId musicListId;
 public:
-    //loads all assets
+    /**
+     * Initializes the asset manager and loads all assets
+     * @param runtimeObjectSystem, !=nullptr
+     */
     void init(IRuntimeObjectSystem* runtimeObjectSystem);
+    /**
+     * Checks if assets need to be reloaded and reloads them
+     */
     void update();
-    //cleans up all assets
+    /**
+     * cleans up all assets (eg. delete things on graphics card,...)
+     */
     void cleanup();
 
+    //called if Asset lists have been changed and recompiled
     void OnConstructorsAdded() override;
 
+    /**
+     * @param id
+     * @return pointer to sound asset with given id, or default sound if there no sound with given id, never returns nullptr
+     */
     SoundAsset* getSound(AssetId id);
+    /**
+     * @param id
+     * @return pointer to music asset with given id, or default music if there no music with given id, never returns nullptr
+     */
     MusicAsset* getMusic(AssetId id);
 
 private:
+    /**
+     * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
+     * @param assetBitmask
+     */
     void loadAssets(unsigned char assetBitmask);
     void reloadFileAsset(const std::string& path);
+    /**
+     * Reloads all assets
+     */
     void reloadAssets();
 
-    void storeFilePaths(std::pair<std::string,AssetIdentifier> paths[],int size);
+    /**
+     * Stores values in given array into the path map, helper method for loading assets
+     * @param paths, !=nullptr, length must be at least size
+     * @param size
+     */
+    void storeFilePaths(std::pair<std::string,AssetIdentifier> paths[],size_t size);
 
     //asset loading and cleanup functions
     void cleanupSounds();

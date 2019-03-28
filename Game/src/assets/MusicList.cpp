@@ -6,7 +6,6 @@
 #define CGUE19_THECHOSENFROG_MUSICLIST_H
 
 #include <soloud_wavstream.h>
-#include <soloud_wav.h>
 #include "../RuntimeClasses.h"
 #include "AssetList.h"
 #include <ObjectInterfacePerModule.h>

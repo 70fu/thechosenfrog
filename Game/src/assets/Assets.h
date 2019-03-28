@@ -29,6 +29,9 @@ enum AssetType : unsigned char
     ALL=255
 };
 
+/**
+ * Uniquely identifies an asset in an asset manager
+ */
 struct AssetIdentifier
 {
 public:

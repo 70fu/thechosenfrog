@@ -11,7 +11,9 @@
     #define RT_VIRTUAL
 #endif
 
-
+/**
+ * Do not change order!!!
+ */
 enum RuntimeClassIds : unsigned char
 {
     SOUND_LIST,
@@ -19,6 +21,9 @@ enum RuntimeClassIds : unsigned char
 	EVENT_MANAGER
 };
 
+/**
+ * These names must be exactly the class name
+ */
 namespace RuntimeClassNames
 {
     static constexpr const char* SOUND_LIST = "SoundList";

@@ -110,7 +110,7 @@ void AssetManager::reloadFileAsset(const std::string& path)
     }
 }
 
-void AssetManager::storeFilePaths(std::pair<std::string, AssetIdentifier> *paths, int size)
+void AssetManager::storeFilePaths(std::pair<std::string, AssetIdentifier> *paths, size_t size)
 {
     for(int i = 0;i<size;++i)
         pathsToIds[paths[i].first] = paths[i].second;
