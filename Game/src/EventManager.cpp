@@ -40,10 +40,22 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager> {
 
 	void mousePosCallback(GLFWwindow * window, double x, double y) override
 	{
+		std::cout << "Mouse is moving: x: " << x << " y: " << y << std::endl;
 	}
 
 	void mouseButtonCallback(GLFWwindow * window, int button, int action, int mods) override
 	{
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+			std::cout << "You pressed the right Mouse-Button" << std::endl;
+		}
+
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			std::cout << "You pressed the left Mouse-Button" << std::endl;
+		}
+
+		if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
+			std::cout << "You pressed the middle Mouse-Button" << std::endl;
+		}
 	}
 
 };

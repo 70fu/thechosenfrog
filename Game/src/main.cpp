@@ -129,10 +129,12 @@ static void keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 
 static void mousePosCallback(GLFWwindow* window, double x, double y)
 {
+	game.getEventManager()->mousePosCallback(window, x, y);
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
+	game.getEventManager()->mouseButtonCallback(window, button, action, mods);
 }
 
 /* --------------------------------------------- */
@@ -222,6 +224,7 @@ int main(int argc, char** argv)
 
     //setup mouse callbacks
     glfwSetCursorPosCallback(window, mousePosCallback);
+
     //glfwSetScrollCallback(window, scrollCallback);
     glfwSetMouseButtonCallback(window,mouseButtonCallback);
 
