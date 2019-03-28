@@ -6,8 +6,22 @@
 #define CGUE19_THECHOSENFROG_GAME_H
 
 
-class Game {
+#include "assets/AssetManager.h"
+
+class Game : public IObjectFactoryListener {
+private:
+    AssetManager assetManager;
+
+    //audio module
+    SoLoud::Soloud soloud;
+
+    //runtime compiled cpp systems
+    IRuntimeObjectSystem* runtimeObjectSystem;
+    ICompilerLogger* compilerLogger;
 public:
+    Game();
+    virtual ~Game();
+
     void init();
     /**
      * @return true if game has not finished
@@ -15,6 +29,8 @@ public:
     bool update();
     void render();
     void cleanup();
+
+    void OnConstructorsAdded();
 };
 
 

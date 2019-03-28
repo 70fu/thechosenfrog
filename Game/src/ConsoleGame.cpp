@@ -4,6 +4,7 @@
 
 #include "ConsoleGame.h"
 #include "StdioLogSystem.h"
+#include "util/RuntimeCompileUtils.h"
 #include <RuntimeObjectSystem.h>
 #include <thread>
 #include <chrono>
@@ -35,20 +36,7 @@ void ConsoleGame::Init() {
     objectSystem->GetObjectFactorySystem()->AddListener(this);
 
     // construct first object
-    IObjectConstructor* pCtor = objectSystem->GetObjectFactorySystem()->GetConstructor("ConsoleUpdate");
-    if( pCtor )
-    {
-        IObject* pObj = pCtor->Construct();
-        pObj->GetInterface( &updateable );
-        if( 0 == updateable )
-        {
-            delete pObj;
-            compilerLogger->LogError( "Error - no updateable interface found\n");
-            return;
-        }
-        updateableId = pObj->GetObjectId();
-
-    }
+    //updateableId = RuntimeCompileUtils::constructObject(objectSystem,"ConsoleUpdate",updateable);
 }
 
 void ConsoleGame::Run() {
@@ -73,12 +61,6 @@ void ConsoleGame::OnConstructorsAdded() {
     // This could have resulted in a change of object pointer, so release old and get new one.
     if( updateable )
     {
-        IObject* pObj = objectSystem->GetObjectFactorySystem()->GetObject( updateableId );
-        pObj->GetInterface( &updateable );
-        if( 0 == updateable )
-        {
-            compilerLogger->LogError( "Error - no updateable interface found\n");
-            delete pObj;
-        }
+        //RuntimeCompileUtils::updateObject(objectSystem,updateableId,updateable);
     }
 }
