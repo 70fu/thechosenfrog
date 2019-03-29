@@ -147,7 +147,7 @@ int main(int argc, char** argv)
     // Load settings.ini
     /* --------------------------------------------- */
 
-    INIReader reader("assets/settings.ini");
+    INIReader reader("assets/settings/settings.ini");
 
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value

@@ -7,7 +7,8 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/IEventManager.h 
 		src/EventManager.cpp
         src/util/INIReader.h
-        src/imgui/imconfig.h src/imgui/imgui.cpp src/imgui/imgui.h src/imgui/imgui_draw.cpp src/imgui/imgui_demo.cpp src/imgui/imgui_internal.h src/imgui/imgui_widgets.cpp src/imgui/imstb_rectpack.h src/imgui/imstb_textedit.h src/imgui/imstb_truetype.h src/imgui/imgui_impl_glfw.cpp src/imgui/imgui_impl_glfw.h src/imgui/imgui_impl_opengl3.cpp src/imgui/imgui_impl_opengl3.h src/Game.cpp src/Game.h src/Constants.h src/assets/AssetManager.cpp src/assets/AssetManager.h src/assets/SoundList.cpp src/RuntimeClasses.h src/assets/AssetList.h src/assets/MusicList.cpp src/util/RuntimeCompileUtils.h src/assets/SoundIds.h src/assets/MusicIds.h src/assets/Assets.h)
+		src/cute_filewatch/assetsys.h src/cute_filewatch/cute_filewatch.h
+        src/imgui/imconfig.h src/imgui/imgui.cpp src/imgui/imgui.h src/imgui/imgui_draw.cpp src/imgui/imgui_demo.cpp src/imgui/imgui_internal.h src/imgui/imgui_widgets.cpp src/imgui/imstb_rectpack.h src/imgui/imstb_textedit.h src/imgui/imstb_truetype.h src/imgui/imgui_impl_glfw.cpp src/imgui/imgui_impl_glfw.h src/imgui/imgui_impl_opengl3.cpp src/imgui/imgui_impl_opengl3.h src/Game.cpp src/Game.h src/Constants.h src/assets/AssetManager.cpp src/assets/AssetManager.h src/assets/SoundList.cpp src/RuntimeClasses.h src/assets/AssetList.h src/assets/MusicList.cpp src/util/RuntimeCompileUtils.h src/assets/SoundIds.h src/assets/MusicIds.h src/assets/Assets.h src/assets/Assets.cpp)
 
 #runtime compiled cpp
 target_include_directories(thechosenfrog PRIVATE ${CMAKE_SOURCE_DIR}/RuntimeCompiledCPlusPlus/RuntimeCompiler)
@@ -35,6 +36,3 @@ target_link_libraries(thechosenfrog soloud)
 #assimp
 target_include_directories(thechosenfrog PRIVATE ${ASSIMP_INCLUDE_DIR})
 target_link_libraries(thechosenfrog assimp)
-
-#copy assets to build dir
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/Game)

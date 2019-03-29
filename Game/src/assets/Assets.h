@@ -39,4 +39,17 @@ public:
     AssetId id;
 };
 
+//forward declare string
+#include <iosfwd>
+/**
+ * @param assetPath, relative to asset directory, must start with a /, eg. /shaders/phong.vert
+ * @return full path to asset
+ */
+#ifndef NDEBUG
+static constexpr const char* PATH_TO_ASSETS_DIR = "../../Game/assets";//asset folder relative to cmake build directory
+#else
+static constexpr const char* PATH_TO_ASSETS_DIR = "./assets";//asset folder next to executable
+#endif
+std::string getFullAssetPath(const std::string& assetPath);
+
 #endif //CGUE19_THECHOSENFROG_ASSETS_H

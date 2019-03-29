@@ -5,7 +5,41 @@
 #include "AssetManager.h"
 #include "../util/RuntimeCompileUtils.h"
 #include "../RuntimeClasses.h"
+#include "../Constants.h"
 #include <RuntimeObjectSystem.h>
+#include <iostream>
+
+#define STRPOOL_IMPLEMENTATION
+#define ASSETSYS_IMPLEMENTATION
+#include "../cute_filewatch/assetsys.h"
+
+#define CUTE_FILEWATCH_IMPLEMENTATION
+#include "../cute_filewatch/cute_filewatch.h"
+
+/**
+ * called whenever an asset changes
+ * @param change
+ * @param virtual_path
+ * @param udata points to AssetManager
+ */
+void AssetManager::filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata)
+{
+    std::string change_string;
+    switch (change)
+    {
+        case FILEWATCH_DIR_ADDED: change_string = "FILEWATCH_DIR_ADDED"; break;
+        case FILEWATCH_DIR_REMOVED: change_string = "FILEWATCH_DIR_REMOVED"; break;
+        case FILEWATCH_FILE_ADDED: change_string = "FILEWATCH_FILE_ADDED"; break;
+        case FILEWATCH_FILE_REMOVED: change_string = "FILEWATCH_FILE_REMOVED"; break;
+        case FILEWATCH_FILE_MODIFIED: change_string = "FILEWATCH_FILE_MODIFIED"; break;
+    }
+
+    //TODO log file change
+    //std::cout<<change_string <<" at " <<virtual_path<<std::endl;
+
+    if(change==FILEWATCH_FILE_MODIFIED)
+        ((AssetManager*)udata)->reloadFileAsset(virtual_path);
+}
 
 void AssetManager::init(IRuntimeObjectSystem *ros)
 {
@@ -20,17 +54,48 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
 
     //load all assets
     loadAssets(AssetType::ALL);
+
+#ifndef NDEBUG
+    //init filewatch
+    assetsys = assetsys_create(0);
+    filewatch = filewatch_create(assetsys, 0);
+
+    if(!filewatch_mount(filewatch, "../../Game/assets/settings", FILEWATCH_SETTINGS_PATH))
+        ;//TODO log
+    if(!filewatch_start_watching(filewatch, FILEWATCH_SETTINGS_PATH, AssetManager::filewatchCallback, this))
+        ;//TODO log
+    if(!filewatch_mount(filewatch, "../../Game/assets/shaders", FILEWATCH_SHADERS_PATH))
+        ;//TODO log
+    if(!filewatch_start_watching(filewatch, FILEWATCH_SHADERS_PATH, AssetManager::filewatchCallback, this))
+        ;//TODO log
+#endif
 }
+
 
 void AssetManager::update()
 {
+#ifndef NDEBUG
+    //scan asset folder for changes if time is due
+    fileWatchUpdateCounter-=FIXED_DELTA;
+    if(fileWatchUpdateCounter<=0)
+    {
+        filewatch_update(filewatch);
+        filewatch_notify(filewatch);
 
+        fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
+    }
+#endif
 }
 
 void AssetManager::cleanup()
 {
     cleanupSounds();
     cleanupMusic();
+
+#ifndef NDEBUG
+    filewatch_free(filewatch);
+    assetsys_destroy(assetsys);
+#endif
 }
 
 SoundAsset* AssetManager::getSound(AssetId id) {

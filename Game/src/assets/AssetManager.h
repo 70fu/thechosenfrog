@@ -13,6 +13,8 @@
 #include <algorithm>
 #include "Assets.h"
 #include "AssetList.h"
+#include "../cute_filewatch/cute_filewatch.h"
+
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
 
@@ -42,7 +44,7 @@ private:
     SoundAsset sounds[SOUNDS_SIZE];
     MusicAsset music[MUSIC_SIZE];
 
-    //asset paths & file watching
+    //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
 
     //Asset manager is not responsible for this
@@ -53,6 +55,19 @@ private:
     ObjectId soundListId;
     AssetList<MusicAsset,AssetType::MUSIC>* musicList;
     ObjectId musicListId;
+
+#ifndef NDEBUG
+    //file watcher
+    static constexpr double FILEWATCH_UPDATE_INTERVAL = 1;
+    double fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
+    assetsys_t* assetsys;
+    filewatch_t* filewatch;
+
+    //virtual file watcher path
+    static constexpr const char* FILEWATCH_SETTINGS_PATH = "";
+    static constexpr const char* FILEWATCH_SHADERS_PATH = "/shaders";
+    //...
+#endif
 public:
     /**
      * Initializes the asset manager and loads all assets
@@ -107,6 +122,8 @@ private:
 
     void cleanupMusic();
     void cleanupMusic(MusicAsset& musicAsset);
+
+    static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };
 
 

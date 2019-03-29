@@ -33,23 +33,23 @@ protected:
     /**
      * Loads the asset file into given asset object
      * should only be used from loadAssets
-     * @param path !=nullptr
+     * @param assetPath !=nullptr, must be a path relative from asset folder
      * @param asset
-     * @param path
+     * @param id
      */
-    void loadAssetsFromFileHelper(const std::string& path, AssetId id, A& asset)
+    void loadAssetsFromFileHelper(const std::string& assetPath, AssetId id, A& asset)
     {
         if(paths!=nullptr)
-            paths[fileLoadCounter++] = {path,{AT,id}};
+            paths[fileLoadCounter++] = {assetPath,{AT,id}};
 
-        loadFromFile(path,asset);
+        loadFromFile(assetPath,asset);
     }
 
     /**
      * Loads the asset file into given asset object
      * @param path !=nullptr
      * @param asset
-     * @param path
+     * @param path, complete path to asset
      * @return true if asset could successfully be loaded from file
      */
     virtual bool loadAssetFromFile(const std::string& path, A& asset) const=0;
@@ -85,13 +85,12 @@ public:
     /**
      * Loads the asset file into given asset object
      * should only be used from loadAssets
-     * @param path !=nullptr
+     * @param assetPath, path relative from asset directory starting with /
      * @param asset
-     * @param path
      */
-    void loadFromFile(const std::string& path, A& asset)
+    void loadFromFile(const std::string& assetPath, A& asset)
     {
-        if(!loadAssetFromFile(path,asset))
+        if(!loadAssetFromFile(getFullAssetPath(assetPath),asset))
         {
             //TODO log message
 
