@@ -34,13 +34,18 @@ if (WIN32)
 elseif (APPLE)
     set(SOLOUD_SOURCES ${SOLOUD_SOURCES} src/backend/coreaudio/soloud_coreaudio.cpp)
 elseif (UNIX)
-    #set(SOLOUD_SOURCES ${SOLOUD_SOURCES} src/backend/alsa/soloud_alsa.cpp)
-    set(SOLOUD_SOURCES ${SOLOUD_SOURCES} src/backend/oss/soloud_oss.cpp)
+    set(SOLOUD_SOURCES ${SOLOUD_SOURCES} src/backend/alsa/soloud_alsa.cpp)
+    #set(SOLOUD_SOURCES ${SOLOUD_SOURCES} src/backend/oss/soloud_oss.cpp)
 endif()
 
 #add lib
 include_directories(include)
-add_library(soloud ${SOLOUD_SOURCES} ${SOLOUD_HEADERS})
+add_library(soloud STATIC ${SOLOUD_SOURCES} ${SOLOUD_HEADERS})
+
+#compile with position independent code if using runtime compiled c++
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_property(TARGET soloud PROPERTY POSITION_INDEPENDENT_CODE ON)
+endif()
 
 #enable correct backends
 if (WIN32)
@@ -48,6 +53,12 @@ if (WIN32)
 elseif (APPLE)
     target_compile_definitions(soloud PRIVATE WITH_COREAUDIO)
 elseif (UNIX)
-    target_compile_definitions(soloud PRIVATE WITH_OSS)
-    #target_compile_definitions(soloud PRIVATE WITH_OSS)
+    target_compile_definitions(soloud PRIVATE WITH_ALSA)
+    find_package(ALSA REQUIRED)
+    if (ALSA_FOUND)
+        include_directories(${ALSA_INCLUDE_DIRS})
+        target_link_libraries (soloud ${ALSA_LIBRARIES})
+    endif(ALSA_FOUND)
 endif()
+
+#install(TARGETS soloudDyn LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/RuntimeLibs)

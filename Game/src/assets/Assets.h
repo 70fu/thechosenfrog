@@ -40,7 +40,7 @@ public:
 };
 
 //forward declare string
-#include <iosfwd>
+#include <string>
 /**
  * @param assetPath, relative to asset directory, must start with a /, eg. /shaders/phong.vert
  * @return full path to asset
@@ -50,6 +50,8 @@ static constexpr const char* PATH_TO_ASSETS_DIR = "../../Game/assets";//asset fo
 #else
 static constexpr const char* PATH_TO_ASSETS_DIR = "./assets";//asset folder next to executable
 #endif
-std::string getFullAssetPath(const std::string& assetPath);
+inline std::string getFullAssetPath(const std::string& assetPath){
+    return PATH_TO_ASSETS_DIR+assetPath;//from cmake build directory
+}
 
 #endif //CGUE19_THECHOSENFROG_ASSETS_H

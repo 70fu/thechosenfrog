@@ -5,28 +5,28 @@
 #ifndef CGUE19_THECHOSENFROG_SOUNDLIST_H
 #define CGUE19_THECHOSENFROG_SOUNDLIST_H
 
+#include "../RuntimeSoLoud.h"
 #include <ObjectInterfacePerModule.h>
 #include "../RuntimeClasses.h"
 #include "AssetList.h"
-#include <soloud_wav.h>
-#include <RuntimeInclude.h>
 #include "SoundIds.h"
 
-class SoundList : public TInterface<RuntimeClassIds::SOUND_LIST,AssetList<SoLoud::Wav,AssetType::SOUND>>
+class SoundList : public TInterface<RuntimeClassIds::SOUND_LIST,AssetList<SoundAsset,AssetType::SOUND>>
 {
 protected:
-    void loadAssets(SoLoud::Wav *assets, size_t size) const override
+    void loadAssets(SoundAsset *assets, size_t size) override
     {
-        //TODO make loadFromFile calls, ...
+        loadAssetsFromFileHelper("/sounds/error.wav",SoundIds::DEFAULT,assets[SoundIds::DEFAULT]);
     }
 
-    bool loadAssetFromFile(const std::string &path, SoLoud::Wav &asset) const override
+    bool loadAssetFromFile(const std::string &path,SoundAsset &asset) override
     {
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(SoLoud::Wav &asset) const override {
-        //TODO
+    void loadDefault(SoundAsset &asset) const override
+    {
+        asset.load(getFullAssetPath("/sounds/error.wav").c_str());
     }
 };
 REGISTERCLASS(SoundList);

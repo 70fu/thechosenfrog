@@ -28,7 +28,7 @@ protected:
      * @param assets
      * @param size
      */
-    virtual void loadAssets(A assets[], size_t size) const=0;
+    virtual void loadAssets(A assets[], size_t size) =0;
 
     /**
      * Loads the asset file into given asset object
@@ -52,7 +52,7 @@ protected:
      * @param path, complete path to asset
      * @return true if asset could successfully be loaded from file
      */
-    virtual bool loadAssetFromFile(const std::string& path, A& asset) const=0;
+    virtual bool loadAssetFromFile(const std::string& path, A& asset)=0;
 public:
     /**
      * Loads all assets into given array.

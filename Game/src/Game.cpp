@@ -30,9 +30,16 @@ void Game::init()
     runtimeObjectSystem->GetObjectFactorySystem()->AddListener(this);
 
 	// specify include directories
-	FileSystemUtils::Path basePath = runtimeObjectSystem->FindFile((__FILE__));
-	FileSystemUtils::Path GLFW_includePath = basePath.ParentPath().ParentPath().ParentPath() / "glfw" / "include";
+	FileSystemUtils::Path basePath = runtimeObjectSystem->FindFile((__FILE__)).ParentPath().ParentPath().ParentPath();
+
+	FileSystemUtils::Path GLFW_includePath = basePath / "glfw" / "include";
 	runtimeObjectSystem->AddIncludeDir(GLFW_includePath.c_str());
+    FileSystemUtils::Path soloudIncludePath = basePath / "soloud" / "include";
+    runtimeObjectSystem->AddIncludeDir(soloudIncludePath.c_str());
+
+    //specify library directories
+    FileSystemUtils::Path soloudLibPath = basePath / "cmake-build-debug" / "soloud";
+    runtimeObjectSystem->AddLibraryDir(soloudLibPath.c_str());
 
 
     //init audio module
@@ -41,8 +48,9 @@ void Game::init()
     //init asset manager to load all assets
     assetManager.init(runtimeObjectSystem);
 
-    //TODO construct runtime swappable members, e.g. EventManager
+    //construct runtime swappable members, e.g. EventManager
 	eventManagerID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::EVENT_MANAGER, &eventManager);
+	//...
 }
 
 bool Game::update(){

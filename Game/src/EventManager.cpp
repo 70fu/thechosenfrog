@@ -40,7 +40,7 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager> {
 
 	void mousePosCallback(GLFWwindow * window, double x, double y) override
 	{
-		std::cout << "Mouse is moving: x: " << x << " y: " << y << std::endl;
+		//std::cout << "Mouse is moving: x: " << x << " y: " << y << std::endl;
 	}
 
 	void mouseButtonCallback(GLFWwindow * window, int button, int action, int mods) override

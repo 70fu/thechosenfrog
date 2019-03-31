@@ -380,7 +380,7 @@ bool RuntimeObjectSystem::LoadCompiledModule()
 
 	if (!module)
 	{
-		if (m_pCompilerLogger) { m_pCompilerLogger->LogError( "Failed to load module %s\n",m_CurrentlyCompilingModuleName.c_str()); }
+		if (m_pCompilerLogger) { m_pCompilerLogger->LogError( "Failed to load module %s: %s\n",m_CurrentlyCompilingModuleName.c_str(),dlerror()); }
 		return false;
 	}
 

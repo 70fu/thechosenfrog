@@ -5,28 +5,29 @@
 #ifndef CGUE19_THECHOSENFROG_MUSICLIST_H
 #define CGUE19_THECHOSENFROG_MUSICLIST_H
 
-#include <soloud_wavstream.h>
+#include "../RuntimeSoLoud.h"
 #include "../RuntimeClasses.h"
 #include "AssetList.h"
 #include <ObjectInterfacePerModule.h>
 #include "MusicIds.h"
 
-class MusicList : public TInterface<RuntimeClassIds::SOUND_LIST,AssetList<SoLoud::WavStream,AssetType::MUSIC>>
+class MusicList : public TInterface<RuntimeClassIds::MUSIC_LIST,AssetList<MusicAsset ,AssetType::MUSIC>>
 {
 protected:
-    void loadAssets(SoLoud::WavStream *assets, size_t size) const override
+    void loadAssets(MusicAsset *assets, size_t size) override
     {
-        //TODO make loadFromFile calls, ...
+        loadAssetsFromFileHelper("/music/error.ogg",MusicIds::DEFAULT,assets[MusicIds::DEFAULT]);
+        //...
     }
 
-    bool loadAssetFromFile(const std::string &path, SoLoud::WavStream &asset) const override
+    bool loadAssetFromFile(const std::string &path, MusicAsset &asset) override
     {
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(SoLoud::WavStream &asset) const override
+    void loadDefault(MusicAsset &asset) const override
     {
-        //TODO
+        asset.load(getFullAssetPath("/music/error.ogg").c_str());
     }
 };
 REGISTERCLASS(MusicList);
