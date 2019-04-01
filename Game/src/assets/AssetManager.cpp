@@ -16,6 +16,8 @@
 #define CUTE_FILEWATCH_IMPLEMENTATION
 #include "../cute_filewatch/cute_filewatch.h"
 
+using namespace ImGuiAl;
+
 /**
  * called whenever an asset changes
  * @param change
@@ -34,8 +36,7 @@ void AssetManager::filewatchCallback(filewatch_update_t change, const char* virt
         case FILEWATCH_FILE_MODIFIED: change_string = "FILEWATCH_FILE_MODIFIED"; break;
     }
 
-    //TODO log file change
-    //std::cout<<change_string <<" at " <<virtual_path<<std::endl;
+    ImGuiAl::Log::getInstance().Info("%s at %s",change_string.c_str(),virtual_path);
 
     if(change==FILEWATCH_FILE_MODIFIED)
         ((AssetManager*)udata)->reloadFileAsset(virtual_path);
@@ -58,16 +59,33 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
 #ifndef NDEBUG
     //init filewatch
     assetsys = assetsys_create(0);
-    filewatch = filewatch_create(assetsys, 0);
+    for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
+        filewatches[i] = filewatch_create(assetsys, 0);
 
-    if(!filewatch_mount(filewatch, "../../Game/assets/settings", FILEWATCH_SETTINGS_PATH))
-        ;//TODO log
-    if(!filewatch_start_watching(filewatch, FILEWATCH_SETTINGS_PATH, AssetManager::filewatchCallback, this))
-        ;//TODO log
-    if(!filewatch_mount(filewatch, "../../Game/assets/shaders", FILEWATCH_SHADERS_PATH))
-        ;//TODO log
-    if(!filewatch_start_watching(filewatch, FILEWATCH_SHADERS_PATH, AssetManager::filewatchCallback, this))
-        ;//TODO log
+    int i = 0;
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/settings", FILEWATCH_SETTINGS_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to settings directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_SETTINGS_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching settings directory");
+    ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/shaders", FILEWATCH_SHADERS_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to shaders directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_SHADERS_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching shaders directory");
+    ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/music", FILEWATCH_MUSIC_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to music directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_MUSIC_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching music directory");
+    ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/sounds", FILEWATCH_SOUND_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to sound directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_SOUND_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching sound directory");
+    ++i;
 #endif
 }
 
@@ -79,9 +97,11 @@ void AssetManager::update()
     fileWatchUpdateCounter-=FIXED_DELTA;
     if(fileWatchUpdateCounter<=0)
     {
-        filewatch_update(filewatch);
-        filewatch_notify(filewatch);
-
+        for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
+        {
+            filewatch_update(filewatches[i]);
+            filewatch_notify(filewatches[i]);
+        }
         fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
     }
 #endif
@@ -93,7 +113,8 @@ void AssetManager::cleanup()
     cleanupMusic();
 
 #ifndef NDEBUG
-    filewatch_free(filewatch);
+    for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
+        filewatch_free(filewatches[i]);
     assetsys_destroy(assetsys);
 #endif
 }

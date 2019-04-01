@@ -61,11 +61,14 @@ private:
     static constexpr double FILEWATCH_UPDATE_INTERVAL = 1;
     double fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
     assetsys_t* assetsys;
-    filewatch_t* filewatch;
+    filewatch_t* filewatches[4];
 
     //virtual file watcher path
-    static constexpr const char* FILEWATCH_SETTINGS_PATH = "";
+    static constexpr const char* FILEWATCH_SETTINGS_PATH = "/settings";
     static constexpr const char* FILEWATCH_SHADERS_PATH = "/shaders";
+    static constexpr const char* FILEWATCH_MUSIC_PATH = "/music";
+    static constexpr const char* FILEWATCH_SOUND_PATH = "/sounds";
+
     //...
 #endif
 public:

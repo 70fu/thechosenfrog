@@ -17,15 +17,18 @@ Game::~Game() {
     //TODO put code of cleanup here?? or call cleanup if it has not been called??
 }
 
-void Game::init()
+void Game::init(GLFWwindow* window)
 {
-    //init runtime compiled cpp classes
-    compilerLogger = new StdioLogSystem();
+    this->window=window;
 
+    //init logger
+    ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);
+
+    //init runtime compiled cpp classes
     runtimeObjectSystem = new RuntimeObjectSystem();
-    if(!runtimeObjectSystem->Initialise(compilerLogger, nullptr))
+    if(!runtimeObjectSystem->Initialise(&ImGuiAl::Log::getInstance(), nullptr))
     {
-        compilerLogger->LogError("Failed to init object system");
+        ImGuiAl::Log::getInstance().LogError("Failed to init object system");
     }
     runtimeObjectSystem->GetObjectFactorySystem()->AddListener(this);
 
@@ -41,7 +44,6 @@ void Game::init()
     FileSystemUtils::Path soloudLibPath = basePath / "cmake-build-debug" / "soloud";
     runtimeObjectSystem->AddLibraryDir(soloudLibPath.c_str());
 
-
     //init audio module
     soloud.init();
 
@@ -50,7 +52,11 @@ void Game::init()
 
     //construct runtime swappable members, e.g. EventManager
 	eventManagerID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::EVENT_MANAGER, &eventManager);
-	//...
+    debugGuiID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::IMGUI_DEBUG_GUI, &debugGui);
+    //...
+
+    //init debug gui
+    debugGui->init(this);
 }
 
 bool Game::update(){
@@ -77,12 +83,23 @@ bool Game::update(){
     return true;
 }
 
-void Game::render() {
+void Game::render()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    int width,height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
 
+    debugGui->render(this);
+
+    //swap buffer after everything has rendered
+    glfwSwapBuffers(window);
 }
 
 void Game::cleanup()
 {
+    debugGui->cleanup(this);
+
     assetManager.cleanup();
     soloud.deinit();
 
@@ -93,17 +110,29 @@ void Game::cleanup()
     }
 
     delete runtimeObjectSystem;
-    delete compilerLogger;
 }
 
 void Game::OnConstructorsAdded()
 {
     //reload runtime swappable members e.g. EventManager
 	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
+    RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
 
 }
 
 IEventManager* Game::getEventManager() const
 {
 	return eventManager;
+}
+
+IDebugGUI *Game::getDebugGUI() const {
+    return debugGui;
+}
+
+AssetManager &Game::getAssetManager() {
+    return assetManager;
+}
+
+GLFWwindow *Game::getWindow() {
+    return window;
 }

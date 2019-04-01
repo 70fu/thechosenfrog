@@ -8,6 +8,7 @@
 #include <IObject.h>
 #include <string>
 #include "Assets.h"
+#include "../log/imguial_log.h"
 
 /**
  * Base class to simplify writing of asset loader using inheritance
@@ -92,7 +93,7 @@ public:
     {
         if(!loadAssetFromFile(getFullAssetPath(assetPath),asset))
         {
-            //TODO log message
+            ImGuiAl::Log::getInstance().Error("Could not load Asset: %s",assetPath.c_str());
 
             //reset asset to default
             loadDefault(asset);

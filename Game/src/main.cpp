@@ -6,10 +6,8 @@
 
 #include <sstream>
 #include <string>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "util/INIReader.h"
 #include "Game.h"
+#include "util/INIReader.h"
 #include "Constants.h"
 #include "IEventManager.h"
 
@@ -119,22 +117,35 @@ static std::string formatDebugOutput(GLenum source, GLenum type, GLuint id, GLen
 static void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const GLvoid* userParam)
 {
     std::string error = formatDebugOutput(source, type, id, severity, message);
-    std::cout << error << std::endl;
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+        case GL_DEBUG_SEVERITY_MEDIUM: {
+            ImGuiAl::Log::getInstance().Error(error.c_str());
+            break;
+        }
+        case GL_DEBUG_SEVERITY_LOW:
+            ImGuiAl::Log::getInstance().Debug(error.c_str());
+            break;
+        default:
+            //ImGuiAl::Log::getInstance().Debug(error.c_str());
+            break;
+
+    }
 }
 
 static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	game.getEventManager()->keyCallback(window, key, scancode, action, mods);
+	game.getEventManager()->keyCallback(game, key, scancode, action, mods);
 }
 
 static void mousePosCallback(GLFWwindow* window, double x, double y)
 {
-	game.getEventManager()->mousePosCallback(window, x, y);
+	game.getEventManager()->mousePosCallback(game, x, y);
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
-	game.getEventManager()->mouseButtonCallback(window, button, action, mods);
+	game.getEventManager()->mouseButtonCallback(game, button, action, mods);
 }
 
 /* --------------------------------------------- */
@@ -195,7 +206,7 @@ int main(int argc, char** argv)
     glfwMakeContextCurrent(window);
 
     //load openGL functions
-    int gladInitRes = gladLoadGL();
+    int gladInitRes = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
     if (!gladInitRes) {
         std::cerr << "Unable to initialize glad" << std::endl;
         glfwDestroyWindow(window);
@@ -207,7 +218,7 @@ int main(int argc, char** argv)
     // Initialize Game
     /* --------------------------------------------- */
     game = Game();
-    game.init();
+    game.init(window);
 
     /* --------------------------------------------- */
     // Register callback functions (input, opengl errors, ...)

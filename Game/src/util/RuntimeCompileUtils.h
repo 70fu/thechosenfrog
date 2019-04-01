@@ -13,6 +13,8 @@
 #include <IObjectFactorySystem.h>
 #include <IObject.h>
 
+using namespace ImGuiAl;
+
 namespace RuntimeCompileUtils
 {
     template<class T>
@@ -27,14 +29,14 @@ namespace RuntimeCompileUtils
             if(pointer==nullptr)
             {
                 delete pObj;//why do I delete this only in the error case?? But this is exactly how the ConsoleExample from the RuntimeCompiledCPP looks
-                //TODO log
+                Log::getInstance().Error("Could not construct rccpp object %s",name);
             }
             else
                 return pObj->GetObjectId();
         }
         else
         {
-            //TODO log
+            Log::getInstance().Error("rccpp object %s does not have a registered constructor",name);
         }
 
         //return invalid object id
@@ -49,7 +51,7 @@ namespace RuntimeCompileUtils
         pObj->GetInterface( pointer);
         if( *pointer== nullptr )
         {
-            //TODO log
+            Log::getInstance().Error("Could not fetch new instance for rccpp object of type %s",typeid(T).name());
             delete pObj;
         }
 

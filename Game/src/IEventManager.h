@@ -4,14 +4,14 @@
 
 
 #include <IObject.h>
-#include <GLFW/glfw3.h>
 
+class Game;
 
 class IEventManager : public IObject {
 public:
-	virtual void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) = 0;
-	virtual void mousePosCallback(GLFWwindow* window, double x, double y) = 0;
-	virtual void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) = 0;
+	virtual void keyCallback(Game& game, int key, int scancode, int action, int mods) = 0;
+	virtual void mousePosCallback(Game& game, double x, double y) = 0;
+	virtual void mouseButtonCallback(Game& game, int button, int action, int mods) = 0;
 
 };
 

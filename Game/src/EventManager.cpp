@@ -2,10 +2,13 @@
 #include "RuntimeClasses.h"
 #include <ObjectInterfacePerModule.h>
 #include <iostream>
+#include "Game.h"
 
-class EventManager : public TInterface<EVENT_MANAGER, IEventManager> {
-	void keyCallback(GLFWwindow * window, int key, int scancode, int action, int mods) override
+class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
+	void keyCallback(Game& game, int key, int scancode, int action, int mods) override
 	{
+		//toggle debug windows
+		keyToggleDebugWindows(game,key,scancode,action,mods);
 
 		// move forward
 		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
@@ -38,12 +41,12 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager> {
 		}
 	}
 
-	void mousePosCallback(GLFWwindow * window, double x, double y) override
+	void mousePosCallback(Game& game, double x, double y) override
 	{
 		//std::cout << "Mouse is moving: x: " << x << " y: " << y << std::endl;
 	}
 
-	void mouseButtonCallback(GLFWwindow * window, int button, int action, int mods) override
+	void mouseButtonCallback(Game& game, int button, int action, int mods) override
 	{
 		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
 			std::cout << "You pressed the right Mouse-Button" << std::endl;
@@ -57,8 +60,22 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager> {
 			std::cout << "You pressed the middle Mouse-Button" << std::endl;
 		}
 	}
-
+private:
+	/**
+	 * this is only used to make the key callback function more readable (
+	 * toggles respective debug windows if Control+<Number> is pressed
+	 */
+	inline void keyToggleDebugWindows(Game& game, int key, int scancode, int action, int mods)
+	{
+		if((mods&GLFW_MOD_CONTROL)!=0 && action==GLFW_PRESS)
+		{
+			if(key==GLFW_KEY_1)
+				game.getDebugGUI()->toggleWindow(DebugWindowIds::LOGGER);
+			//...
+		}
+	}
 };
+
 REGISTERCLASS(EventManager);
 
 
