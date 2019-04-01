@@ -9,7 +9,7 @@
 #include <GLFW/glfw3.h>
 #include "assets/AssetManager.h"
 #include "IEventManager.h"
-#include "log/imguial_log.h"
+#include "logger/imguial_log.h"
 #include "IDebugGUI.h"
 
 class Game : public IObjectFactoryListener {

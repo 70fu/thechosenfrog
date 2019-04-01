@@ -8,7 +8,7 @@
 #include <IObject.h>
 #include <string>
 #include "Assets.h"
-#include "../log/imguial_log.h"
+#include "../logger/imguial_log.h"
 
 /**
  * Base class to simplify writing of asset loader using inheritance
