@@ -204,8 +204,8 @@ void AssetManager::storeFilePaths(std::pair<std::string, AssetIdentifier> *paths
 
 void AssetManager::cleanupSounds()
 {
-    for(SoundAsset& sound : sounds)
-        cleanupSound(sound);
+    for(int i = 0;i<SOUNDS_SIZE;++i)
+        cleanupSound(sounds[i]);
 }
 
 void AssetManager::cleanupSound(SoundAsset &soundAsset) {
@@ -213,8 +213,8 @@ void AssetManager::cleanupSound(SoundAsset &soundAsset) {
 }
 
 void AssetManager::cleanupMusic() {
-    for(MusicAsset & m : music)
-        cleanupMusic(m);
+    for(int i = 0;i<MUSIC_SIZE;++i)
+        cleanupMusic(music[i]);
 }
 
 void AssetManager::cleanupMusic(MusicAsset &musicAsset) {
