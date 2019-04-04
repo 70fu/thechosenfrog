@@ -7,10 +7,12 @@
 
 #include <soloud_wav.h>
 #include <soloud_wavstream.h>
+#include "Mesh.h"
 
 //asset aliases
 using SoundAsset = SoLoud::Wav;
 using MusicAsset = SoLoud::WavStream;
+using MeshAsset = Mesh;
 
 using AssetId = unsigned int;
 
@@ -21,8 +23,8 @@ enum AssetType : unsigned char
 {
     SOUND = 1,
     MUSIC = 2,
-    //SHADER=4
-    //MODEL=8,
+    SHADER=4,
+    MESH=8,
     //TEXTURE=16,
     //FONT=32,
 

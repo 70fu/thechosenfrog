@@ -13,7 +13,9 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/IDebugGUI.h src/ImGuiDebugGUI.cpp
 		src/DebugWindowIds.h src/IDebugGUI.cpp
 		src/assets/Mesh.cpp src/assets/Mesh.h
-        src/assets/Surface.cpp src/assets/Surface.h)
+        src/assets/Surface.cpp src/assets/Surface.h
+		src/assets/MeshList.cpp
+		src/assets/MeshIds.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

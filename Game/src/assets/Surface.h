@@ -37,7 +37,7 @@ struct Surface {
     /**
      * Bitmask of SurfaceData values, that describe which vectors are filled
      */
-    unsigned char dataFormatBitmask;
+    unsigned char dataFormatBitmask=~0;
 
     /*!
      * Vertex positions
@@ -69,6 +69,11 @@ struct Surface {
      * @return size  of buffer needed for storing all data except the index array
      */
     size_t getVertexDataSize();
+
+    /**
+     * Clears all data and sets dataFormatBitmask to 0
+     */
+    void clear();
 };
 
 

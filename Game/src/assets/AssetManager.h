@@ -14,6 +14,7 @@
 #include "Assets.h"
 #include "AssetList.h"
 #include "../cute_filewatch/cute_filewatch.h"
+#include "MeshIds.h"
 
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
@@ -26,12 +27,11 @@
 
 //forward declarations
 struct IRuntimeObjectSystem;
-class SoundList;
-class MusicList;
 
 //calculate array sizes at compile time
 static constexpr size_t SOUNDS_SIZE = SoundIds::SOUND_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MUSIC_SIZE = MusicIds::MUSIC_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t MESH_SIZE = MeshIds::MESH_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE});
 
 /**
@@ -43,6 +43,7 @@ private:
     //asset arrays
     SoundAsset sounds[SOUNDS_SIZE];
     MusicAsset music[MUSIC_SIZE];
+    MeshAsset meshes[MESH_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -55,20 +56,22 @@ private:
     ObjectId soundListId;
     AssetList<MusicAsset,AssetType::MUSIC>* musicList;
     ObjectId musicListId;
+    AssetList<MeshAsset ,AssetType::MESH>* meshList;
+    ObjectId meshListId;
 
 #ifndef NDEBUG
     //file watcher
     static constexpr double FILEWATCH_UPDATE_INTERVAL = 1;
     double fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
     assetsys_t* assetsys;
-    filewatch_t* filewatches[4];
+    filewatch_t* filewatches[5];
 
     //virtual file watcher path
     static constexpr const char* FILEWATCH_SETTINGS_PATH = "/settings";
     static constexpr const char* FILEWATCH_SHADERS_PATH = "/shaders";
     static constexpr const char* FILEWATCH_MUSIC_PATH = "/music";
     static constexpr const char* FILEWATCH_SOUND_PATH = "/sounds";
-
+    static constexpr const char* FILEWATCH_MESH_PATH = "/meshes";
     //...
 #endif
 public:
@@ -99,6 +102,11 @@ public:
      * @return pointer to music asset with given id, or default music if there no music with given id, never returns nullptr
      */
     MusicAsset* getMusic(AssetId id);
+    /**
+     * @param id
+     * @return pointer to mesh asset with given id, or default mesh if there no mesh with given id, never returns nullptr
+     */
+    MeshAsset* getMesh(AssetId id);
 
 private:
     /**
@@ -125,6 +133,9 @@ private:
 
     void cleanupMusic();
     void cleanupMusic(MusicAsset& musicAsset);
+
+    void cleanupMeshes();
+    void cleanupMesh(MeshAsset& meshAsset);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

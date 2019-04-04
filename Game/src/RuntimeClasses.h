@@ -19,7 +19,8 @@ enum RuntimeClassIds : unsigned char
     SOUND_LIST,
     MUSIC_LIST,
 	EVENT_MANAGER,
-	IMGUI_DEBUG_GUI
+	IMGUI_DEBUG_GUI,
+	MESH_LIST
 };
 
 /**
@@ -31,6 +32,8 @@ namespace RuntimeClassNames
     static constexpr const char* MUSIC_LIST = "MusicList";
 	static constexpr const char* EVENT_MANAGER = "EventManager";
 	static constexpr const char* IMGUI_DEBUG_GUI = "ImGuiDebugGUI";
+	static constexpr const char* MESH_LIST = "MeshList";
+
 };
 
 #endif //CGUE19_THECHOSENFROG_RUNTIMECLASSES_H

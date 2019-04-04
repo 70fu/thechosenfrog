@@ -24,7 +24,7 @@ protected:
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(SoundAsset &asset) const override
+    void loadDefault(SoundAsset &asset) override
     {
         asset.load(getFullAssetPath("/sounds/error.wav").c_str());
     }

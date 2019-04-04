@@ -81,7 +81,7 @@ public:
      * loads the default asset, this is called when asset could not be loaded from file
      * @param asset
      */
-    virtual void loadDefault(A& asset) const=0;
+    virtual void loadDefault(A& asset)=0;
 
     /**
      * Loads the asset file into given asset object

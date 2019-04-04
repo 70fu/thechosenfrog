@@ -25,7 +25,7 @@ protected:
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(MusicAsset &asset) const override
+    void loadDefault(MusicAsset &asset) override
     {
         asset.load(getFullAssetPath("/music/error.ogg").c_str());
     }

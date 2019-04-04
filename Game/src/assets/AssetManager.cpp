@@ -52,6 +52,7 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     //construct lists
     soundListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SOUND_LIST,&soundList);
     musicListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MUSIC_LIST,&musicList);
+    meshListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MESH_LIST,&meshList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -86,6 +87,12 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     if(!filewatch_start_watching(filewatches[i], FILEWATCH_SOUND_PATH, AssetManager::filewatchCallback, this))
         Log::getInstance().Error("Failed to start watching sound directory");
     ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/meshes", FILEWATCH_MESH_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to mesh directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_SOUND_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching mesh directory");
+    ++i;
 #endif
 }
 
@@ -111,6 +118,7 @@ void AssetManager::cleanup()
 {
     cleanupSounds();
     cleanupMusic();
+    cleanupMeshes();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -133,6 +141,14 @@ MusicAsset* AssetManager::getMusic(AssetId id) {
         return &music[MusicIds::DEFAULT];
 }
 
+MeshAsset *AssetManager::getMesh(AssetId id)
+{
+    if(id<MESH_SIZE)
+        return &meshes[id];
+    else
+        return &meshes[MeshIds::DEFAULT];;
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -144,6 +160,11 @@ void AssetManager::OnConstructorsAdded() {
     {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,musicListId,&musicList))
             assetBitmask|=AssetType::MUSIC;
+    }
+    if(meshList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,meshListId,&meshList))
+            assetBitmask|=AssetType::MESH;
     }
 
     //reload lists of asset types whose classes have changed
@@ -163,12 +184,16 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         storeFilePaths(paths,soundList->loadAll(sounds,paths,SOUNDS_SIZE));
     if((assetBitmask&AssetType::MUSIC)!=0)
         storeFilePaths(paths,musicList->loadAll(music,paths,MUSIC_SIZE));
+    if((assetBitmask&AssetType::MESH)!=0)
+        storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE));
     //...
 }
 
 void AssetManager::reloadAssets()
 {
-    cleanup();
+    cleanupSounds();
+    cleanupMusic();
+    cleanupMeshes();
     loadAssets(AssetType::ALL);
 }
 
@@ -189,6 +214,9 @@ void AssetManager::reloadFileAsset(const std::string& path)
             break;
         case AssetType::MUSIC:
             musicList->loadFromFile(path,music[id.id]);
+            break;
+        case AssetType::MESH:
+            meshList->loadFromFile(path,meshes[id.id]);
             break;
         default:
             //TODO log: unknown asset type
@@ -219,4 +247,15 @@ void AssetManager::cleanupMusic() {
 
 void AssetManager::cleanupMusic(MusicAsset &musicAsset) {
     //There does not seem to be the need to clean anything up
+}
+
+void AssetManager::cleanupMeshes()
+{
+    for(int i = 0;i<MESH_SIZE;++i)
+        cleanupMesh(meshes[i]);
+}
+
+void AssetManager::cleanupMesh(MeshAsset &meshAsset)
+{
+    meshAsset.cleanup();
 }

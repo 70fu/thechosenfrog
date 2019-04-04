@@ -95,6 +95,8 @@ void Mesh::cleanup() {
     if((surface.dataFormatBitmask&Surface::INDICES_FORMAT) != 0)
         glDeleteBuffers(1, &iVBOHandle);
 
+    surface.clear();
+
     allocated = false;
 }
 

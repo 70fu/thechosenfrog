@@ -19,3 +19,14 @@ size_t Surface::getVertexDataSize() {
 
     return size;
 }
+
+void Surface::clear()
+{
+    dataFormatBitmask = 0;
+    positions.clear();
+    normals.clear();
+    tangents.clear();
+    indices.clear();
+    uvs.clear();
+    colors.clear();
+}
