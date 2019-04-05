@@ -202,7 +202,7 @@ void AssetManager::reloadFileAsset(const std::string& path)
     //check if there is an asset with given path
     if(pathsToIds.count(path)==0)
     {
-        //TODO log, could not find asset at path
+        Log::getInstance().Error("Could not find any asset at path %s",path.c_str());
         return;
     }
 
@@ -219,7 +219,7 @@ void AssetManager::reloadFileAsset(const std::string& path)
             meshList->loadFromFile(path,meshes[id.id]);
             break;
         default:
-            //TODO log: unknown asset type
+            Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
             break;
     }
 }
