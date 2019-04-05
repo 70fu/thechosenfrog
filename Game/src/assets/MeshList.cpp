@@ -46,7 +46,7 @@ protected:
             ImGuiAl::Log::getInstance().Error("Loading mesh from %s has failed: $s",path.c_str(),importer.GetErrorString());
             return false;
         }
-        if(!scene->mNumMeshes>0)
+        if(scene->mNumMeshes==0)
         {
             ImGuiAl::Log::getInstance().Error("%s contains no meshes",path.c_str());
             return false;
