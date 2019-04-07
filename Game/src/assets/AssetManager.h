@@ -12,6 +12,9 @@
 #include "MusicIds.h"
 #include <algorithm>
 #include "Assets.h"
+#include "Mesh.h"
+#include "Texture.h"
+#include "ShaderProgram.h"
 #include "AssetList.h"
 #include "../cute_filewatch/cute_filewatch.h"
 #include "MeshIds.h"

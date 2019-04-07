@@ -16,7 +16,7 @@ struct ShaderSource
 class ShaderProgram
 {
 private:
-    bool compiled;
+    bool compiled = false;
 
     std::unordered_map<GLenum,std::string> shaderCode;
 

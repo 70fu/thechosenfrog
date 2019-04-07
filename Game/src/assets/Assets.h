@@ -7,12 +7,20 @@
 
 #include <soloud_wav.h>
 #include <soloud_wavstream.h>
-#include "Mesh.h"
+
+//forward asset type declerations
+class Mesh;
+class ShaderProgram;
+class Material;
+class Texture;
 
 //asset aliases
 using SoundAsset = SoLoud::Wav;
 using MusicAsset = SoLoud::WavStream;
 using MeshAsset = Mesh;
+using ShaderAsset = ShaderProgram;
+using MaterialAsset = Material;
+using TextureAsset = Texture;
 
 using AssetId = unsigned int;
 

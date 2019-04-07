@@ -9,6 +9,7 @@
 #include "../RuntimeClasses.h"
 #include <ObjectInterfacePerModule.h>
 #include "Assets.h"
+#include "Mesh.h"
 #include "MeshIds.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
