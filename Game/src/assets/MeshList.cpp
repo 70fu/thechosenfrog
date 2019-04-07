@@ -18,9 +18,9 @@
 class MeshList : public TInterface<RuntimeClassIds::MESH_LIST,AssetList<MeshAsset ,AssetType::MESH>>
 {
 protected:
-    void loadAssets(MeshAsset *assets, size_t size) override
+    void loadAssets(MeshAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        loadAssetsFromFileHelper("/meshes/cross.obj",MeshIds::DEFAULT,assets[MeshIds::DEFAULT]);
+        loadAssetsFromFileHelper("/meshes/cross.obj",MeshIds::DEFAULT,assets[MeshIds::DEFAULT],assetManager);
 
         for(int i = 0;i<size;++i)
             assets[i].allocateOnGPU(GL_STATIC_DRAW);
@@ -127,7 +127,7 @@ protected:
         return true;
     }
 
-    void loadDefault(MeshAsset &asset) override
+    void loadDefault(MeshAsset &asset, AssetManager& assetManager) override
     {
         loadAssetFromFile(getFullAssetPath("/meshes/cross.obj"),asset);
         asset.allocateOnGPU(GL_STATIC_DRAW);

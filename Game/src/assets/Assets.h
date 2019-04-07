@@ -33,8 +33,9 @@ enum AssetType : unsigned char
     MUSIC = 2,
     SHADER=4,
     MESH=8,
-    //TEXTURE=16,
-    //FONT=32,
+    MATERIAL=16,
+    TEXTURE=32,
+    //FONT=64,
 
     ALL=255
 };

@@ -18,6 +18,8 @@
 #include "AssetList.h"
 #include "../cute_filewatch/cute_filewatch.h"
 #include "MeshIds.h"
+#include "MaterialIds.h"
+#include "Material.h"
 
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
@@ -35,7 +37,8 @@ struct IRuntimeObjectSystem;
 static constexpr size_t SOUNDS_SIZE = SoundIds::SOUND_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MUSIC_SIZE = MusicIds::MUSIC_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MESH_SIZE = MeshIds::MESH_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE});
+static constexpr size_t MATERIAL_SIZE = MaterialIds::MATERIAL_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -47,6 +50,7 @@ private:
     SoundAsset sounds[SOUNDS_SIZE];
     MusicAsset music[MUSIC_SIZE];
     MeshAsset meshes[MESH_SIZE];
+    MaterialAsset materials[MATERIAL_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -61,6 +65,8 @@ private:
     ObjectId musicListId;
     AssetList<MeshAsset ,AssetType::MESH>* meshList;
     ObjectId meshListId;
+    AssetList<MaterialAsset ,AssetType::MATERIAL>* materialList;
+    ObjectId materialListId;
 
 #ifndef NDEBUG
     //file watcher
@@ -110,6 +116,11 @@ public:
      * @return pointer to mesh asset with given id, or default mesh if there no mesh with given id, never returns nullptr
      */
     MeshAsset* getMesh(AssetId id);
+    /**
+     * @param id
+     * @return pointer to mesh material with given id, or default material if there no material with given id, never returns nullptr
+     */
+    MaterialAsset* getMaterial(AssetId id);
 
 private:
     /**
@@ -139,6 +150,9 @@ private:
 
     void cleanupMeshes();
     void cleanupMesh(MeshAsset& meshAsset);
+
+    void cleanupMaterials();
+    void cleanupMaterial(MaterialAsset& materialAsset);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

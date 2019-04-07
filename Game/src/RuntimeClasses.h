@@ -20,7 +20,8 @@ enum RuntimeClassIds : unsigned char
     MUSIC_LIST,
 	EVENT_MANAGER,
 	IMGUI_DEBUG_GUI,
-	MESH_LIST
+	MESH_LIST,
+	MATERIAL_LIST
 };
 
 /**
@@ -33,6 +34,7 @@ namespace RuntimeClassNames
 	static constexpr const char* EVENT_MANAGER = "EventManager";
 	static constexpr const char* IMGUI_DEBUG_GUI = "ImGuiDebugGUI";
 	static constexpr const char* MESH_LIST = "MeshList";
+	static constexpr const char* MATERIAL_LIST = "MaterialList";
 
 };
 

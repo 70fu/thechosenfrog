@@ -14,9 +14,9 @@
 class MusicList : public TInterface<RuntimeClassIds::MUSIC_LIST,AssetList<MusicAsset ,AssetType::MUSIC>>
 {
 protected:
-    void loadAssets(MusicAsset *assets, size_t size) override
+    void loadAssets(MusicAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        loadAssetsFromFileHelper("/music/error.ogg",MusicIds::DEFAULT,assets[MusicIds::DEFAULT]);
+        loadAssetsFromFileHelper("/music/error.ogg",MusicIds::DEFAULT,assets[MusicIds::DEFAULT],assetManager);
         //...
     }
 
@@ -25,7 +25,7 @@ protected:
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(MusicAsset &asset) override
+    void loadDefault(MusicAsset &asset, AssetManager& assetManager) override
     {
         asset.load(getFullAssetPath("/music/error.ogg").c_str());
     }

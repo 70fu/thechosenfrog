@@ -14,9 +14,9 @@
 class SoundList : public TInterface<RuntimeClassIds::SOUND_LIST,AssetList<SoundAsset,AssetType::SOUND>>
 {
 protected:
-    void loadAssets(SoundAsset *assets, size_t size) override
+    void loadAssets(SoundAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        loadAssetsFromFileHelper("/sounds/error.wav",SoundIds::DEFAULT,assets[SoundIds::DEFAULT]);
+        loadAssetsFromFileHelper("/sounds/error.wav",SoundIds::DEFAULT,assets[SoundIds::DEFAULT],assetManager);
     }
 
     bool loadAssetFromFile(const std::string &path,SoundAsset &asset) override
@@ -24,7 +24,7 @@ protected:
         return asset.load(path.c_str())==SoLoud::SO_NO_ERROR;
     }
 
-    void loadDefault(SoundAsset &asset) override
+    void loadDefault(SoundAsset &asset, AssetManager& assetManager) override
     {
         asset.load(getFullAssetPath("/sounds/error.wav").c_str());
     }

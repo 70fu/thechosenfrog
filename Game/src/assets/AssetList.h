@@ -10,6 +10,8 @@
 #include "Assets.h"
 #include "../logger/imguial_log.h"
 
+class AssetManager;
+
 /**
  * Base class to simplify writing of asset loader using inheritance
  * A base class should use the protected loadAssetsFromFileHelper method to load an asset from file (which calls the virtual loadAssetFromFile function)
@@ -29,7 +31,7 @@ protected:
      * @param assets
      * @param size
      */
-    virtual void loadAssets(A assets[], size_t size) =0;
+    virtual void loadAssets(A assets[], size_t size, AssetManager& assetManager) =0;
 
     /**
      * Loads the asset file into given asset object
@@ -38,12 +40,12 @@ protected:
      * @param asset
      * @param id
      */
-    void loadAssetsFromFileHelper(const std::string& assetPath, AssetId id, A& asset)
+    void loadAssetsFromFileHelper(const std::string& assetPath, AssetId id, A& asset, AssetManager& assetManager)
     {
         if(paths!=nullptr)
             paths[fileLoadCounter++] = {assetPath,{AT,id}};
 
-        loadFromFile(assetPath,asset);
+        loadFromFile(assetPath,asset,assetManager);
     }
 
     /**
@@ -63,7 +65,7 @@ public:
      * @param size of sounds and paths
      * @return how many assets were loaded from files (file paths have been set into paths array until this value (exclusive))
      */
-    int loadAll(A assets[], std::pair<std::string,AssetIdentifier> paths[],size_t size)
+    int loadAll(A assets[], std::pair<std::string,AssetIdentifier> paths[],size_t size, AssetManager& assetManager)
     {
         //TODO what if the size is smaller than the sound count
 
@@ -71,7 +73,7 @@ public:
         this->paths = paths;
 
         //load assets
-        loadAssets(assets,size);
+        loadAssets(assets,size,assetManager);
 
         this->paths = nullptr;
         return fileLoadCounter;
@@ -81,22 +83,21 @@ public:
      * loads the default asset, this is called when asset could not be loaded from file
      * @param asset
      */
-    virtual void loadDefault(A& asset)=0;
+    virtual void loadDefault(A& asset, AssetManager& assetManager)=0;
 
     /**
      * Loads the asset file into given asset object
-     * should only be used from loadAssets
      * @param assetPath, path relative from asset directory starting with /
      * @param asset
      */
-    void loadFromFile(const std::string& assetPath, A& asset)
+    void loadFromFile(const std::string& assetPath, A& asset, AssetManager& assetManager)
     {
         if(!loadAssetFromFile(getFullAssetPath(assetPath),asset))
         {
             ImGuiAl::Log::getInstance().Error("Could not load Asset: %s",assetPath.c_str());
 
             //reset asset to default
-            loadDefault(asset);
+            loadDefault(asset,assetManager);
         }
     }
 };

@@ -53,6 +53,7 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     soundListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SOUND_LIST,&soundList);
     musicListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MUSIC_LIST,&musicList);
     meshListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MESH_LIST,&meshList);
+    materialListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MATERIAL_LIST,&materialList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -119,6 +120,7 @@ void AssetManager::cleanup()
     cleanupSounds();
     cleanupMusic();
     cleanupMeshes();
+    cleanupMaterials();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -149,6 +151,14 @@ MeshAsset *AssetManager::getMesh(AssetId id)
         return &meshes[MeshIds::DEFAULT];;
 }
 
+MaterialAsset *AssetManager::getMaterial(AssetId id)
+{
+    if(id<MATERIAL_SIZE)
+        return &materials[id];
+    else
+        return &materials[MaterialIds::DEFAULT];;
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -166,6 +176,11 @@ void AssetManager::OnConstructorsAdded() {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,meshListId,&meshList))
             assetBitmask|=AssetType::MESH;
     }
+    if(materialList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,materialListId,&materialList))
+            assetBitmask|=AssetType::MATERIAL;
+    }
 
     //reload lists of asset types whose classes have changed
     loadAssets(assetBitmask);
@@ -181,11 +196,13 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
 
     //load assets from asset lists
     if((assetBitmask&AssetType::SOUND)!=0)
-        storeFilePaths(paths,soundList->loadAll(sounds,paths,SOUNDS_SIZE));
+        storeFilePaths(paths,soundList->loadAll(sounds,paths,SOUNDS_SIZE,*this));
     if((assetBitmask&AssetType::MUSIC)!=0)
-        storeFilePaths(paths,musicList->loadAll(music,paths,MUSIC_SIZE));
+        storeFilePaths(paths,musicList->loadAll(music,paths,MUSIC_SIZE,*this));
     if((assetBitmask&AssetType::MESH)!=0)
-        storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE));
+        storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE,*this));
+    if((assetBitmask&AssetType::MATERIAL)!=0)
+        storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
     //...
 }
 
@@ -194,6 +211,7 @@ void AssetManager::reloadAssets()
     cleanupSounds();
     cleanupMusic();
     cleanupMeshes();
+    cleanupMaterials();
     loadAssets(AssetType::ALL);
 }
 
@@ -210,13 +228,16 @@ void AssetManager::reloadFileAsset(const std::string& path)
     switch(id.assetType)
     {
         case AssetType::SOUND:
-            soundList->loadFromFile(path,sounds[id.id]);
+            soundList->loadFromFile(path,sounds[id.id],*this);
             break;
         case AssetType::MUSIC:
-            musicList->loadFromFile(path,music[id.id]);
+            musicList->loadFromFile(path,music[id.id],*this);
             break;
         case AssetType::MESH:
-            meshList->loadFromFile(path,meshes[id.id]);
+            meshList->loadFromFile(path,meshes[id.id],*this);
+            break;
+        case AssetType::MATERIAL:
+            materialList->loadFromFile(path,materials[id.id],*this);
             break;
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
@@ -258,4 +279,14 @@ void AssetManager::cleanupMeshes()
 void AssetManager::cleanupMesh(MeshAsset &meshAsset)
 {
     meshAsset.cleanup();
+}
+
+void AssetManager::cleanupMaterials()
+{
+    //nothing to do here
+}
+
+void AssetManager::cleanupMaterial(MaterialAsset &materialAsset)
+{
+    //nothing to do here
 }
