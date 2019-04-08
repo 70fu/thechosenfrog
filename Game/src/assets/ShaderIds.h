@@ -13,6 +13,8 @@ namespace ShaderIds
     enum ShaderIds : unsigned char
     {
         DEFAULT,
+        DEFAULT_VERT,
+        DEFAULT_FRAG,
 
         SHADER_COUNT
     };
