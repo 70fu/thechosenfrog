@@ -54,6 +54,8 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     musicListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MUSIC_LIST,&musicList);
     meshListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MESH_LIST,&meshList);
     materialListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MATERIAL_LIST,&materialList);
+    shaderListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_LIST,&shaderList);
+    shaderProgramListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_PROGRAM_LIST,&shaderProgramList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -121,6 +123,8 @@ void AssetManager::cleanup()
     cleanupMusic();
     cleanupMeshes();
     cleanupMaterials();
+    cleanupShaderPrograms();
+    cleanupShaders();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -148,7 +152,7 @@ MeshAsset *AssetManager::getMesh(AssetId id)
     if(id<MESH_SIZE)
         return &meshes[id];
     else
-        return &meshes[MeshIds::DEFAULT];;
+        return &meshes[MeshIds::DEFAULT];
 }
 
 MaterialAsset *AssetManager::getMaterial(AssetId id)
@@ -156,7 +160,23 @@ MaterialAsset *AssetManager::getMaterial(AssetId id)
     if(id<MATERIAL_SIZE)
         return &materials[id];
     else
-        return &materials[MaterialIds::DEFAULT];;
+        return &materials[MaterialIds::DEFAULT];
+}
+
+ShaderAsset *AssetManager::getShader(AssetId id)
+{
+    if(id<SHADER_SIZE)
+        return &shaders[id];
+    else
+        return &shaders[ShaderIds::DEFAULT];
+}
+
+ShaderProgramAsset *AssetManager::getShaderProgram(AssetId id)
+{
+    if(id<SHADER_PROGRAM_SIZE)
+        return &shaderPrograms[id];
+    else
+        return &shaderPrograms[ShaderProgramIds::DEFAULT];
 }
 
 void AssetManager::OnConstructorsAdded() {
@@ -181,6 +201,16 @@ void AssetManager::OnConstructorsAdded() {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,materialListId,&materialList))
             assetBitmask|=AssetType::MATERIAL;
     }
+    if(shaderList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,shaderListId,&shaderList))
+            assetBitmask|=AssetType::SHADER;
+    }
+    if(shaderProgramList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,shaderProgramListId,&shaderProgramList))
+            assetBitmask|=AssetType::SHADER_PROGRAM;
+    }
 
     //reload lists of asset types whose classes have changed
     loadAssets(assetBitmask);
@@ -203,6 +233,14 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE,*this));
     if((assetBitmask&AssetType::MATERIAL)!=0)
         storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
+    if((assetBitmask&AssetType::SHADER)!=0)
+    {
+        storeFilePaths(paths, shaderList->loadAll(shaders, paths, SHADER_SIZE, *this));
+        //force reloading of shader programs as well
+        assetBitmask|=AssetType::SHADER_PROGRAM;
+    }
+    if((assetBitmask&AssetType::SHADER_PROGRAM)!=0)
+        storeFilePaths(paths,shaderProgramList->loadAll(shaderPrograms,paths,SHADER_PROGRAM_SIZE,*this));
     //...
 }
 
@@ -212,6 +250,9 @@ void AssetManager::reloadAssets()
     cleanupMusic();
     cleanupMeshes();
     cleanupMaterials();
+    cleanupShaderPrograms();
+    cleanupShaders();
+
     loadAssets(AssetType::ALL);
 }
 
@@ -239,6 +280,24 @@ void AssetManager::reloadFileAsset(const std::string& path)
         case AssetType::MATERIAL:
             materialList->loadFromFile(path,materials[id.id],*this);
             break;
+        case AssetType::SHADER:
+        {
+            Shader *shader = &shaders[id.id];
+            shaderList->loadFromFile(path, *shader, *this);
+
+            //reload all shader programs using this shader
+            for (int i = 0; i < SHADER_PROGRAM_SIZE && i < ShaderProgramIds::SHADER_PROGRAM_COUNT; ++i)
+            {
+                ShaderProgramAsset &shaderProgram = shaderPrograms[i];
+                if (shaderProgram.hasShader(shader))
+                {
+                    //relink program
+                    shaderProgram.cleanup();
+                    shaderProgram.link();
+                }
+            }
+            break;
+        }
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
             break;
@@ -253,7 +312,7 @@ void AssetManager::storeFilePaths(std::pair<std::string, AssetIdentifier> *paths
 
 void AssetManager::cleanupSounds()
 {
-    for(int i = 0;i<SOUNDS_SIZE;++i)
+    for(int i = 0;i<SOUNDS_SIZE && i<SoundIds::SOUND_COUNT;++i)
         cleanupSound(sounds[i]);
 }
 
@@ -262,7 +321,7 @@ void AssetManager::cleanupSound(SoundAsset &soundAsset) {
 }
 
 void AssetManager::cleanupMusic() {
-    for(int i = 0;i<MUSIC_SIZE;++i)
+    for(int i = 0;i<MUSIC_SIZE && i<MusicIds::MUSIC_COUNT;++i)
         cleanupMusic(music[i]);
 }
 
@@ -272,7 +331,7 @@ void AssetManager::cleanupMusic(MusicAsset &musicAsset) {
 
 void AssetManager::cleanupMeshes()
 {
-    for(int i = 0;i<MESH_SIZE;++i)
+    for(int i = 0;i<MESH_SIZE && i<MeshIds::MESH_COUNT;++i)
         cleanupMesh(meshes[i]);
 }
 
@@ -283,10 +342,33 @@ void AssetManager::cleanupMesh(MeshAsset &meshAsset)
 
 void AssetManager::cleanupMaterials()
 {
-    //nothing to do here
+    for(int i = 0;i<MATERIAL_SIZE && i<MaterialIds::MATERIAL_COUNT;++i)
+        cleanupMaterial(materials[i]);
 }
 
 void AssetManager::cleanupMaterial(MaterialAsset &materialAsset)
 {
     //nothing to do here
+}
+
+void AssetManager::cleanupShaders()
+{
+    for(int i = 0;i<SHADER_SIZE && i<ShaderIds::SHADER_COUNT;++i)
+        cleanupShader(shaders[i]);
+}
+
+void AssetManager::cleanupShader(ShaderAsset &shaderAsset)
+{
+    shaderAsset.cleanup();
+}
+
+void AssetManager::cleanupShaderPrograms()
+{
+    for(int i = 0;i<SHADER_PROGRAM_SIZE && i<ShaderProgramIds::SHADER_PROGRAM_COUNT;++i)
+        cleanupShaderProgram(shaderPrograms[i]);
+}
+
+void AssetManager::cleanupShaderProgram(ShaderProgramAsset &shaderProgramAsset)
+{
+    shaderProgramAsset.cleanup();
 }

@@ -20,7 +20,12 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/assets/Material.cpp src/assets/Material.h
 		src/assets/Texture.cpp src/assets/Texture.h
 		src/assets/MaterialList.cpp
-		src/assets/MaterialIds.h)
+		src/assets/MaterialIds.h
+		src/assets/ShaderList.cpp src/assets/ShaderList.h
+		src/assets/ShaderProgramIds.h
+		src/assets/ShaderIds.h
+		src/assets/Shader.cpp src/assets/Shader.h
+		src/assets/ShaderProgramList.cpp)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

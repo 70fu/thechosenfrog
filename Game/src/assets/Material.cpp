@@ -6,7 +6,7 @@ GLint MaterialData::UniformValue<T>::getLocation() const
     return location;
 }
 
-void MaterialData::retrieveLocations(ShaderAsset &shaderAsset)
+void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
 {
     for(auto& u : floats)
         u.second.location = shaderAsset.getUniformLocation(u.first);

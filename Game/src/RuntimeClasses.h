@@ -21,7 +21,9 @@ enum RuntimeClassIds : unsigned char
 	EVENT_MANAGER,
 	IMGUI_DEBUG_GUI,
 	MESH_LIST,
-	MATERIAL_LIST
+	MATERIAL_LIST,
+	SHADER_LIST,
+	SHADER_PROGRAM_LIST
 };
 
 /**
@@ -35,7 +37,8 @@ namespace RuntimeClassNames
 	static constexpr const char* IMGUI_DEBUG_GUI = "ImGuiDebugGUI";
 	static constexpr const char* MESH_LIST = "MeshList";
 	static constexpr const char* MATERIAL_LIST = "MaterialList";
-
+	static constexpr const char* SHADER_LIST = "ShaderList";
+	static constexpr const char* SHADER_PROGRAM_LIST = "ShaderProgramList";
 };
 
 #endif //CGUE19_THECHOSENFROG_RUNTIMECLASSES_H

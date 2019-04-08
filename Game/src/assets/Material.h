@@ -44,7 +44,7 @@ public:
     std::unordered_map<std::string,UniformValue<glm::mat4>> mat4s;
     std::unordered_map<std::string,UniformValue<TextureAsset*>> textures;
 
-    void retrieveLocations(ShaderAsset& shaderAsset);
+    void retrieveLocations(ShaderProgramAsset& shaderAsset);
 
     //set methods, override a value for a material property or add the property if it is not present
     /*void setFloat(const std::string& name, float value);
@@ -75,7 +75,7 @@ class Material
 {
 public:
     MaterialData data;
-    ShaderAsset* shader;
+    ShaderProgramAsset* shader;
 };
 
 

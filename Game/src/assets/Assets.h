@@ -13,12 +13,13 @@ class Mesh;
 class ShaderProgram;
 class Material;
 class Texture;
-
+class Shader;
 //asset aliases
 using SoundAsset = SoLoud::Wav;
 using MusicAsset = SoLoud::WavStream;
 using MeshAsset = Mesh;
-using ShaderAsset = ShaderProgram;
+using ShaderAsset=Shader;
+using ShaderProgramAsset = ShaderProgram;
 using MaterialAsset = Material;
 using TextureAsset = Texture;
 
@@ -35,7 +36,8 @@ enum AssetType : unsigned char
     MESH=8,
     MATERIAL=16,
     TEXTURE=32,
-    //FONT=64,
+    SHADER_PROGRAM=64,
+    //FONT=128,
 
     ALL=255
 };

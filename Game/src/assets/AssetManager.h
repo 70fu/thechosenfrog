@@ -20,6 +20,8 @@
 #include "MeshIds.h"
 #include "MaterialIds.h"
 #include "Material.h"
+#include "ShaderIds.h"
+#include "ShaderProgramIds.h"
 
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
@@ -38,7 +40,9 @@ static constexpr size_t SOUNDS_SIZE = SoundIds::SOUND_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MUSIC_SIZE = MusicIds::MUSIC_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MESH_SIZE = MeshIds::MESH_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MATERIAL_SIZE = MaterialIds::MATERIAL_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE});
+static constexpr size_t SHADER_SIZE = ShaderIds::SHADER_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t SHADER_PROGRAM_SIZE = ShaderProgramIds::SHADER_PROGRAM_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -51,6 +55,8 @@ private:
     MusicAsset music[MUSIC_SIZE];
     MeshAsset meshes[MESH_SIZE];
     MaterialAsset materials[MATERIAL_SIZE];
+    ShaderAsset shaders[SHADER_SIZE];
+    ShaderProgramAsset shaderPrograms[SHADER_PROGRAM_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -67,6 +73,10 @@ private:
     ObjectId meshListId;
     AssetList<MaterialAsset ,AssetType::MATERIAL>* materialList;
     ObjectId materialListId;
+    AssetList<ShaderAsset ,AssetType::SHADER>* shaderList;
+    ObjectId shaderListId;
+    AssetList<ShaderProgramAsset ,AssetType::SHADER_PROGRAM>* shaderProgramList;
+    ObjectId shaderProgramListId;
 
 #ifndef NDEBUG
     //file watcher
@@ -118,10 +128,20 @@ public:
     MeshAsset* getMesh(AssetId id);
     /**
      * @param id
-     * @return pointer to mesh material with given id, or default material if there no material with given id, never returns nullptr
+     * @return pointer to material asset with given id, or default material if there no material with given id, never returns nullptr
      */
     MaterialAsset* getMaterial(AssetId id);
+    /**
+     * @param id
+     * @return pointer to shader asset with given id, or default shader if there is no shader with given id, never returns nullptr
+     */
+    ShaderAsset* getShader(AssetId id);
 
+    /**
+     * @param id
+     * @return pointer to shader program asset with given id, or default shader program if there is no shader program with given id, never returns nullptr
+     */
+    ShaderProgramAsset* getShaderProgram(AssetId id);
 private:
     /**
      * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
@@ -153,6 +173,12 @@ private:
 
     void cleanupMaterials();
     void cleanupMaterial(MaterialAsset& materialAsset);
+
+    void cleanupShaders();
+    void cleanupShader(ShaderAsset& shaderAsset);
+
+    void cleanupShaderPrograms();
+    void cleanupShaderProgram(ShaderProgramAsset& shaderProgramAsset);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };
