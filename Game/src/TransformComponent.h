@@ -1,51 +1,42 @@
 #pragma once
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <glm.hpp>
-#include <gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
-#include <gtx/euler_angles.hpp>
+#include <vec3.hpp>
+#include <mat4x4.hpp>
 
 class TransformComponent {
 private:
-	glm::vec3 m_translation; // Verschiebung
-	glm::vec3 m_rotation; // Drehung
-	glm::vec3 m_scaling; // vergrößern / verkleinern
+	glm::vec3 translation = { 0,0,0 }; // Verschiebung
+	glm::vec3 rotation = { 0,0,0 }; // Drehung Y X Z
+	glm::vec3 scaling = { 0,0,0 }; // vergrößern / verkleinern
 
 
-	glm::mat4x4 m_transformationMatrix; // matrix of translation, rotation, scaling
+	glm::mat4x4 transformationMatrix; // matrix of translation, rotation, scaling
 
-	glm::mat4x4 m_translationsMatrix; // translation matrix
-	glm::mat4x4 m_rotationsMatrix; // rotation Matrix
-	glm::mat4x4 m_scalingMatrix; // scalierungsmatrix
-
-public:
 	void updateTransformationMatrix();
 
+public:
+	
 	// constructor
-	TransformComponent(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scaling) {
-		m_translation = translation;
-		m_rotation = rotation;
-		m_scaling = scaling;
+	TransformComponent(glm::vec3, glm::vec3, glm::vec3); 
 
-		// update transformationsMatrix with initialized values
-		updateTransformationMatrix();
-	}
+	TransformComponent();
 
 
 
 	// getter Transformationsmatrix
-	glm::mat4x4 const & getTransformationMatrix() { return m_transformationMatrix; }
+	glm::mat4x4 const & getTransformationMatrix() { return this->transformationMatrix; }
 
 	// translation
-	glm::vec3 const & getTranslation() { return m_translation;}
+	glm::vec3 const & getTranslation() { return this->translation;}
 	void setTranslation(glm::vec3 translation);
 
 	// rotation
-	glm::vec3 const & getRotation() { return m_rotation; }
+	glm::vec3 const & getRotation() { return this ->rotation; }
 	void setRotation(glm::vec3 rotation);
 
 	// scaling
-	glm::vec3 const & getScaling() { return m_scaling; }
+	glm::vec3 const & getScaling() { return this->scaling; }
 	void setScaling(glm::vec3 scaling);
 };
 
