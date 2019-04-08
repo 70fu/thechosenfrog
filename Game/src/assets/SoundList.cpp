@@ -1,10 +1,3 @@
-//
-// Created by simon on 22.03.19.
-//
-
-#ifndef CGUE19_THECHOSENFROG_SOUNDLIST_H
-#define CGUE19_THECHOSENFROG_SOUNDLIST_H
-
 #include "../RuntimeSoLoud.h"
 #include <ObjectInterfacePerModule.h>
 #include "../RuntimeClasses.h"
@@ -30,7 +23,3 @@ protected:
     }
 };
 REGISTERCLASS(SoundList);
-
-
-
-#endif //CGUE19_THECHOSENFROG_SOUNDLIST_H

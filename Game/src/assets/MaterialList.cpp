@@ -1,10 +1,3 @@
-//
-// Created by simon on 22.03.19.
-//
-
-#ifndef CGUE19_THECHOSENFROG_MUSICLIST_H
-#define CGUE19_THECHOSENFROG_MUSICLIST_H
-
 #include "AssetList.h"
 #include "../RuntimeClasses.h"
 #include <ObjectInterfacePerModule.h>
@@ -32,8 +25,3 @@ protected:
     }
 };
 REGISTERCLASS(MaterialList);
-
-
-
-#endif //CGUE19_THECHOSENFROG_MUSICLIST_H
-
