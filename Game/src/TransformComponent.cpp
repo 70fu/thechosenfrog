@@ -1,6 +1,7 @@
 #include "TransformComponent.h"
-#include <iostream>
-#include <ext.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+//#include <iostream> // will be commented out
+//#include <ext.hpp> // will be commented out with all the test prints
 #include <gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
 #include <gtx/euler_angles.hpp>
 
@@ -14,7 +15,8 @@ TransformComponent::TransformComponent(glm::vec3 translation, glm::vec3 rotation
 }
 
 TransformComponent::TransformComponent() {
-	std::cout << "TransformComponent Contructor init with 0" << std::endl;
+	//std::cout << "TransformComponent Contructor init with 0" << std::endl;
+	updateTransformationMatrix();
 }
 
 void TransformComponent::updateTransformationMatrix()
@@ -31,7 +33,7 @@ void TransformComponent::updateTransformationMatrix()
 	// multiply matrix
 	transformationMatrix = scalingMatrix * translationsMatrix * rotationsMatrix;
 
-	// test prints
+	/*// test prints
 	std::cout << "---- Testausgaben: init Werte - Anfang ------" << std::endl;
 	std::cout << "ScalingMatrix: "<< glm::to_string(scalingMatrix) << std::endl;
 	std::cout << std::endl;
@@ -41,7 +43,7 @@ void TransformComponent::updateTransformationMatrix()
 	std::cout << std::endl;
 	std::cout << "---- Testausgaben: init Werte - Ende ------" << std::endl;
 	std::cout << "--TransformationsMatrix ---" << std::endl;
-	std::cout <<glm::to_string( transformationMatrix) << std::endl;
+	std::cout <<glm::to_string( transformationMatrix) << std::endl;*/
 }
 
 // Translation setter + Update Transformationsmatrix

@@ -1,5 +1,4 @@
 #pragma once
-#define GLM_ENABLE_EXPERIMENTAL
 
 #include <vec3.hpp>
 #include <mat4x4.hpp>
@@ -18,25 +17,23 @@ private:
 public:
 	
 	// constructor
-	TransformComponent(glm::vec3, glm::vec3, glm::vec3); 
-
 	TransformComponent();
+	TransformComponent(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scaling); 
 
-
-
+	
 	// getter Transformationsmatrix
 	glm::mat4x4 const & getTransformationMatrix() { return this->transformationMatrix; }
 
 	// translation
-	glm::vec3 const & getTranslation() { return this->translation;}
+	glm::vec3 const & getTranslation() const { return this->translation; }
 	void setTranslation(glm::vec3 translation);
 
 	// rotation
-	glm::vec3 const & getRotation() { return this ->rotation; }
+	glm::vec3 const & getRotation() const { return this ->rotation; }
 	void setRotation(glm::vec3 rotation);
 
 	// scaling
-	glm::vec3 const & getScaling() { return this->scaling; }
+	glm::vec3 const & getScaling() const { return this->scaling; }
 	void setScaling(glm::vec3 scaling);
 };
 
