@@ -37,6 +37,7 @@ protected:
         }
 
         //TODO OH NO, hard coded values, plz remove
+        //update trello doc if this is changed
         std::string fileEnding = path.substr(lastDotI+1);
         if(fileEnding=="vert")
             asset.type=GL_VERTEX_SHADER;

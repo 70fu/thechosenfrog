@@ -11,17 +11,18 @@ class MaterialList : public TInterface<RuntimeClassIds::MATERIAL_LIST,AssetList<
 protected:
     void loadAssets(MaterialAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        //TODO
+        loadDefault(assets[MaterialIds::DEFAULT],assetManager);
     }
 
     bool loadAssetFromFile(const std::string &path, MaterialAsset &asset) override
     {
-        return false;
+        return false;//currently not supported
     }
 
     void loadDefault(MaterialAsset &asset, AssetManager& assetManager) override
     {
-        //TODO
+        asset.data.clearProps();
+        asset.shader = assetManager.getShaderProgram(ShaderProgramIds::DEFAULT);
     }
 };
 REGISTERCLASS(MaterialList);

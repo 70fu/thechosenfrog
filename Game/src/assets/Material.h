@@ -45,6 +45,10 @@ public:
     std::unordered_map<std::string,UniformValue<TextureAsset*>> textures;
 
     void retrieveLocations(ShaderProgramAsset& shaderAsset);
+    /**
+     * Removes all property values
+     */
+    void clearProps();
 
     //set methods, override a value for a material property or add the property if it is not present
     /*void setFloat(const std::string& name, float value);
@@ -76,6 +80,11 @@ class Material
 public:
     MaterialData data;
     ShaderProgramAsset* shader;
+
+    /**
+     * Removes all property values
+     */
+    void clearMaterialProps();
 };
 
 

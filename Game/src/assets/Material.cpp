@@ -26,6 +26,23 @@ void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
         u.second.location = shaderAsset.getUniformLocation(u.first);
 }
 
+void MaterialData::clearProps()
+{
+    floats.clear();
+    vec2s.clear();
+    vec3s.clear();
+    vec4s.clear();
+    mat2s.clear();
+    mat3s.clear();
+    mat4s.clear();
+    textures.clear();
+}
+
+void Material::clearMaterialProps()
+{
+    data.clearProps();
+}
+
 /*void MaterialData::setFloat(const std::string &name, float value)
 {
     floats[name].value=value;
