@@ -11,7 +11,7 @@
 #include "Constants.h"
 #include "IEventManager.h"
 
-static Game game;
+static Game game=Game();
 
 //helper method to generate an error message from the debug callback arguments
 static std::string formatDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, const char* msg)
@@ -217,8 +217,6 @@ int main(int argc, char** argv)
     /* --------------------------------------------- */
     // Initialize Game
     /* --------------------------------------------- */
-    game = Game();
-
     game.init(window);
 
     /* --------------------------------------------- */
