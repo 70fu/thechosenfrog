@@ -204,7 +204,7 @@ void Game::render()
     glViewport(0, 0, width, height);
 
     //render game world
-    gameRenderer->render(this);
+    gameRenderer->render(*this);
 
     //render debug gui
     debugGui->render(this);

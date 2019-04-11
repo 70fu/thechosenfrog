@@ -8,7 +8,7 @@
 class GameRenderer : public TInterface<RuntimeClassIds ::GAME_RENDERER,IGameRenderer>
 {
 public:
-    void render(Game* game) override
+    void render(Game& game) override
     {
         //TODO
     }
