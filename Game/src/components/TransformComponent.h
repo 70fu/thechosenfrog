@@ -3,7 +3,7 @@
 #include <vec3.hpp>
 #include <mat4x4.hpp>
 
-class TransformComponent {
+class TransformComponent : public Component {
 private:
 	glm::vec3 translation = { 0,0,0 }; // Verschiebung
 	glm::vec3 rotation = { 0,0,0 }; // Drehung Y X Z

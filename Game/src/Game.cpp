@@ -4,7 +4,6 @@
 #include "Constants.h"
 #include "util/RuntimeCompileUtils.h"
 #include "RuntimeClasses.h"
-#include "TransformComponent.h"
 
 template<class T, Components::Types TYPE_ID>
 Game::ComponentStore<T, TYPE_ID>::ComponentStore(Game &game) : game(game)
@@ -101,7 +100,7 @@ const T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId) const
 }
 
 
-Game::Game():meshComps(*this),assetManager(),soloud()
+Game::Game():meshComps(*this),assetManager(),soloud(),transformComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -129,9 +128,7 @@ void Game::init(GLFWwindow* window)
     this->window=window;
 
 
-	// creation of transformcomponent test
-	TransformComponent t1({ 1,2,3 }, { 0,30,0 }, { 7,8,9 }); // rotation vector y x z
-
+	
 
     //init logger
     ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);

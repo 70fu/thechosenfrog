@@ -7,10 +7,14 @@
 
 namespace Components
 {
+
+	/*
+	* Add new types of components here
+	*/
     enum Types : unsigned char
     {
-        //TRANSFORM,
         MESH,
+		TRANSFORM,
 
         COMPONENT_COUNT
     };
@@ -21,8 +25,9 @@ namespace Components
     //unsigned long is 32 bit at least
     enum MaskBits : unsigned long
     {
-        //TRANSFORM_BIT = 1<<TRANSFORM,
-        MESH_BIT = 1<<MESH
+        
+        MESH_BIT = 1<<MESH,
+		TRANSFORM_BIT = 1 << TRANSFORM
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -32,8 +37,8 @@ namespace Components
      * index corresponds to component type see Types enum
      */
     static constexpr unsigned int MAX_SIZES[] = {
-                MAX_ENTITIES, //TRANSFORM
                 MAX_ENTITIES, //MESH
+				MAX_ENTITIES, //TRANSFORM
             };
 
     //TODO why is constexpr not possible here?

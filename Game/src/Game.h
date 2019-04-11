@@ -13,6 +13,7 @@
 #include "IDebugGUI.h"
 #include "components/MeshComponent.h"
 #include "components/Components.h"
+#include "components/TransformComponent.h"
 
 
 class Game : public IObjectFactoryListener {
@@ -65,7 +66,7 @@ public:
         T& addComp(EntityId entity);
         void removeComp(EntityId entity) override;
 
-        constexpr Components::Types getType() const override;
+        Components::Types getType() const override;
 
         //iterator methods iterate over all active components
         //iterators are invalidated on removal or add of components
@@ -104,6 +105,8 @@ private:
 
 	//components
     ComponentStore<MeshComponent,Components::MESH> meshComps;
+	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
+
     /**
      * This array is used to remove components from entities when an entity is deleted
      * a component store of every component type must be in this array.
@@ -111,7 +114,8 @@ private:
      */
 	ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
 			{
-    			&meshComps
+    			&meshComps,
+				&transformComps
 			};
 
     AssetManager assetManager;
