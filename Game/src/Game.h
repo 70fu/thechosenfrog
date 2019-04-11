@@ -14,6 +14,7 @@
 #include "components/TransformComponent.h"
 #include "IGameRenderer.h"
 #include "IGameUpdater.h"
+#include "components/MaterialComponent.h"
 
 class GLFWwindow;
 
@@ -108,6 +109,7 @@ private:
 	//components
     ComponentStore<MeshComponent,Components::MESH> meshComps;
 	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
+	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
 
     /**
      * This array is used to remove components from entities when an entity is deleted
@@ -117,7 +119,8 @@ private:
 	ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
 			{
     			&meshComps,
-				&transformComps
+				&transformComps,
+				&materialComps
 			};
 
     AssetManager assetManager;

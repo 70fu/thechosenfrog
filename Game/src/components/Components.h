@@ -15,6 +15,7 @@ namespace Components
     {
         MESH,
 		TRANSFORM,
+		MATERIAL,
 
         COMPONENT_COUNT
     };
@@ -25,9 +26,9 @@ namespace Components
     //unsigned long is 32 bit at least
     enum MaskBits : unsigned long
     {
-        
         MESH_BIT = 1<<MESH,
-		TRANSFORM_BIT = 1 << TRANSFORM
+		TRANSFORM_BIT = 1 << TRANSFORM,
+		MATERIAL_BIT = 1 << MATERIAL
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -39,6 +40,7 @@ namespace Components
     static constexpr unsigned int MAX_SIZES[] = {
                 MAX_ENTITIES, //MESH
 				MAX_ENTITIES, //TRANSFORM
+				MAX_ENTITIES, //MATERIAL
             };
 
     //TODO why is constexpr not possible here?

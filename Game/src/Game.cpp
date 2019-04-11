@@ -102,7 +102,7 @@ const T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId) const
 }
 
 
-Game::Game():meshComps(*this),assetManager(),soloud(),transformComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
