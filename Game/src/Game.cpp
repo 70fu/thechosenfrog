@@ -4,6 +4,8 @@
 #include "Constants.h"
 #include "util/RuntimeCompileUtils.h"
 #include "RuntimeClasses.h"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 template<class T, Components::Types TYPE_ID>
 Game::ComponentStore<T, TYPE_ID>::ComponentStore(Game &game) : game(game)
@@ -104,7 +106,7 @@ Game::Game():meshComps(*this),assetManager(),soloud(),transformComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
-    size_t componentStoreSize = std::size(componentStores);
+    size_t componentStoreSize = Components::COMPONENT_COUNT;
     for(int i = 0;i<componentStoreSize;++i)
     {
         if(componentStores[i]==nullptr)
@@ -145,6 +147,12 @@ void Game::init(GLFWwindow* window)
 	runtimeObjectSystem->AddIncludeDir(GLFW_includePath.c_str());
     FileSystemUtils::Path soloudIncludePath = basePath / "soloud" / "include";
     runtimeObjectSystem->AddIncludeDir(soloudIncludePath.c_str());
+    FileSystemUtils::Path gladIncludePath = basePath / "Game" / "libs" / "glad" / "include";
+    runtimeObjectSystem->AddIncludeDir(gladIncludePath.c_str());
+    FileSystemUtils::Path glmIncludePath = basePath / "Game" / "libs" / "glm";
+    runtimeObjectSystem->AddIncludeDir(glmIncludePath.c_str());
+    FileSystemUtils::Path imguiIncludePath = basePath / "Game" / "libs" / "imgui";
+    runtimeObjectSystem->AddIncludeDir(imguiIncludePath.c_str());
 
     //specify library directories
     FileSystemUtils::Path soloudLibPath = basePath / "cmake-build-debug" / "soloud";

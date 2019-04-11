@@ -10,7 +10,6 @@ public:
     void update(Game& game) override
     {
         //TODO
-        ImGuiAl::Log::getInstance().Debug("Game update");
     }
 };
 REGISTERCLASS(GameUpdater)

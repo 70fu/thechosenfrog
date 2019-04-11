@@ -3,6 +3,8 @@
 #include <ObjectInterfacePerModule.h>
 #include <iostream>
 #include "Game.h"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
 	void keyCallback(Game& game, int key, int scancode, int action, int mods) override

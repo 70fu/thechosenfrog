@@ -5,8 +5,6 @@
 #ifndef CGUE19_THECHOSENFROG_GAME_H
 #define CGUE19_THECHOSENFROG_GAME_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "assets/AssetManager.h"
 #include "IEventManager.h"
 #include "logger/imguial_log.h"
@@ -16,6 +14,8 @@
 #include "components/TransformComponent.h"
 #include "IGameRenderer.h"
 #include "IGameUpdater.h"
+
+class GLFWwindow;
 
 
 class Game : public IObjectFactoryListener {

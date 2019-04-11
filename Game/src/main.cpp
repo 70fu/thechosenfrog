@@ -3,7 +3,9 @@
 * Institute of Computer Graphics and Algorithms.
 * This file is part of the ECG Lab Framework and must not be redistributed.
 */
-
+#include <glad/glad.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <sstream>
 #include <string>
 #include "Game.h"
