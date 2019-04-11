@@ -106,10 +106,7 @@ private:
 	EntityId freeIds[MAX_ENTITIES];
 	EntityId freeCount = 0;
 
-	//components
-    ComponentStore<MeshComponent,Components::MESH> meshComps;
-	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
-	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
+
 
     /**
      * This array is used to remove components from entities when an entity is deleted
@@ -151,6 +148,11 @@ private:
 	 */
     inline void deleteMarkedEntities();
 public:
+	//components
+	ComponentStore<MeshComponent,Components::MESH> meshComps;
+	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
+	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
+
     Game();
     virtual ~Game();
 
