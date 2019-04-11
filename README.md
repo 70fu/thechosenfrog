@@ -22,3 +22,8 @@ bin/build
 ## Links
 
 - [GLFW Input Key](https://www.glfw.org/docs/latest/input_guide.html#input_key) - How to set up Key & Mouse Input
+
+## How to add a new Asset:
+1. Go to <Asset>Ids.h and add a new id to the enum
+1. Go to <Asset>List.h and write asset at the same position in the assets array as the new id (just use the id for index)
+ 1. If the asset is loaded from a file, use loadAssetFromFileHelper()
