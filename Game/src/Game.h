@@ -14,6 +14,7 @@
 #include "components/MeshComponent.h"
 #include "components/Components.h"
 #include "components/TransformComponent.h"
+#include "IGameRenderer.h"
 
 
 class Game : public IObjectFactoryListener {
@@ -134,6 +135,9 @@ private:
 
 	IDebugGUI* debugGui;
 	ObjectId debugGuiID;
+
+	IGameRenderer* gameRenderer;
+	ObjectId gameRendererId;
 
     /**
 	 * Deletes all entities marked for deletion

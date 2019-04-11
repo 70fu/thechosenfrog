@@ -11,8 +11,8 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/cute_filewatch/cute_filewatch.h
 		src/Game.cpp
 		src/Game.h
-		src/TransformComponent.cpp
-		src/TransformComponent.h
+		src/components/TransformComponent.cpp
+		src/components/TransformComponent.h
 		src/Constants.h
 		src/assets/AssetManager.cpp
 		src/assets/AssetManager.h
@@ -64,7 +64,9 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		libs/imgui/imgui_impl_glfw.h
 		libs/imgui/imgui_impl_opengl3.cpp
 		libs/imgui/imgui_impl_opengl3.h
-)
+	#------end libs
+		src/IGameRenderer.h
+		src/GameRenderer.cpp)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

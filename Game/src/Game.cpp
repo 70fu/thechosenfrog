@@ -56,7 +56,7 @@ void Game::ComponentStore<T, TYPE_ID>::removeComp(EntityId entityId)
 }
 
 template<class T, Components::Types TYPE_ID>
-constexpr Components::Types Game::ComponentStore<T, TYPE_ID>::getType() const
+Components::Types Game::ComponentStore<T, TYPE_ID>::getType() const
 {
     return TYPE_ID;
 }
@@ -162,6 +162,7 @@ void Game::init(GLFWwindow* window)
     //construct runtime swappable members, e.g. EventManager
 	eventManagerID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::EVENT_MANAGER, &eventManager);
     debugGuiID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::IMGUI_DEBUG_GUI, &debugGui);
+    gameRendererId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_RENDERER, &gameRenderer);
     //...
 
     //init debug gui
@@ -202,6 +203,10 @@ void Game::render()
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
+    //render game world
+    gameRenderer->render(this);
+
+    //render debug gui
     debugGui->render(this);
 
     //swap buffer after everything has rendered
@@ -304,7 +309,7 @@ void Game::OnConstructorsAdded()
     //reload runtime swappable members e.g. EventManager
 	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
-
+    RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
 }
 
 IEventManager* Game::getEventManager() const
