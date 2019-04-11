@@ -218,6 +218,7 @@ int main(int argc, char** argv)
     // Initialize Game
     /* --------------------------------------------- */
     game = Game();
+
     game.init(window);
 
     /* --------------------------------------------- */

@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "util/RuntimeCompileUtils.h"
 #include "RuntimeClasses.h"
+#include "TransformComponent.h"
 
 Game::Game():assetManager(),soloud() {
 
@@ -20,6 +21,11 @@ Game::~Game() {
 void Game::init(GLFWwindow* window)
 {
     this->window=window;
+
+
+	// creation of transformcomponent test
+	TransformComponent t1({ 1,2,3 }, { 0,30,0 }, { 7,8,9 }); // rotation vector y x z
+
 
     //init logger
     ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);
@@ -85,7 +91,7 @@ bool Game::update(){
 
 void Game::render()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     int width,height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
