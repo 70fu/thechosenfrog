@@ -66,7 +66,9 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		libs/imgui/imgui_impl_opengl3.h
 	#------end libs
 		src/IGameRenderer.h
-		src/GameRenderer.cpp)
+		src/GameRenderer.cpp
+		src/IGameUpdater.h
+		src/GameUpdater.cpp)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

@@ -15,6 +15,7 @@
 #include "components/Components.h"
 #include "components/TransformComponent.h"
 #include "IGameRenderer.h"
+#include "IGameUpdater.h"
 
 
 class Game : public IObjectFactoryListener {
@@ -138,6 +139,9 @@ private:
 
 	IGameRenderer* gameRenderer;
 	ObjectId gameRendererId;
+
+	IGameUpdater* gameUpdater;
+	ObjectId gameUpdaterId;
 
     /**
 	 * Deletes all entities marked for deletion

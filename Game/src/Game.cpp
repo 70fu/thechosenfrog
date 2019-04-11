@@ -127,9 +127,6 @@ void Game::init(GLFWwindow* window)
 {
     this->window=window;
 
-
-	
-
     //init logger
     ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);
 
@@ -163,6 +160,7 @@ void Game::init(GLFWwindow* window)
 	eventManagerID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::EVENT_MANAGER, &eventManager);
     debugGuiID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::IMGUI_DEBUG_GUI, &debugGui);
     gameRendererId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_RENDERER, &gameRenderer);
+    gameUpdaterId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_UPDATER, &gameUpdater);
     //...
 
     //init debug gui
@@ -188,7 +186,7 @@ bool Game::update(){
 
     assetManager.update();
 
-    //TODO update game world
+    gameUpdater->update(*this);
 
     //remove entities marked for deletion
     deleteMarkedEntities();
@@ -310,6 +308,7 @@ void Game::OnConstructorsAdded()
 	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
+    RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameUpdaterId, &gameUpdater);
 }
 
 IEventManager* Game::getEventManager() const
