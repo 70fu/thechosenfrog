@@ -64,30 +64,6 @@ Components::Types Game::ComponentStore<T, TYPE_ID>::getType() const
 }
 
 template<class T, Components::Types TYPE_ID>
-auto Game::ComponentStore<T, TYPE_ID>::begin()
-{
-    return std::begin(components);
-}
-
-template<class T, Components::Types TYPE_ID>
-auto Game::ComponentStore<T, TYPE_ID>::end()
-{
-    return begin()+numActive;
-}
-
-template<class T, Components::Types TYPE_ID>
-constexpr auto Game::ComponentStore<T, TYPE_ID>::begin() const
-{
-    return std::cbegin(components);
-}
-
-template<class T, Components::Types TYPE_ID>
-constexpr auto Game::ComponentStore<T, TYPE_ID>::end() const
-{
-    return begin()+numActive;
-}
-
-template<class T, Components::Types TYPE_ID>
 T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId)
 {
     //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID

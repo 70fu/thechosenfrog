@@ -73,10 +73,10 @@ public:
 
         //iterator methods iterate over all active components
         //iterators are invalidated on removal or add of components
-        auto begin();
-        auto end();
-        constexpr auto begin() const;
-        constexpr auto end() const;
+        T* begin(){return &components[0];}
+        T* end(){return &components[0]+numActive;}
+        constexpr T* begin() const{return &components[0];}
+        constexpr T* end() const{return &components[0]+numActive;}
 
         /**
          * Precondition: given entity has component of type TYPE_ID
@@ -105,8 +105,6 @@ private:
 	 */
 	EntityId freeIds[MAX_ENTITIES];
 	EntityId freeCount = 0;
-
-
 
     /**
      * This array is used to remove components from entities when an entity is deleted

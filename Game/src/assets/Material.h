@@ -19,7 +19,7 @@
 struct MaterialData
 {
     friend class Material;
-private:
+public:
     template <class T>
     struct UniformValue
     {
