@@ -165,13 +165,12 @@ bool Game::update(){
 
 void Game::render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //obtain size of window
     int width,height;
     glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
 
     //render game world
-    gameRenderer->render(*this);
+    gameRenderer->render(*this,width,height);
 
     //render debug gui
     debugGui->render(this);

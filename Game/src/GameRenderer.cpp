@@ -71,14 +71,19 @@ private:
     }
 
 public:
-    void render(Game& game) override
+    void render(Game& game, int width, int height) override
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         //perform rendering for each camera
         for(CameraComponent& camera : game.cameraComps)
         {
             //a camera also needs a position, otherwise no view matrix can be calculated
             if(!game.hasComponents(camera.entity,Components::TRANSFORM_BIT))
                 continue;
+
+            //set viewport
+            glViewport(camera.getViewportPos().x*width,camera.getViewportPos().y*height,camera.getViewportSize().x*width,camera.getViewportSize().y*height);
 
             TransformComponent& cTransform = game.transformComps[camera.entity];
 

@@ -3,6 +3,7 @@
 
 
 #include <mat4x4.hpp>
+#include <vec2.hpp>
 #include "Component.h"
 
 class CameraComponent : public Component
@@ -11,8 +12,12 @@ private:
     //cached value, updated when fov,near,far or viewport size changes
     glm::mat4 projectionMatrix;
 
-    int viewportWidth;
-    int viewportHeight;
+    //viewport coordinates and size is given relative to window size, so 1 means 100% and 0 is 0 percent
+    /**
+     * Left bottom corner of viewport
+     */
+    glm::vec2 viewportPos;
+    glm::vec2 viewportSize;
     /**
      * Field of View, but I think its for the y axis in radians
      */
@@ -24,10 +29,10 @@ private:
 public:
     const glm::mat4& getProjectionMatrix() const;
 
-    int getViewportWidth() const;
-    void setViewportWidth(int viewportWidth);
-    int getViewportHeight() const;
-    void setViewportHeight(int viewportHeight);
+    const glm::vec2& getViewportPos() const;
+    void setViewportPos(const glm::vec2& viewportPos);
+    const glm::vec2& getViewportSize() const;
+    void setViewportSize(const glm::vec2& viewportSize);
     float getFov() const;
     void setFov(float fov);
     float getNear() const;

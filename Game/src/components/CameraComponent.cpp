@@ -4,7 +4,7 @@
 
 void CameraComponent::updateProjectionMatrix()
 {
-    projectionMatrix = glm::perspectiveFov(fov, static_cast<float>(viewportWidth), static_cast<float>(viewportHeight),near,far);
+    projectionMatrix = glm::perspectiveFov(fov, viewportSize.x, viewportSize.y,near,far);
 }
 
 const glm::mat4 &CameraComponent::getProjectionMatrix() const
@@ -12,25 +12,24 @@ const glm::mat4 &CameraComponent::getProjectionMatrix() const
     return projectionMatrix;
 }
 
-int CameraComponent::getViewportWidth() const
+const glm::vec2 &CameraComponent::getViewportPos() const
 {
-    return viewportWidth;
+    return viewportPos;
 }
 
-void CameraComponent::setViewportWidth(int newViewportWidth)
+void CameraComponent::setViewportPos(const glm::vec2& newViewportPos)
 {
-    viewportWidth = newViewportWidth;
-    updateProjectionMatrix();
+    viewportPos = newViewportPos;
 }
 
-int CameraComponent::getViewportHeight() const
+const glm::vec2 &CameraComponent::getViewportSize() const
 {
-    return viewportHeight;
+    return viewportSize;
 }
 
-void CameraComponent::setViewportHeight(int newViewportHeight)
+void CameraComponent::setViewportSize(const glm::vec2& newViewportSize)
 {
-    viewportHeight = newViewportHeight;
+    viewportSize = newViewportSize;
     updateProjectionMatrix();
 }
 
