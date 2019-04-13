@@ -6,7 +6,7 @@
 
 class Game;
 /**
- * Responsible for drawing all debug gui
+ * Responsible for rendering the scene (all entities, so not including debug gui)
  */
 class IGameRenderer : public IObject
 {

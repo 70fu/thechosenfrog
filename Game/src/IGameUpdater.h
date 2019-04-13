@@ -6,7 +6,7 @@
 
 class Game;
 /**
- * Responsible for drawing all debug gui
+ * Responsible for updating all the entities in the game
  */
 class IGameUpdater : public IObject
 {
