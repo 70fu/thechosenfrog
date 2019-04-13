@@ -63,22 +63,7 @@ Components::Types Game::ComponentStore<T, TYPE_ID>::getType() const
     return TYPE_ID;
 }
 
-template<class T, Components::Types TYPE_ID>
-T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId)
-{
-    //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
-    return components[game.entities[entityId].components[TYPE_ID]];
-}
-
-template<class T, Components::Types TYPE_ID>
-const T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId) const
-{
-    //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
-    return components[game.entities[entityId].components[TYPE_ID]];
-}
-
-
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?

@@ -29,7 +29,7 @@ public:
     public:
         T value;
 
-        GLint getLocation() const;
+        GLint getLocation() const{return location;}
     };
 
 public:

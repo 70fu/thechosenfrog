@@ -15,6 +15,7 @@
 #include "IGameRenderer.h"
 #include "IGameUpdater.h"
 #include "components/MaterialComponent.h"
+#include "components/CameraComponent.h"
 
 class GLFWwindow;
 
@@ -84,8 +85,16 @@ public:
          * @param entity
          * @return reference to component of given entity
          */
-        T& operator[](EntityId entity);
-        const T& operator[](EntityId entity) const;
+        T& operator[](EntityId entity)
+        {
+            //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
+            return components[game.entities[entity].components[TYPE_ID]];
+        }
+        const T& operator[](EntityId entity) const
+        {
+            //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
+            return components[game.entities[entity].components[TYPE_ID]];
+        }
     };
 private:
 	//index=id, there may be holes of inactive/deleted entities
@@ -105,18 +114,6 @@ private:
 	 */
 	EntityId freeIds[MAX_ENTITIES];
 	EntityId freeCount = 0;
-
-    /**
-     * This array is used to remove components from entities when an entity is deleted
-     * a component store of every component type must be in this array.
-     * Component store that manages components with type id T must be at index T
-     */
-	ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
-			{
-    			&meshComps,
-				&transformComps,
-				&materialComps
-			};
 
     AssetManager assetManager;
     const char* loggerActions[1] = {nullptr};//TODO find better place for this
@@ -145,12 +142,28 @@ private:
 	 * Deletes all entities marked for deletion
 	 */
     inline void deleteMarkedEntities();
+
 public:
 	//components
 	ComponentStore<MeshComponent,Components::MESH> meshComps;
 	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
 	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
+    ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
+private:
+    /**
+     * This array is used to remove components from entities when an entity is deleted
+     * a component store of every component type must be in this array.
+     * Component store that manages components with type id T must be at index T
+     */
+    ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
+            {
+                    &meshComps,
+                    &transformComps,
+                    &materialComps,
+                    &cameraComps
+            };
 
+public:
     Game();
     virtual ~Game();
 
