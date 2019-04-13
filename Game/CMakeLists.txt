@@ -69,7 +69,9 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/GameRenderer.cpp
 		src/IGameUpdater.h
 		src/GameUpdater.cpp
-		src/components/MaterialComponent.cpp src/components/MaterialComponent.h src/components/CameraComponent.cpp src/components/CameraComponent.h src/util/CameraUtil.cpp src/util/CameraUtil.h)
+		src/components/MaterialComponent.cpp src/components/MaterialComponent.h
+		src/components/CameraComponent.cpp src/components/CameraComponent.h
+		src/util/CameraUtil.cpp src/util/CameraUtil.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)
