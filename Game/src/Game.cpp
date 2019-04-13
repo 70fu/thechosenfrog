@@ -130,10 +130,14 @@ void Game::init(GLFWwindow* window)
     debugGuiID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::IMGUI_DEBUG_GUI, &debugGui);
     gameRendererId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_RENDERER, &gameRenderer);
     gameUpdaterId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_UPDATER, &gameUpdater);
+    mainSceneId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::MAIN_SCENE, &mainScene);
     //...
 
     //init debug gui
     debugGui->init(this);
+
+    //init scene
+    mainScene->init(*this);
 }
 
 bool Game::update(){
@@ -277,6 +281,7 @@ void Game::OnConstructorsAdded()
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameUpdaterId, &gameUpdater);
+    RuntimeCompileUtils::updateObject(runtimeObjectSystem, mainSceneId, &mainScene);
 }
 
 IEventManager* Game::getEventManager() const

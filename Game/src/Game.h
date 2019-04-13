@@ -16,6 +16,7 @@
 #include "IGameUpdater.h"
 #include "components/MaterialComponent.h"
 #include "components/CameraComponent.h"
+#include "scenes/IScene.h"
 
 class GLFWwindow;
 
@@ -137,6 +138,9 @@ private:
 
 	IGameUpdater* gameUpdater;
 	ObjectId gameUpdaterId;
+
+	IScene* mainScene;
+	ObjectId mainSceneId;
 
     /**
 	 * Deletes all entities marked for deletion
