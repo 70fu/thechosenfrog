@@ -6,4 +6,7 @@ static constexpr double FIXED_DELTA = 1.0/60.0;
 static constexpr double UPDATE_TIME_ACCUM_MAX = 8*FIXED_DELTA;
 static constexpr unsigned short MAX_ENTITIES = 256;
 
+static constexpr double PI = 3.14159265358979323846;
+static constexpr double TO_RADIANS = PI / 180;
+
 #endif //CGUE19_THECHOSENFROG_CONSTANTS_H

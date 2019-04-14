@@ -16,14 +16,14 @@ private:
     /**
      * Left bottom corner of viewport
      */
-    glm::vec2 viewportPos;
-    glm::vec2 viewportSize;
+    glm::vec2 viewportPos={0,0};
+    glm::vec2 viewportSize={1,1};
     /**
      * Field of View, but I think its for the y axis in radians
      */
-    float fov;
-    float near;
-    float far;
+    float fov=1;
+    float near=0.1f;
+    float far=100;
 
     void updateProjectionMatrix();
 public:

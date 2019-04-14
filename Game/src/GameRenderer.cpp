@@ -116,8 +116,6 @@ public:
                     //bind viewer position uniform
                     glUniform3fv(3,1,glm::value_ptr(viewerPos));//TODO remove hard coded uniform locations
 
-                    //TODO bind view projection matrix
-
                     //bind uniforms, first material data of component, then of the material asset
                     //stores which uniforms have already been set, long int is at least 32 bit, so uniform locations until 31 are currently supported
                     long int uniformMask = 0;
@@ -142,6 +140,10 @@ public:
                     glBindVertexArray(0);
                 }
             }
+
+            //unbind shader
+            glUseProgram(0);
+
             //endregion
         }
 

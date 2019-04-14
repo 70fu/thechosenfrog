@@ -43,6 +43,8 @@ bool ShaderProgram::link()
         delete[] log;
 
     }
+    else
+        linked=true;
 
     //detach shaders
     for (Shader* shader : shaders)

@@ -59,19 +59,57 @@ public:
 
         Game& game;
     public:
-		explicit ComponentStore(Game& game) ;
+		explicit ComponentStore(Game& game):game(game) {}
 
 		/**
 		 * Precondition: entity does not have component of the type this store manages
 		 * Adds component to entity
 		 * component bit of componentMask of given entity is set to 1
-		 * @param entity, id of entity to add component to
+		 * @param entityId, id of entity to add component to
 		 * @return returns a reference to the component to configure it.
 		 */
-        T& addComp(EntityId entity);
-        void removeComp(EntityId entity) override;
+        T& addComp(EntityId entityId)
+        {
+            //TODO only check in debug mode
+            if(numActive==Components::MAX_SIZES[TYPE_ID])
+            {
+                ImGuiAl::Log::getInstance().Warn("Could not create component of id %d, maximum reached, plz increase max in Components.h and recompile",TYPE_ID);
+                return invalidComponent;
+            }
 
-        Components::Types getType() const override;
+            Entity& entity = game.entities[entityId];
+
+            //set index of component in entity object
+            entity.components[TYPE_ID]=numActive;
+
+            //set component bit to 1
+            entity.componentMask|=Components::typeToMask(TYPE_ID);
+
+            //return component at numActive position, and increase active components
+            T& ret = components[numActive++];
+            ret.entity = entityId;
+            return ret;
+        }
+        void removeComp(EntityId entityId) override
+        {
+            Entity& entity = game.entities[entityId];
+            ComponentId pos = entity.components[TYPE_ID];
+
+            //TODO only check in debug mode
+            if((entity.componentMask&Components::typeToMask(TYPE_ID))==0)
+            {
+                ImGuiAl::Log::getInstance().Warn("Cannot remove component from entity with id %d, entity has no component of type %d",entity,TYPE_ID);
+                return ;
+            }
+
+            //set component bit to zero
+            entity.componentMask&=~Components::typeToMask(TYPE_ID);
+
+            //fill hole
+            components[pos] = components[--numActive];//TODO think about moving component instead of copying
+        }
+
+        Components::Types getType() const override {return TYPE_ID;}
 
         //iterator methods iterate over all active components
         //iterators are invalidated on removal or add of components
