@@ -6,7 +6,6 @@
 #include "IGameRenderer.h"
 #include <glad/glad.h>
 #include <gtc/type_ptr.inl>
-#include "assets/Shader.h"
 #include "assets/Material.h"
 #include "util/CameraUtil.h"
 
@@ -112,9 +111,9 @@ public:
                     glUseProgram(material.material->shader->getProgramHandle());
 
                     //bind projection view matrix uniform
-                    glUniformMatrix4fv(2,1,GL_FALSE,glm::value_ptr(pv));//TODO remove hard coded uniform location
+                    glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX,1,GL_FALSE,glm::value_ptr(pv));
                     //bind viewer position uniform
-                    glUniform3fv(3,1,glm::value_ptr(viewerPos));//TODO remove hard coded uniform locations
+                    glUniform3fv(CommonShaderUniforms::VIEWER_POS,1,glm::value_ptr(viewerPos));
 
                     //bind uniforms, first material data of component, then of the material asset
                     //stores which uniforms have already been set, long int is at least 32 bit, so uniform locations until 31 are currently supported
@@ -124,9 +123,9 @@ public:
 
                     //bind mesh
                     glBindVertexArray(mesh.mesh->getVAOHandle());
-                    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(transform.getTransformationMatrix()));//TODO store hard coded uniform location of ModelMatrix somewhere
+                    glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getTransformationMatrix()));
                     glm::mat4 inverseTransform = glm::inverse(transform.getTransformationMatrix());
-                    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(glm::transpose(inverseTransform)));//TODO store hard coded uniform location of normal matrix somewhere
+                    glUniformMatrix4fv(CommonShaderUniforms::NORMAL_MAT, 1, GL_FALSE, glm::value_ptr(glm::transpose(inverseTransform)));
 
                     //draw
                     Surface& surface = mesh.mesh->surface;

@@ -8,6 +8,20 @@
 #include "Shader.h"
 
 /**
+ * Uniforms, every shader program should be able to accept
+ */
+namespace CommonShaderUniforms
+{
+    enum CommonShaderUniforms : unsigned char
+    {
+        MODEL_MAT,//mat4
+        NORMAL_MAT,//mat4
+        PROJECTION_VIEW_MATRIX, //mat4
+        VIEWER_POS //vec3
+    };
+}
+
+/**
  * Class, that manages a shader program (linking and such) on the graphics card
  * Usage:
  * 1. add Shaders
