@@ -43,8 +43,7 @@ namespace Components
 				MAX_ENTITIES, //MATERIAL
             };
 
-    //TODO why is constexpr not possible here?
-    MaskBits typeToMask(Types componentType);
+    constexpr MaskBits typeToMask(Types componentType){return static_cast<MaskBits>(1<<componentType);}
 }
 
 #endif //CGUE19_THECHOSENFROG_COMPONENTTYPES_H
