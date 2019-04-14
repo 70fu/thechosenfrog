@@ -8,10 +8,10 @@ class TransformComponent : public Component {
 private:
 	glm::vec3 translation = { 0,0,0 }; // Verschiebung
 	glm::vec3 rotation = { 0,0,0 }; // Drehung Y X Z
-	glm::vec3 scaling = { 0,0,0 }; // vergr��ern / verkleinern
+	glm::vec3 scaling = { 1,1,1 }; // vergr��ern / verkleinern
 
 
-	glm::mat4x4 transformationMatrix; // matrix of translation, rotation, scaling
+	glm::mat4x4 transformationMatrix = glm::mat4(1); // matrix of translation, rotation, scaling
 
 	void updateTransformationMatrix();
 

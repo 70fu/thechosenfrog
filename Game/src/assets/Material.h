@@ -19,7 +19,7 @@
 struct MaterialData
 {
     friend class Material;
-private:
+public:
     template <class T>
     struct UniformValue
     {
@@ -29,7 +29,7 @@ private:
     public:
         T value;
 
-        GLint getLocation() const;
+        GLint getLocation() const{return location;}
     };
 
 public:

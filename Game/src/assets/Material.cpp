@@ -1,11 +1,5 @@
 #include "Material.h"
 
-template<class T>
-GLint MaterialData::UniformValue<T>::getLocation() const
-{
-    return location;
-}
-
 void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
 {
     for(auto& u : floats)

@@ -15,6 +15,8 @@
 #include "IGameRenderer.h"
 #include "IGameUpdater.h"
 #include "components/MaterialComponent.h"
+#include "components/CameraComponent.h"
+#include "scenes/IScene.h"
 
 class GLFWwindow;
 
@@ -57,26 +59,64 @@ public:
 
         Game& game;
     public:
-		explicit ComponentStore(Game& game) ;
+		explicit ComponentStore(Game& game):game(game) {}
 
 		/**
 		 * Precondition: entity does not have component of the type this store manages
 		 * Adds component to entity
 		 * component bit of componentMask of given entity is set to 1
-		 * @param entity, id of entity to add component to
+		 * @param entityId, id of entity to add component to
 		 * @return returns a reference to the component to configure it.
 		 */
-        T& addComp(EntityId entity);
-        void removeComp(EntityId entity) override;
+        T& addComp(EntityId entityId)
+        {
+            //TODO only check in debug mode
+            if(numActive==Components::MAX_SIZES[TYPE_ID])
+            {
+                ImGuiAl::Log::getInstance().Warn("Could not create component of id %d, maximum reached, plz increase max in Components.h and recompile",TYPE_ID);
+                return invalidComponent;
+            }
 
-        Components::Types getType() const override;
+            Entity& entity = game.entities[entityId];
+
+            //set index of component in entity object
+            entity.components[TYPE_ID]=numActive;
+
+            //set component bit to 1
+            entity.componentMask|=Components::typeToMask(TYPE_ID);
+
+            //return component at numActive position, and increase active components
+            T& ret = components[numActive++];
+            ret.entity = entityId;
+            return ret;
+        }
+        void removeComp(EntityId entityId) override
+        {
+            Entity& entity = game.entities[entityId];
+            ComponentId pos = entity.components[TYPE_ID];
+
+            //TODO only check in debug mode
+            if((entity.componentMask&Components::typeToMask(TYPE_ID))==0)
+            {
+                ImGuiAl::Log::getInstance().Warn("Cannot remove component from entity with id %d, entity has no component of type %d",entity,TYPE_ID);
+                return ;
+            }
+
+            //set component bit to zero
+            entity.componentMask&=~Components::typeToMask(TYPE_ID);
+
+            //fill hole
+            components[pos] = components[--numActive];//TODO think about moving component instead of copying
+        }
+
+        Components::Types getType() const override {return TYPE_ID;}
 
         //iterator methods iterate over all active components
         //iterators are invalidated on removal or add of components
-        auto begin();
-        auto end();
-        constexpr auto begin() const;
-        constexpr auto end() const;
+        T* begin(){return &components[0];}
+        T* end(){return &components[0]+numActive;}
+        constexpr T* begin() const{return &components[0];}
+        constexpr T* end() const{return &components[0]+numActive;}
 
         /**
          * Precondition: given entity has component of type TYPE_ID
@@ -84,8 +124,16 @@ public:
          * @param entity
          * @return reference to component of given entity
          */
-        T& operator[](EntityId entity);
-        const T& operator[](EntityId entity) const;
+        T& operator[](EntityId entity)
+        {
+            //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
+            return components[game.entities[entity].components[TYPE_ID]];
+        }
+        const T& operator[](EntityId entity) const
+        {
+            //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
+            return components[game.entities[entity].components[TYPE_ID]];
+        }
     };
 private:
 	//index=id, there may be holes of inactive/deleted entities
@@ -105,20 +153,6 @@ private:
 	 */
 	EntityId freeIds[MAX_ENTITIES];
 	EntityId freeCount = 0;
-
-
-
-    /**
-     * This array is used to remove components from entities when an entity is deleted
-     * a component store of every component type must be in this array.
-     * Component store that manages components with type id T must be at index T
-     */
-	ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
-			{
-    			&meshComps,
-				&transformComps,
-				&materialComps
-			};
 
     AssetManager assetManager;
     const char* loggerActions[1] = {nullptr};//TODO find better place for this
@@ -143,16 +177,35 @@ private:
 	IGameUpdater* gameUpdater;
 	ObjectId gameUpdaterId;
 
+	IScene* mainScene;
+	ObjectId mainSceneId;
+
     /**
 	 * Deletes all entities marked for deletion
 	 */
     inline void deleteMarkedEntities();
+
 public:
 	//components
 	ComponentStore<MeshComponent,Components::MESH> meshComps;
 	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
 	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
+    ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
+private:
+    /**
+     * This array is used to remove components from entities when an entity is deleted
+     * a component store of every component type must be in this array.
+     * Component store that manages components with type id T must be at index T
+     */
+    ComponentStoreBase* componentStores[Components::COMPONENT_COUNT]=
+            {
+                    &meshComps,
+                    &transformComps,
+                    &materialComps,
+                    &cameraComps
+            };
 
+public:
     Game();
     virtual ~Game();
 

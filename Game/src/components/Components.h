@@ -16,6 +16,7 @@ namespace Components
         MESH,
 		TRANSFORM,
 		MATERIAL,
+		CAMERA,
 
         COMPONENT_COUNT
     };
@@ -28,7 +29,8 @@ namespace Components
     {
         MESH_BIT = 1<<MESH,
 		TRANSFORM_BIT = 1 << TRANSFORM,
-		MATERIAL_BIT = 1 << MATERIAL
+		MATERIAL_BIT = 1 << MATERIAL,
+		CAMERA_BIT = 1<<CAMERA
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -38,9 +40,10 @@ namespace Components
      * index corresponds to component type see Types enum
      */
     static constexpr unsigned int MAX_SIZES[] = {
-                MAX_ENTITIES, //MESH
-				MAX_ENTITIES, //TRANSFORM
-				MAX_ENTITIES, //MATERIAL
+                MAX_ENTITIES,   //MESH
+				MAX_ENTITIES,   //TRANSFORM
+				MAX_ENTITIES,   //MATERIAL
+				1,              //CAMERA
             };
 
     constexpr MaskBits typeToMask(Types componentType){return static_cast<MaskBits>(1<<componentType);}

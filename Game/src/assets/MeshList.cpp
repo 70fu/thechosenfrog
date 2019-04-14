@@ -60,6 +60,20 @@ protected:
             }
         }
 
+        if(/*(asset.surface.dataFormatBitmask&Surface::INDICES_FORMAT)!=0*/mesh->HasFaces())
+        {
+            for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+            {
+                const aiFace& face = mesh->mFaces[i];
+                for(unsigned int j = 0;j<face.mNumIndices;++j)
+                {
+                    asset.surface.indices.push_back(face.mIndices[j]);
+                }
+            }
+        }
+        else
+            asset.surface.dataFormatBitmask&=~Surface::INDICES_FORMAT;
+
         if(/*(asset.surface.dataFormatBitmask&Surface::NORMALS_FORMAT)!=0 && */mesh->HasNormals())
         {
             for(unsigned int i = 0; i < mesh->mNumVertices; i++)

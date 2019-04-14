@@ -11,6 +11,6 @@ class Game;
 class IGameRenderer : public IObject
 {
 public:
-    virtual void render(Game& game)=0;
+    virtual void render(Game& game,int width, int height)=0;
 };
 #endif //CGUE19_THECHOSENFROG_IGAMERENDERER_H

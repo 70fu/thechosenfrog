@@ -7,102 +7,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-template<class T, Components::Types TYPE_ID>
-Game::ComponentStore<T, TYPE_ID>::ComponentStore(Game &game) : game(game)
-{
-
-}
-
-template<class T, Components::Types TYPE_ID>
-T &Game::ComponentStore<T, TYPE_ID>::addComp(EntityId entityId)
-{
-    //TODO only check in debug mode
-    if(numActive==Components::MAX_SIZES[TYPE_ID])
-    {
-        ImGuiAl::Log::getInstance().Warn("Could not create component of id %d, maximum reached, plz increase max in Components.h and recompile",TYPE_ID);
-        return invalidComponent;
-    }
-
-    Entity& entity = game.entities[entityId];
-
-    //set index of component in entity object
-    entity.components[TYPE_ID]=numActive;
-
-    //set component bit to 1
-    entity.componentMask|=Components::typeToMask(TYPE_ID);
-
-    //return component at numActive position, and increase active components
-    T& ret = components[numActive++];
-    ret.entityId = entity;
-    return ret;
-}
-
-template<class T, Components::Types TYPE_ID>
-void Game::ComponentStore<T, TYPE_ID>::removeComp(EntityId entityId)
-{
-    Entity& entity = game.entities[entityId];
-    ComponentId pos = entity.components[TYPE_ID];
-
-    //TODO only check in debug mode
-    if((entity.componentMask&Components::typeToMask(TYPE_ID))==0)
-    {
-        ImGuiAl::Log::getInstance().Warn("Cannot remove component from entity with id %d, entity has no component of type %d",entity,TYPE_ID);
-        return ;
-    }
-
-    //set component bit to zero
-    entity.componentMask&=~Components::typeToMask(TYPE_ID);
-
-    //fill hole
-    components[pos] = components[--numActive];//TODO think about moving component instead of copying
-}
-
-template<class T, Components::Types TYPE_ID>
-Components::Types Game::ComponentStore<T, TYPE_ID>::getType() const
-{
-    return TYPE_ID;
-}
-
-template<class T, Components::Types TYPE_ID>
-auto Game::ComponentStore<T, TYPE_ID>::begin()
-{
-    return std::begin(components);
-}
-
-template<class T, Components::Types TYPE_ID>
-auto Game::ComponentStore<T, TYPE_ID>::end()
-{
-    return begin()+numActive;
-}
-
-template<class T, Components::Types TYPE_ID>
-constexpr auto Game::ComponentStore<T, TYPE_ID>::begin() const
-{
-    return std::cbegin(components);
-}
-
-template<class T, Components::Types TYPE_ID>
-constexpr auto Game::ComponentStore<T, TYPE_ID>::end() const
-{
-    return begin()+numActive;
-}
-
-template<class T, Components::Types TYPE_ID>
-T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId)
-{
-    //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
-    return components[game.entities[entityId].components[TYPE_ID]];
-}
-
-template<class T, Components::Types TYPE_ID>
-const T & Game::ComponentStore<T, TYPE_ID>::operator[](EntityId entityId) const
-{
-    //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
-    return components[game.entities[entityId].components[TYPE_ID]];
-}
-
-
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -169,10 +74,14 @@ void Game::init(GLFWwindow* window)
     debugGuiID = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::IMGUI_DEBUG_GUI, &debugGui);
     gameRendererId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_RENDERER, &gameRenderer);
     gameUpdaterId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_UPDATER, &gameUpdater);
+    mainSceneId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::MAIN_SCENE, &mainScene);
     //...
 
     //init debug gui
     debugGui->init(this);
+
+    //init scene
+    mainScene->init(*this);
 }
 
 bool Game::update(){
@@ -204,13 +113,12 @@ bool Game::update(){
 
 void Game::render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //obtain size of window
     int width,height;
     glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
 
     //render game world
-    gameRenderer->render(*this);
+    gameRenderer->render(*this,width,height);
 
     //render debug gui
     debugGui->render(this);
@@ -317,6 +225,7 @@ void Game::OnConstructorsAdded()
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameUpdaterId, &gameUpdater);
+    RuntimeCompileUtils::updateObject(runtimeObjectSystem, mainSceneId, &mainScene);
 }
 
 IEventManager* Game::getEventManager() const
