@@ -65,11 +65,11 @@ public:
 		ComponentId getNumActive() const {return numActive;}
 
 		/**
-		 * Precondition: entity does not have component of the type this store manages
 		 * Adds component to entity
 		 * component bit of componentMask of given entity is set to 1
+		 * Simply returns component if it is already attached
 		 * @param entityId, id of entity to add component to
-		 * @return returns a reference to the component to configure it.
+		 * @return returns a reference to the component attached to given entity to configure it
 		 */
         T& addComp(EntityId entityId)
         {
@@ -81,6 +81,12 @@ public:
             }
 
             Entity& entity = game.entities[entityId];
+
+            //check if component is already attached and return it
+            if((entity.componentMask&Components::typeToMask(TYPE_ID))!=0)
+			{
+				return components[entity.components[TYPE_ID]];
+			}
 
             //set index of component in entity object
             entity.components[TYPE_ID]=numActive;
