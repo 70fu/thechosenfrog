@@ -7,7 +7,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -107,6 +107,15 @@ bool Game::update(){
 
     //remove entities marked for deletion
     deleteMarkedEntities();
+
+    //reset mouse scroll delta
+    mouseScrollDelta = glm::vec2(0,0);
+
+    //reset mouse move delta
+    lastMousePos = mousePos;
+
+    //reset mouse enter event
+    cursorEnteredWindowThisFrame = false;
 
     return true;
 }
@@ -243,4 +252,42 @@ AssetManager &Game::getAssetManager() {
 
 GLFWwindow *Game::getWindow() {
     return window;
+}
+
+glm::vec2 Game::getMouseMoveDelta() const
+{
+    if(cursorEnteredWindowThisFrame)
+        return {0,0};
+
+    return mousePos-lastMousePos;
+}
+
+bool Game::cursorEnteredWindow() const
+{
+    return cursorEnteredWindowThisFrame;
+}
+
+void Game::setCursorEnteredWindow(bool enteredWindowThisUpdate)
+{
+    cursorEnteredWindowThisFrame = enteredWindowThisUpdate;
+}
+
+const glm::vec2 &Game::getMousePos() const
+{
+    return mousePos;
+}
+
+void Game::setMousePos(const glm::vec2 &newMousePos)
+{
+    mousePos = newMousePos;
+}
+
+const glm::vec2& Game::getMouseScrollDelta() const
+{
+    return mouseScrollDelta;
+}
+
+void Game::setMouseScrollDelta(const glm::vec2 &delta)
+{
+    mouseScrollDelta = delta;
 }

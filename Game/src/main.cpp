@@ -150,6 +150,16 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	game.getEventManager()->mouseButtonCallback(game, button, action, mods);
 }
 
+void mouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
+{
+    game.getEventManager()->mouseScrollCallback(game, xOffset, yOffset);
+}
+
+void mouseCursorEnterCallback(GLFWwindow* window, int entered)
+{
+    game.getEventManager()->mouseCursorEnterCallback(game,entered);
+}
+
 /* --------------------------------------------- */
 // Main
 /* --------------------------------------------- */
@@ -236,6 +246,8 @@ int main(int argc, char** argv)
 
     //setup mouse callbacks
     glfwSetCursorPosCallback(window, mousePosCallback);
+    glfwSetScrollCallback(window,mouseScrollCallback);
+    glfwSetCursorEnterCallback(window, mouseCursorEnterCallback);
 
     //glfwSetScrollCallback(window, scrollCallback);
     glfwSetMouseButtonCallback(window,mouseButtonCallback);

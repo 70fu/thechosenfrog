@@ -13,11 +13,15 @@ public:
         //init camera
         {
             EntityId id = game.createEntity();
+
             game.transformComps.addComp(id);
+
             CameraComponent& camera = game.cameraComps.addComp(id);
             camera.setFar(100);
             camera.setNear(0.1f);
             camera.setFov(static_cast<float>(60*TO_RADIANS));
+
+            CameraControllerComponent& controller = game.cameraControllerComps.addComp(id);
         }
 
         //init default object

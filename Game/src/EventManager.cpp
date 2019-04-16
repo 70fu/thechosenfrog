@@ -45,7 +45,7 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
 
 	void mousePosCallback(Game& game, double x, double y) override
 	{
-		//std::cout << "Mouse is moving: x: " << x << " y: " << y << std::endl;
+		game.setMousePos(glm::vec2(x,y));
 	}
 
 	void mouseButtonCallback(Game& game, int button, int action, int mods) override
@@ -62,6 +62,17 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
 			std::cout << "You pressed the middle Mouse-Button" << std::endl;
 		}
 	}
+
+	void mouseScrollCallback(Game& game, double xOffset, double yOffset) override
+	{
+		game.setMouseScrollDelta(glm::vec2(xOffset,yOffset));
+	}
+
+	void mouseCursorEnterCallback(Game& game, int entered) override
+	{
+		if(entered==GLFW_PRESS)
+			game.setCursorEnteredWindow(true);
+	}
 private:
 	/**
 	 * this is only used to make the key callback function more readable (
@@ -73,6 +84,8 @@ private:
 		{
 			if(key==GLFW_KEY_1)
 				game.getDebugGUI()->toggleWindow(DebugWindowIds::LOGGER);
+			if(key==GLFW_KEY_2)
+				game.getDebugGUI()->toggleWindow(DebugWindowIds::COMPONENT_VIEWER);
 			//...
 		}
 	}

@@ -17,6 +17,7 @@
 #include "components/MaterialComponent.h"
 #include "components/CameraComponent.h"
 #include "scenes/IScene.h"
+#include "components/CameraControllerComponent.h"
 
 class GLFWwindow;
 
@@ -60,6 +61,8 @@ public:
         Game& game;
     public:
 		explicit ComponentStore(Game& game):game(game) {}
+
+		ComponentId getNumActive() const {return numActive;}
 
 		/**
 		 * Precondition: entity does not have component of the type this store manages
@@ -180,7 +183,15 @@ private:
 	IScene* mainScene;
 	ObjectId mainSceneId;
 
-    /**
+	/* --------------------------------------------- */
+	// Input Helper
+	/* --------------------------------------------- */
+	glm::vec2 lastMousePos;
+	glm::vec2 mousePos;
+	glm::vec2 mouseScrollDelta;
+	bool cursorEnteredWindowThisFrame = false;
+
+	/**
 	 * Deletes all entities marked for deletion
 	 */
     inline void deleteMarkedEntities();
@@ -191,6 +202,7 @@ public:
 	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
 	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
     ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
+    ComponentStore<CameraControllerComponent, Components::CAMERA_CONTROLLER> cameraControllerComps;
 private:
     /**
      * This array is used to remove components from entities when an entity is deleted
@@ -202,7 +214,8 @@ private:
                     &meshComps,
                     &transformComps,
                     &materialComps,
-                    &cameraComps
+                    &cameraComps,
+                    &cameraControllerComps
             };
 
 public:
@@ -246,6 +259,47 @@ public:
 	IDebugGUI* getDebugGUI() const;
 	AssetManager& getAssetManager();
 	GLFWwindow* getWindow();
+
+
+	/* --------------------------------------------- */
+	// Input helper
+	/* --------------------------------------------- */
+	/**
+	 * @return mouse position change since last update, returns zero vector if the cursor entered the window this update
+	 */
+	glm::vec2 getMouseMoveDelta() const;
+
+	/**
+	 * @return true if the cursor entered the window this frame
+	 */
+	bool cursorEnteredWindow() const;
+
+	/**
+	 * Called by the event manager
+	 * @param enteredWindowThisUpdate
+	 */
+	void setCursorEnteredWindow(bool enteredWindowThisUpdate);
+
+	/**
+	 * @return Current mouse position
+	 */
+	const glm::vec2& getMousePos() const;
+
+	/**
+	 * Sets mouse position, is called by the event manager
+	 * @param mousePos
+	 */
+	void setMousePos(const glm::vec2& mousePos);
+
+	/**
+	 * @return mouse scroll wheel change since last update
+	 */
+	const glm::vec2& getMouseScrollDelta() const;
+	/**
+	 * Called by the event manager
+	 * @param delta
+	 */
+	void setMouseScrollDelta(const glm::vec2& delta);
 };
 
 

@@ -28,7 +28,7 @@ void TransformComponent::updateTransformationMatrix()
 	// fill each matrix
 	scalingMatrix = glm::scale(glm::mat4(1.0f), getScaling());
 	translationsMatrix = glm::translate(glm::mat4(1.0f), getTranslation());
-	rotationsMatrix = glm::orientate4(getRotation()); // Y * X * Z
+	rotationsMatrix = glm::orientate4(glm::vec3(rotation.x,rotation.z,rotation.y)); //TODO why this strange order, WTH, maybe look into quaternions
 
 	// multiply matrix
 	transformationMatrix = scalingMatrix * translationsMatrix * rotationsMatrix;
@@ -64,5 +64,12 @@ void TransformComponent::setRotation(glm::vec3 rotation) {
 
 void TransformComponent::setScaling(glm::vec3 scaling) {
 	this->scaling = scaling;
+	updateTransformationMatrix();
+}
+
+void TransformComponent::setTranslationAndRotation(const glm::vec3 &newTranslation, const glm::vec3 &newRotation)
+{
+	translation=newTranslation;
+	rotation=newRotation;
 	updateTransformationMatrix();
 }

@@ -36,5 +36,8 @@ public:
 	// scaling
 	glm::vec3 const & getScaling() const { return this->scaling; }
 	void setScaling(glm::vec3 scaling);
+
+	//combination setter
+	void setTranslationAndRotation(const glm::vec3& translation, const glm::vec3& rotation);
 };
 

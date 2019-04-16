@@ -5,7 +5,7 @@
 #include "RuntimeClasses.h"
 #include "IGameRenderer.h"
 #include <glad/glad.h>
-#include <gtc/type_ptr.inl>
+#include <gtc/type_ptr.hpp>
 #include "assets/Material.h"
 #include "util/CameraUtil.h"
 
