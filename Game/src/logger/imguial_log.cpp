@@ -1,3 +1,5 @@
+#include "imguial_log.h"
+#include "imguial_log.h"
 /*
 The MIT License (MIT)
 
@@ -25,6 +27,10 @@ SOFTWARE.
 #include "imguial_log.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <fstream>
+#include <iostream>
+
+std::fstream file;
 
 ImGuiAl::Log::~Log()
 {
@@ -130,7 +136,16 @@ void ImGuiAl::Log::VPrintf( Level level, const char* format, va_list args )
   
   Write( meta, 3 );
   Write( line, length );
+
+/*
+	Parse Output to file IMGUI_LogToFILE_LogOutput.txt inside /home/user/CMakeBuilds/[BuildID]/build/x64-Debug/Game
+*/
   
+ // file.open("IMGUI_LogToFILE_LogOutput.txt", std::ios::out | std::ios::app);
+ // file << line << std::endl;
+ // file.close();
+ //-------------------------
+
   m_ScrollToBottom = true;
 
   //print to stdout
