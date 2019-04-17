@@ -22,8 +22,8 @@ private:
      * Field of View, but I think its for the y axis in radians
      */
     float fov=1;
-    float near=0.1f;
-    float far=100;
+    float nearPlane=0.1f;
+    float farPlane=100;
 
     void updateProjectionMatrix();
 public:
@@ -36,9 +36,9 @@ public:
     float getFov() const;
     void setFov(float fov);
     float getNear() const;
-    void setNear(float near);
+    void setNear(float nearPlane);
     float getFar() const;
-    void setFar(float far);
+    void setFar(float farPlane);
 };
 
 

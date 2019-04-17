@@ -4,7 +4,7 @@
 
 void CameraComponent::updateProjectionMatrix()
 {
-    projectionMatrix = glm::perspectiveFov(fov, viewportSize.x, viewportSize.y,near,far);
+    projectionMatrix = glm::perspectiveFov(fov, viewportSize.x, viewportSize.y,nearPlane,farPlane);
 }
 
 const glm::mat4 &CameraComponent::getProjectionMatrix() const
@@ -46,22 +46,22 @@ void CameraComponent::setFov(float newFov)
 
 float CameraComponent::getNear() const
 {
-    return near;
+    return nearPlane;
 }
 
 void CameraComponent::setNear(float newNear)
 {
-    near=newNear;
+    nearPlane=newNear;
     updateProjectionMatrix();
 }
 
 float CameraComponent::getFar() const
 {
-    return far;
+    return farPlane;
 }
 
 void CameraComponent::setFar(float newFar)
 {
-    far=newFar;
+    farPlane=newFar;
     updateProjectionMatrix();
 }

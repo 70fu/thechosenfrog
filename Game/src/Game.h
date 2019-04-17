@@ -18,6 +18,8 @@
 #include "components/CameraComponent.h"
 #include "scenes/IScene.h"
 #include "components/CameraControllerComponent.h"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 class GLFWwindow;
 
