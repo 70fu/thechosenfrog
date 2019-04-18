@@ -37,7 +37,7 @@ protected:
         // If the import failed, report it
         if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
-            ImGuiAl::Log::getInstance().Error("Loading mesh from %s has failed: $s",path.c_str(),importer.GetErrorString());
+            ImGuiAl::Log::getInstance().Error("Loading mesh from %s has failed: %s",path.c_str(),importer.GetErrorString());
             return false;
         }
         if(scene->mNumMeshes==0)
