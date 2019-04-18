@@ -17,6 +17,7 @@ public:
 
 class Texture
 {
+    friend class TextureList;
 private:
     GLuint handle;
 
@@ -24,6 +25,10 @@ private:
 
     bool allocated = false;
 
+    /**
+     * Allocates on gpu using current parameters
+     */
+    void allocateOnGPU();
 public:
     /**
      * Can be changed freely, but updateOnGPU needs to be called after a change

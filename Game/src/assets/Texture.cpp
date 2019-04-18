@@ -3,7 +3,7 @@
 
 using namespace ImGuiAl;
 
-void Texture::allocateOnGPU(TextureParameters textureParameters)
+void Texture::allocateOnGPU()
 {
     //TODO only in debug?
     if(allocated)
@@ -11,8 +11,6 @@ void Texture::allocateOnGPU(TextureParameters textureParameters)
         Log::getInstance().Warn("allocate called even though texture has already been allocated, call ignored");
         return;
     }
-
-    parameters = textureParameters;
 
     glGenTextures(1,&handle);
 
@@ -34,6 +32,12 @@ void Texture::allocateOnGPU(TextureParameters textureParameters)
     glBindTexture(parameters.target,0);
 
     allocated = true;
+}
+
+void Texture::allocateOnGPU(TextureParameters textureParameters)
+{
+    parameters = textureParameters;
+    allocateOnGPU();
 }
 
 void Texture::updateOnGPU()

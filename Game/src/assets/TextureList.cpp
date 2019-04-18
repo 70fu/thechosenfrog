@@ -24,6 +24,8 @@ protected:
             ImageData newImageData(width, height, channelCount);
             newImageData.data = data;
             asset.data = std::move(newImageData);
+            //use parameters set before loading from the first time
+            asset.allocateOnGPU();
             return true;
         }
         else
