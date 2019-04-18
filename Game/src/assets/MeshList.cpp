@@ -14,9 +14,6 @@ protected:
     void loadAssets(MeshAsset *assets, size_t size, AssetManager& assetManager) override
     {
         loadAssetsFromFileHelper("/meshes/cross.obj",MeshIds::DEFAULT,assets[MeshIds::DEFAULT],assetManager);
-
-        for(int i = 0;i<size;++i)
-            assets[i].allocateOnGPU(GL_STATIC_DRAW);
         //...
     }
 
@@ -131,6 +128,7 @@ protected:
             asset.surface.dataFormatBitmask&=~Surface::COLORS_FORMAT;
 
         // We're done. Everything will be cleaned up by the importer destructor
+        asset.allocateOnGPU(GL_STATIC_DRAW);
         return true;
     }
 

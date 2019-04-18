@@ -56,6 +56,7 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     materialListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::MATERIAL_LIST,&materialList);
     shaderListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_LIST,&shaderList);
     shaderProgramListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_PROGRAM_LIST,&shaderProgramList);
+    textureListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::TEXTURE_LIST,&textureList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -93,8 +94,14 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
 
     if(!filewatch_mount(filewatches[i], "../../Game/assets/meshes", FILEWATCH_MESH_PATH))
         Log::getInstance().Error("Failed to mount file watcher to mesh directory");
-    if(!filewatch_start_watching(filewatches[i], FILEWATCH_SOUND_PATH, AssetManager::filewatchCallback, this))
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_MESH_PATH, AssetManager::filewatchCallback, this))
         Log::getInstance().Error("Failed to start watching mesh directory");
+    ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/textures", FILEWATCH_TEXTURE_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to texture directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_TEXTURE_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching textures directory");
     ++i;
 #endif
 }
@@ -125,6 +132,7 @@ void AssetManager::cleanup()
     cleanupMaterials();
     cleanupShaderPrograms();
     cleanupShaders();
+    cleanupTextures();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -179,6 +187,14 @@ ShaderProgramAsset *AssetManager::getShaderProgram(AssetId id)
         return &shaderPrograms[ShaderProgramIds::DEFAULT];
 }
 
+TextureAsset *AssetManager::getTexture(AssetId id)
+{
+    if(id<TEXTURE_SIZE)
+        return &textures[id];
+    else
+        return &textures[TextureIds::DEFAULT];
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -211,6 +227,11 @@ void AssetManager::OnConstructorsAdded() {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,shaderProgramListId,&shaderProgramList))
             assetBitmask|=AssetType::SHADER_PROGRAM;
     }
+    if(textureList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,textureListId,&textureList))
+            assetBitmask|=AssetType::TEXTURE;
+    }
 
     //reload lists of asset types whose classes have changed
     loadAssets(assetBitmask);
@@ -241,6 +262,8 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
     }
     if((assetBitmask&AssetType::SHADER_PROGRAM)!=0)
         storeFilePaths(paths,shaderProgramList->loadAll(shaderPrograms,paths,SHADER_PROGRAM_SIZE,*this));
+    if((assetBitmask&AssetType::TEXTURE)!=0)
+        storeFilePaths(paths,textureList->loadAll(textures,paths,TEXTURE_SIZE,*this));
     //...
 }
 
@@ -252,6 +275,7 @@ void AssetManager::reloadAssets()
     cleanupMaterials();
     cleanupShaderPrograms();
     cleanupShaders();
+    cleanupTextures();
 
     loadAssets(AssetType::ALL);
 }
@@ -298,6 +322,8 @@ void AssetManager::reloadFileAsset(const std::string& path)
             }
             break;
         }
+        case AssetType::TEXTURE:
+            textureList->loadFromFile(path,textures[id.id],*this);
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
             break;
@@ -371,4 +397,15 @@ void AssetManager::cleanupShaderPrograms()
 void AssetManager::cleanupShaderProgram(ShaderProgramAsset &shaderProgramAsset)
 {
     shaderProgramAsset.cleanup();
+}
+
+void AssetManager::cleanupTextures()
+{
+    for(int i = 0;i<TEXTURE_SIZE && i<TextureIds::TEXTURE_COUNT;++i)
+        cleanupTexture(textures[i]);
+}
+
+void AssetManager::cleanupTexture(TextureAsset &textureAsset)
+{
+    textureAsset.cleanup();
 }

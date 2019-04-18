@@ -64,6 +64,8 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		libs/imgui/imgui_impl_glfw.h
 		libs/imgui/imgui_impl_opengl3.cpp
 		libs/imgui/imgui_impl_opengl3.h
+
+		libs/stb_image/stb_image.h
 	#------end libs
 		src/IGameRenderer.h
 		src/GameRenderer.cpp
@@ -74,10 +76,16 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/util/CameraUtil.cpp src/util/CameraUtil.h
 		src/scenes/IScene.h
 		src/scenes/MainScene.cpp
-		src/components/CameraControllerComponent.cpp src/components/CameraControllerComponent.h)
+		src/components/CameraControllerComponent.cpp src/components/CameraControllerComponent.h
+		src/assets/ImageData.cpp src/assets/ImageData.h
+		src/assets/TextureList.cpp src/assets/TextureIds.h
+		src/util/Color.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)
+
+#stb_image
+target_include_directories(thechosenfrog PRIVATE libs/stb_image)
 
 #runtime compiled cpp
 target_include_directories(thechosenfrog PRIVATE ${CMAKE_SOURCE_DIR}/RuntimeCompiledCPlusPlus/RuntimeCompiler)

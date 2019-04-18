@@ -22,6 +22,7 @@
 #include "Material.h"
 #include "ShaderIds.h"
 #include "ShaderProgramIds.h"
+#include "TextureIds.h"
 
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
@@ -42,7 +43,8 @@ static constexpr size_t MESH_SIZE = MeshIds::MESH_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t MATERIAL_SIZE = MaterialIds::MATERIAL_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t SHADER_SIZE = ShaderIds::SHADER_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t SHADER_PROGRAM_SIZE = ShaderProgramIds::SHADER_PROGRAM_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE});
+static constexpr size_t TEXTURE_SIZE = TextureIds::TEXTURE_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -57,6 +59,7 @@ private:
     MaterialAsset materials[MATERIAL_SIZE];
     ShaderAsset shaders[SHADER_SIZE];
     ShaderProgramAsset shaderPrograms[SHADER_PROGRAM_SIZE];
+    TextureAsset textures[TEXTURE_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -77,13 +80,15 @@ private:
     ObjectId shaderListId;
     AssetList<ShaderProgramAsset ,AssetType::SHADER_PROGRAM>* shaderProgramList;
     ObjectId shaderProgramListId;
+    AssetList<TextureAsset ,AssetType::TEXTURE>* textureList;
+    ObjectId textureListId;
 
 #ifndef NDEBUG
     //file watcher
     static constexpr double FILEWATCH_UPDATE_INTERVAL = 1;
     double fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
     assetsys_t* assetsys;
-    filewatch_t* filewatches[5];
+    filewatch_t* filewatches[6];
 
     //virtual file watcher path
     static constexpr const char* FILEWATCH_SETTINGS_PATH = "/settings";
@@ -91,6 +96,7 @@ private:
     static constexpr const char* FILEWATCH_MUSIC_PATH = "/music";
     static constexpr const char* FILEWATCH_SOUND_PATH = "/sounds";
     static constexpr const char* FILEWATCH_MESH_PATH = "/meshes";
+    static constexpr const char* FILEWATCH_TEXTURE_PATH = "/textures";
     //...
 #endif
 public:
@@ -142,6 +148,12 @@ public:
      * @return pointer to shader program asset with given id, or default shader program if there is no shader program with given id, never returns nullptr
      */
     ShaderProgramAsset* getShaderProgram(AssetId id);
+
+    /**
+     * @param id
+     * @return pointer to texture asset with given id, or default texture if there is no texture with given id, never returns nullptr
+     */
+    TextureAsset* getTexture(AssetId id);
 private:
     /**
      * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
@@ -179,6 +191,9 @@ private:
 
     void cleanupShaderPrograms();
     void cleanupShaderProgram(ShaderProgramAsset& shaderProgramAsset);
+
+    void cleanupTextures();
+    void cleanupTexture(Texture& textures);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

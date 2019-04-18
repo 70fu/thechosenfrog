@@ -36,7 +36,7 @@ protected:
             return false;
         }
 
-        //TODO OH NO, hard coded values, plz remove
+        //TODO OH NO, hard coded valueasset.compile();s, plz remove
         //update trello doc if this is changed
         std::string fileEnding = path.substr(lastDotI+1);
         if(fileEnding=="vert")
@@ -50,7 +50,10 @@ protected:
         }
 
         //compile
-        return asset.compile();
+        bool compileResult = asset.compile();
+        if(!compileResult)
+            asset.cleanup();
+        return compileResult;
     }
 
     void loadDefault(ShaderAsset &asset, AssetManager& assetManager) override

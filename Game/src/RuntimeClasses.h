@@ -26,7 +26,8 @@ enum RuntimeClassIds : unsigned char
 	SHADER_PROGRAM_LIST,
 	GAME_RENDERER,
 	GAME_UPDATER,
-	MAIN_SCENE
+	MAIN_SCENE,
+	TEXTURE_LIST
 };
 
 /**
@@ -45,6 +46,7 @@ namespace RuntimeClassNames
 	static constexpr const char* GAME_RENDERER = "GameRenderer";
 	static constexpr const char* GAME_UPDATER = "GameUpdater";
 	static constexpr const char* MAIN_SCENE = "MainScene";
+	static constexpr const char* TEXTURE_LIST = "TextureList";
 };
 
 #endif //CGUE19_THECHOSENFROG_RUNTIMECLASSES_H

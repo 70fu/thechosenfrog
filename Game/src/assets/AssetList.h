@@ -50,6 +50,7 @@ protected:
 
     /**
      * Loads the asset file into given asset object
+     * if false is returned given asset must be in a state, where it can be loaded to (cleaned up)
      * @param path !=nullptr
      * @param asset
      * @param path, complete path to asset
