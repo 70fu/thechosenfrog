@@ -15,6 +15,16 @@ public:
     GLuint tWrap = GL_REPEAT;
 };
 
+/**
+ * Manages a texture on the GPU
+ * allocateOnGPU needs to be called in order to return valid handles
+ * Usage:
+ * 1. set data
+ * 2. allocateOnGPU
+ * 3. update data and call updateOnGPU as often as you want
+ * 4. cleanup
+ * 5. Repeat if desired
+ */
 class Texture
 {
     friend class TextureList;
@@ -26,7 +36,7 @@ private:
     bool allocated = false;
 
     /**
-     * Allocates on gpu using current parameters
+     * Allocates on gpu using currently set parameters
      */
     void allocateOnGPU();
 public:
@@ -35,10 +45,20 @@ public:
      */
     ImageData data;
 
+    /**
+     * Allocates image data on the gpu with given parameters
+     * @param textureParameters
+     */
     void allocateOnGPU(TextureParameters textureParameters);
 
+    /**
+     * Updates image data on the gpu
+     */
     void updateOnGPU();
 
+    /**
+     * Deletes texture on the gpu, needs to be called before calling allocate again
+     */
     void cleanup();
 
     const GLuint& getTextureHandle() const;

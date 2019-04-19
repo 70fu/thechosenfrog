@@ -18,6 +18,20 @@ ImageData::ImageData()
 
 ImageData::ImageData(unsigned int width, unsigned int height, unsigned int channelCount):width(width),height(height),channelCount(channelCount)
 {
+    //TODO only in debug mode
+    if(channelCount==0)
+    {
+        ImGuiAl::Log::getInstance().Warn(
+                "Cannot create image with channel count 0, creating with channel count 1 instead");
+        this->channelCount = channelCount = 1;
+    }
+    if(channelCount>4)
+    {
+        ImGuiAl::Log::getInstance().Warn(
+                "Cannot create image with channel count %d, creating with channel count 4 instead",channelCount);
+        this->channelCount = channelCount = 4;
+    }
+
     data = new unsigned char[width*height*channelCount];
 }
 

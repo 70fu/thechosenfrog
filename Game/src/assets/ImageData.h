@@ -3,10 +3,16 @@
 
 #include "../util/Color.h"
 
-//TODO documentation
+/**
+ * Is an editable Image with fixed size and number of channels in RAM
+ * Channel count may be:
+ * 1 - gray image
+ * 2 - gray image with alpha
+ * 3 - rgb
+ * 4 - rgba
+ */
 class ImageData
 {
-    //TODO check if channel count is valid (1-4)
     friend class TextureList;
     friend class Texture;
 private:
@@ -20,6 +26,11 @@ private:
     bool isInBounds(unsigned int x, unsigned int y) const;
     unsigned int getIndex(unsigned int x, unsigned int y) const;
 public:
+    /**
+     * @param width
+     * @param height
+     * @param channelCount is clamped to 1-4
+     */
     ImageData(unsigned int width, unsigned int height, unsigned int channelCount);
     ImageData(const ImageData& other);
     ImageData(ImageData&& other) noexcept;
@@ -29,7 +40,22 @@ public:
     unsigned int getHeight() const;
     unsigned int getChannelCount() const;
 
+    /**
+     * @param x >=0 && <width
+     * @param y >=0 && <height
+     * @return color at given position
+     */
     Color getPixel(unsigned int x, unsigned int y) const;
+    /**
+     * If channelCount is:
+     * 1 - color.r is used
+     * 2 - color.r and color.a is used
+     * 3 - color.r, color.g, color.b is used
+     * 4 - all components on color are used
+     * @param x >=0 && <width
+     * @param y >=0 && <height
+     * @param color is the new color at given position
+     */
     void setPixel(unsigned int x, unsigned int y, const Color& color);
 
     ImageData& operator=(const ImageData& other);
