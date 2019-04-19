@@ -15,8 +15,9 @@
  */
 class Mesh
 {
+    friend class MeshList;
 private:
-    GLuint usage;
+    GLuint usage = GL_STATIC_DRAW;
     GLuint vaoHandle;
 
     //vbo handles
@@ -29,8 +30,12 @@ private:
      */
     GLuint iVBOHandle;
 
-    bool allocated;
+    bool allocated = false;
 
+    /**
+     * Allocates given surface on gpu with currently configured usage
+     */
+    void allocateOnGPU();
     void uploadSurfaceData();
     void uploadBufferDataHelper(Surface::SurfaceDataType dataType, int &offset, size_t size, const void *data,
                                 unsigned char componentNum);

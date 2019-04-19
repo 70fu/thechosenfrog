@@ -5,43 +5,14 @@
 #include "Mesh.h"
 #include "../logger/imguial_log.h"
 
-void Mesh::uploadSurfaceData() {
-    //set data aligned in buffer (vvvnnntttuuuccc)
-    int offset = 0;
-    uploadBufferDataHelper(Surface::POSITIONS,offset,surface.positions.size()*sizeof(glm::vec3),surface.positions.data(),3);
-    uploadBufferDataHelper(Surface::NORMALS,offset,surface.normals.size()*sizeof(glm::vec3),surface.normals.data(),3);
-    uploadBufferDataHelper(Surface::TANGENTS,offset,surface.tangents.size()*sizeof(glm::vec3),surface.tangents.data(),3);
-    uploadBufferDataHelper(Surface::UVS,offset,surface.uvs.size()*sizeof(glm::vec2),surface.uvs.data(),2);
-    uploadBufferDataHelper(Surface::COLORS,offset,surface.colors.size()*sizeof(glm::vec4),surface.colors.data(),4);
-}
-
-void Mesh::uploadBufferDataHelper(Surface::SurfaceDataType dataType, int &offset, size_t size, const void *data,
-                                  unsigned char componentNum) {
-    if((surface.dataFormatBitmask&(1<<dataType)) != 0)
-    {
-        //TODO check data types of parameters
-        //upload data
-        glBufferSubData(GL_ARRAY_BUFFER,offset,size,data);
-        if(!allocated)
-        {
-            //Bind to attribute position
-            glVertexAttribPointer(dataType, componentNum, GL_FLOAT, GL_FALSE, componentNum * sizeof(float),
-                                  (void *) offset);
-            glEnableVertexAttribArray(dataType);
-        }
-
-        offset+=size;
-    }
-}
-
-void Mesh::allocateOnGPU(GLuint usage) {
+void Mesh::allocateOnGPU()
+{
     if(allocated)
     {
         ImGuiAl::Log::getInstance().Warn("allocate called even though mesh has already been allocated, call ignored");
         return;
     }
 
-    this->usage=usage;
     //TODO check if arrays have correct (same) sizes
 
     //generate VAO
@@ -74,6 +45,40 @@ void Mesh::allocateOnGPU(GLuint usage) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     allocated = true;
+}
+
+void Mesh::uploadSurfaceData() {
+    //set data aligned in buffer (vvvnnntttuuuccc)
+    int offset = 0;
+    uploadBufferDataHelper(Surface::POSITIONS,offset,surface.positions.size()*sizeof(glm::vec3),surface.positions.data(),3);
+    uploadBufferDataHelper(Surface::NORMALS,offset,surface.normals.size()*sizeof(glm::vec3),surface.normals.data(),3);
+    uploadBufferDataHelper(Surface::TANGENTS,offset,surface.tangents.size()*sizeof(glm::vec3),surface.tangents.data(),3);
+    uploadBufferDataHelper(Surface::UVS,offset,surface.uvs.size()*sizeof(glm::vec2),surface.uvs.data(),2);
+    uploadBufferDataHelper(Surface::COLORS,offset,surface.colors.size()*sizeof(glm::vec4),surface.colors.data(),4);
+}
+
+void Mesh::uploadBufferDataHelper(Surface::SurfaceDataType dataType, int &offset, size_t size, const void *data,
+                                  unsigned char componentNum) {
+    if((surface.dataFormatBitmask&(1<<dataType)) != 0)
+    {
+        //TODO check data types of parameters
+        //upload data
+        glBufferSubData(GL_ARRAY_BUFFER,offset,size,data);
+        if(!allocated)
+        {
+            //Bind to attribute position
+            glVertexAttribPointer(dataType, componentNum, GL_FLOAT, GL_FALSE, componentNum * sizeof(float),
+                                  (void *) offset);
+            glEnableVertexAttribArray(dataType);
+        }
+
+        offset+=size;
+    }
+}
+
+void Mesh::allocateOnGPU(GLuint usage) {
+    this->usage = usage;
+    allocateOnGPU();
 }
 
 void Mesh::updateOnGPU() {

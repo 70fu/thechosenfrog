@@ -13,6 +13,7 @@ class MeshList : public TInterface<RuntimeClassIds::MESH_LIST,AssetList<MeshAsse
 protected:
     void loadAssets(MeshAsset *assets, size_t size, AssetManager& assetManager) override
     {
+        //usage can be configured on the meshes before loading them
         loadAssetsFromFileHelper("/meshes/cross.obj",MeshIds::DEFAULT,assets[MeshIds::DEFAULT],assetManager);
         //...
     }
@@ -127,8 +128,8 @@ protected:
         else
             asset.surface.dataFormatBitmask&=~Surface::COLORS_FORMAT;
 
-        // We're done. Everything will be cleaned up by the importer destructor
-        asset.allocateOnGPU(GL_STATIC_DRAW);
+        //allocate mesh on the gpu with usage configured before calling this method
+        asset.allocateOnGPU();
         return true;
     }
 
