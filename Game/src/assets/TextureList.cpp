@@ -13,6 +13,8 @@ protected:
     void loadAssets(TextureAsset *assets, size_t size, AssetManager& assetManager) override
     {
         loadDefault(assets[TextureIds::DEFAULT],assetManager);
+        //you can set parameters on the texture before loading it
+        //...
     }
 
     bool loadAssetFromFile(const std::string &path, TextureAsset &asset) override
