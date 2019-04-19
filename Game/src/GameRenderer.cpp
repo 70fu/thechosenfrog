@@ -87,9 +87,9 @@ public:
             TransformComponent& cTransform = game.transformComps[camera.entity];
 
             //calculate projection view matrix
-            glm::mat4 pv = camera.getProjectionMatrix()*CameraUtil::getViewMatrix(cTransform.getTransformationMatrix());
+            glm::mat4 pv = camera.getProjectionMatrix()*CameraUtil::getViewMatrix(cTransform.getGlobalTransform());
             //get viewer pos
-            glm::vec3 viewerPos = cTransform.getTranslation();
+            glm::vec3 viewerPos = cTransform.getGlobalTranslation();
 
             /* --------------------------------------------- */
             // Render Mesh+Material+Transform
@@ -123,8 +123,8 @@ public:
 
                     //bind mesh
                     glBindVertexArray(mesh.mesh->getVAOHandle());
-                    glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getTransformationMatrix()));
-                    glm::mat4 inverseTransform = glm::inverse(transform.getTransformationMatrix());
+                    glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getGlobalTransform()));
+                    glm::mat4 inverseTransform = glm::inverse(transform.getGlobalTransform());
                     glUniformMatrix4fv(CommonShaderUniforms::NORMAL_MAT, 1, GL_FALSE, glm::value_ptr(glm::transpose(inverseTransform)));
 
                     //draw

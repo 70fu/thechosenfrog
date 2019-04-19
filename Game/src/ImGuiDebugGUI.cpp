@@ -21,6 +21,14 @@ private:
     ComponentId componentIndices[Components::COMPONENT_COUNT]={0};
     //endregion
 
+    void drawMat(const glm::mat4x4& mat)
+    {
+        glm::mat4 transposed = glm::transpose(mat);
+        ImGui::InputFloat4("",&transposed[0][0]);
+        ImGui::InputFloat4("",&transposed[1][0]);
+        ImGui::InputFloat4("",&transposed[2][0]);
+        ImGui::InputFloat4("",&transposed[3][0]);
+    }
 public:
 
     virtual void Serialize(ISimpleSerializer *pSerializer) override
@@ -94,12 +102,11 @@ public:
                     if(ImGui::InputFloat3("Scale: ",glm::value_ptr(scale)))
                         transform.setScaling(scale);
 
-                    ImGui::Text("Matrix");
-                    glm::mat4 matrix = glm::transpose(transform.getTransformationMatrix());
-                    ImGui::InputFloat4("",&matrix[0][0]);
-                    ImGui::InputFloat4("",&matrix[1][0]);
-                    ImGui::InputFloat4("",&matrix[2][0]);
-                    ImGui::InputFloat4("",&matrix[3][0]);
+                    ImGui::Text("Local Matrix");
+                    drawMat(transform.getTransformationMatrix());
+
+                    ImGui::Text("Global Matrix");
+                    drawMat(transform.getGlobalTransform());
                 }
 
                 ImGui::EndTabItem();
