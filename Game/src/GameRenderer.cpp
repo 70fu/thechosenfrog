@@ -12,6 +12,9 @@
 class GameRenderer : public TInterface<RuntimeClassIds ::GAME_RENDERER,IGameRenderer>
 {
 private:
+    //helper variable for texture units which should be cleared after a material bind
+    GLuint nextFreeTextureUnit = 0;
+
     template<typename T>
     inline bool checkMask(MaterialData::UniformValue<T>& uniformValue,long int& uniformMask)
     {
@@ -64,8 +67,17 @@ private:
         }
         for(auto& p : mat.textures)
         {
-            //if (checkMask(p.second, uniformMask))
-            //TODO bind textures
+            if (checkMask(p.second, uniformMask))
+            {
+                //bind texture to texture unit
+                glActiveTexture(GL_TEXTURE0+nextFreeTextureUnit);
+                glBindTexture(p.second.value->getTextureParameters().target,p.second.value->getTextureHandle());
+
+                //bind texture unit id to uniform
+                glUniform1i(p.second.getLocation(),nextFreeTextureUnit);
+
+                ++nextFreeTextureUnit;
+            }
         }
     }
 
@@ -118,6 +130,8 @@ public:
                     //bind uniforms, first material data of component, then of the material asset
                     //stores which uniforms have already been set, long int is at least 32 bit, so uniform locations until 31 are currently supported
                     long int uniformMask = 0;
+                    //start binding textures at texture unit 0
+                    nextFreeTextureUnit = 0;
                     bindMaterialData(material.instanceProp,uniformMask);
                     bindMaterialData(material.material->data,uniformMask);
 
