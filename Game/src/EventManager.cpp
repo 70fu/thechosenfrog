@@ -7,6 +7,23 @@
 #include <GLFW/glfw3.h>
 
 class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
+
+private:
+	void removeTransformChildrenHelper(Game& game, TransformComponent& transform)
+	{
+		//remove children first before moving to sibling
+		if(transform.getFirstChild()!=nullptr)
+			removeTransformChildrenHelper(game,*transform.getFirstChild());
+
+		//remove next sibling
+		if(transform.getNextSibling()!=nullptr)
+			removeTransformChildrenHelper(game,*transform.getNextSibling());
+
+		//destroy yourself
+		game.deleteEntity(transform.entity);
+	}
+
+public:
 	void keyCallback(Game& game, int key, int scancode, int action, int mods) override
 	{
 		//toggle debug windows
@@ -73,6 +90,45 @@ class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
 		if(entered==GLFW_PRESS)
 			game.setCursorEnteredWindow(true);
 	}
+
+	void entityAdded(Game &game, EntityId entityId) override
+	{
+
+	}
+
+	void entityPreRemove(Game &game, EntityId entityId) override
+	{
+		//region remove entities which are children of transform
+		{
+			if(game.hasComponents(entityId,Components::TRANSFORM_BIT))
+			{
+				TransformComponent& transform = game.transformComps[entityId];
+				if(transform.getFirstChild()!=nullptr)
+					removeTransformChildrenHelper(game,*transform.getFirstChild());
+			}
+		}
+		//endregion
+	}
+
+	void componentAdded(Game &game, EntityId entityId, ComponentId componentId) override
+	{
+
+	}
+
+	void componentPreRemove(Game &game, EntityId entityId, ComponentId componentId) override
+	{
+		//region if transform component is removed, clear parent of children
+		{
+			if(componentId==Components::TRANSFORM)
+			{
+				TransformComponent& transform = game.transformComps[entityId];
+				for(TransformComponent* child = transform.getFirstChild();child!=nullptr;child=child->getNextSibling())
+					child->clearParent(true);
+			}
+		}
+		//endregion
+	}
+
 private:
 	/**
 	 * this is only used to make the key callback function more readable (

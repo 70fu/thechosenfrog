@@ -99,6 +99,10 @@ public:
             //return component at numActive position, and increase active components
             T& ret = components[numActive++];
             ret.entity = entityId;
+
+            //notify event manager
+            game.eventManager->componentAdded(game,entityId,TYPE_ID);
+
             return ret;
         }
         void removeComp(EntityId entityId) override
@@ -112,6 +116,9 @@ public:
                 ImGuiAl::Log::getInstance().Warn("Cannot remove component from entity with id %d, entity has no component of type %d",entity,TYPE_ID);
                 return ;
             }
+
+			//notify event manager
+			game.eventManager->componentPreRemove(game,entityId,TYPE_ID);
 
             //set component bit to zero
             entity.componentMask&=~Components::typeToMask(TYPE_ID);

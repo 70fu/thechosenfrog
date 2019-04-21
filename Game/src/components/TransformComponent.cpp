@@ -191,3 +191,18 @@ void TransformComponent::clearParent(bool keepGlobalPos)
 			firstChild->parentChanged();
 	}
 }
+
+TransformComponent *TransformComponent::getFirstChild() const
+{
+    return firstChild;
+}
+
+TransformComponent *TransformComponent::getNextSibling() const
+{
+    return nextSibling;
+}
+
+TransformComponent *TransformComponent::getPrevSibling() const
+{
+    return prevSibling;
+}

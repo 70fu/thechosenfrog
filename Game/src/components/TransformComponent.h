@@ -77,5 +77,19 @@ public:
 	 * @param keepGlobalPos
 	 */
 	void clearParent(bool keepGlobalPos=true);
+
+	/**
+	 * @return the first child of this transform, nullptr if this transform has no child
+	 */
+	TransformComponent* getFirstChild() const;
+	/**
+	 * @return the next sibling, or nullptr if this transform has no next sibling (last one)
+	 */
+    TransformComponent* getNextSibling() const;
+    /**
+	 * @return the previous sibling, or nullptr if this transform has no previous sibling (first one)
+	 */
+    TransformComponent* getPrevSibling() const;
+
 };
 

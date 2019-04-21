@@ -166,6 +166,9 @@ EntityId Game::createEntity()
 
     entities[id].deleted=false;
 
+    //notify event manager
+    eventManager->entityAdded(*this,id);
+
     return id;
 }
 
@@ -190,6 +193,9 @@ void Game::deleteEntity(EntityId entityId)
 
         //mark entity as deleted
         entity.deleted = true;
+
+        //notify event manager
+        eventManager->entityPreRemove(*this,entityId);
     }
 }
 
