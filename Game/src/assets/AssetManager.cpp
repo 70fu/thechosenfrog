@@ -259,7 +259,20 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         assetBitmask|=AssetType::SHADER_PROGRAM;
     }
     if((assetBitmask&AssetType::SHADER_PROGRAM)!=0)
-        storeFilePaths(paths,shaderProgramList->loadAll(shaderPrograms,paths,SHADER_PROGRAM_SIZE,*this));
+    {
+        storeFilePaths(paths, shaderProgramList->loadAll(shaderPrograms, paths, SHADER_PROGRAM_SIZE, *this));
+
+        //if a reload of materials has not been requested, then at least the uniform locations have to be updated
+        if((assetBitmask&AssetType::MATERIAL)==0)
+        {
+            for(int j = 0;j<MATERIAL_SIZE && j<MaterialIds::MATERIAL_COUNT;++j)
+            {
+                MaterialAsset& material = materials[j];
+                material.data.clearLocations();
+                material.data.retrieveLocations(*material.shader);
+            }
+        }
+    }
     if((assetBitmask&AssetType::TEXTURE)!=0)
         storeFilePaths(paths,textureList->loadAll(textures,paths,TEXTURE_SIZE,*this));
     if((assetBitmask&AssetType::MATERIAL)!=0)
@@ -316,8 +329,18 @@ void AssetManager::reloadFileAsset(const std::string& path)
                 if (shaderProgram.hasShader(shader))
                 {
                     //relink program
-                    shaderProgram.cleanup();
-                    shaderProgram.link();
+                    shaderProgram.relink();
+
+                    //let materials using this program retrieve uniforms again
+                    for(int j = 0;j<MATERIAL_SIZE && j<MaterialIds::MATERIAL_COUNT;++j)
+                    {
+                        MaterialAsset& material = materials[j];
+                        if(material.shader==&shaderPrograms[i])
+                        {
+                            material.data.clearLocations();
+                            material.data.retrieveLocations(*material.shader);
+                        }
+                    }
                 }
             }
             break;

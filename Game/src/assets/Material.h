@@ -44,6 +44,14 @@ public:
     std::unordered_map<std::string,UniformValue<glm::mat4>> mat4s;
     std::unordered_map<std::string,UniformValue<TextureAsset*>> textures;
 
+    /**
+     * resets uniform locations of material properties to -1
+     */
+    void clearLocations();
+    /**
+     * calls getUniformLocation on given shader for each material property and caches the uniform location
+     * @param shaderAsset
+     */
     void retrieveLocations(ShaderProgramAsset& shaderAsset);
     /**
      * Removes all property values

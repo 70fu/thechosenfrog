@@ -46,6 +46,11 @@ public:
     ShaderProgram(std::initializer_list<Shader*> shaders);
 
     bool link();
+    /**
+     * Relink shader program with the same shaders
+     * @return
+     */
+    bool relink();
     void cleanup();
 
     GLint getUniformLocation(const std::string& name);

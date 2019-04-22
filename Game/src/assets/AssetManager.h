@@ -28,9 +28,9 @@
 //#include "MusicList.cpp"
 
 #ifndef NDEBUG
-#define EXTRA_ASSET_SPACE 0
-#else
 #define EXTRA_ASSET_SPACE 16
+#else
+#define EXTRA_ASSET_SPACE 0
 #endif
 
 //forward declarations

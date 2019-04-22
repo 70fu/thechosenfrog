@@ -1,5 +1,26 @@
 #include "Material.h"
 
+
+void MaterialData::clearLocations()
+{
+    for(auto& u : floats)
+        u.second.location = -1;
+    for(auto& u : vec2s)
+        u.second.location = -1;
+    for(auto& u : vec3s)
+        u.second.location = -1;
+    for(auto& u : vec4s)
+        u.second.location = -1;
+    for(auto& u : mat2s)
+        u.second.location = -1;
+    for(auto& u : mat3s)
+        u.second.location = -1;
+    for(auto& u : mat4s)
+        u.second.location = -1;
+    for(auto& u : textures)
+        u.second.location = -1;
+}
+
 void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
 {
     for(auto& u : floats)

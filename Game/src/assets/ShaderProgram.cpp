@@ -53,6 +53,25 @@ bool ShaderProgram::link()
     return succeded;
 }
 
+bool ShaderProgram::relink()
+{
+    if(!linked)
+    {
+        Log::getInstance().Warn("Cannot relink shader program, that has not been linked yet, call ignored");
+        return false;
+    }
+
+    //delete program on GPU
+    glDeleteProgram(shaderProgramHandle);
+
+    //clear sources
+    uniformLocations.clear();
+
+    linked = false;
+
+    return link();
+}
+
 void ShaderProgram::cleanup()
 {
     if(!linked)
