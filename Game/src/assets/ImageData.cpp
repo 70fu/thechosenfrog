@@ -9,7 +9,7 @@ bool ImageData::isInBounds(unsigned int x, unsigned int y) const
 
 unsigned int ImageData::getIndex(unsigned int x, unsigned int y) const
 {
-    return y*width+x;
+    return (y*width+x)*channelCount;
 }
 
 ImageData::ImageData()
@@ -32,7 +32,7 @@ ImageData::ImageData(unsigned int width, unsigned int height, unsigned int chann
         this->channelCount = channelCount = 4;
     }
 
-    data = new unsigned char[width*height*channelCount];
+    data = new unsigned char[width*height*channelCount]();
 }
 
 ImageData::ImageData(const ImageData &other) : width(other.width), height(other.height), channelCount(other.channelCount)
