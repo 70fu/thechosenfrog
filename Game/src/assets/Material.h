@@ -51,15 +51,16 @@ public:
     void clearProps();
 
     //set methods, override a value for a material property or add the property if it is not present
-    /*void setFloat(const std::string& name, float value);
-    void setVec2(const std::string& name, glm::vec2 vec2);
-    void setVec3(const std::string& name, glm::vec3 vec3);
-    void setVec4(const std::string& name, glm::vec4 vec4);
-    void setMat2(const std::string& name, glm::mat2 mat2);
-    void setMat3(const std::string& name, glm::mat3 mat3);
-    void setMat4(const std::string& name, glm::mat4 mat4);
+    void setFloat(const std::string& name, float value);
+    void setVec2(const std::string& name, const glm::vec2& vec2);
+    void setVec3(const std::string& name, const glm::vec3& vec3);
+    void setVec4(const std::string& name, const glm::vec4& vec4);
+    void setMat2(const std::string& name, const glm::mat2& mat2);
+    void setMat3(const std::string& name, const glm::mat3& mat3);
+    void setMat4(const std::string& name, const glm::mat4& mat4);
     void setTexture(const std::string& name, TextureAsset* texture);
 
+    /*
     //iterators
     auto beginFloats();
     auto endFloats();
