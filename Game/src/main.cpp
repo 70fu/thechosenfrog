@@ -255,13 +255,6 @@ int main(int argc, char** argv)
     //setup joystick callbacks
     //TODO
 
-    //TODO do we need that?
-    //activate depth testing
-    //glEnable(GL_DEPTH_TEST);
-
-    //enable back-face culling
-    //glEnable(GL_CULL_FACE);
-
     /* --------------------------------------------- */
     // Update/Render Loop (using fixed time step), used https://medium.com/@tglaiel/how-to-make-your-game-run-at-60fps-24c61210fe75 for some design decisions
     /* --------------------------------------------- */
