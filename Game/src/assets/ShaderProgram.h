@@ -58,6 +58,11 @@ public:
     void addShader(Shader* shader);
     bool hasShader(Shader* shader);
 
+    std::vector<Shader*>::iterator begin(){return shaders.begin();};
+    std::vector<Shader*>::iterator end(){return shaders.end();};
+    std::vector<Shader*>::const_iterator begin() const {return shaders.begin();};
+    std::vector<Shader*>::const_iterator end() const {return shaders.end();};
+
     const GLuint& getProgramHandle() const;
 
 };

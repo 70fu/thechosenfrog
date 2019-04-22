@@ -143,13 +143,20 @@ private:
         ImGui::Image((void *) texture.getTextureHandle(), ImVec2(texture.data.getWidth(),texture.data.getHeight()));
     }
 
-    void drawShaderProgram(ShaderProgramAsset& program)
+    void drawShaderProgram(Game& game, ShaderProgramAsset& program)
     {
-        //TODO
-        ImGui::Text("This has not been implemented yet");
+        unsigned int i = 0;
+        for(auto shaderIt = program.begin();shaderIt!=program.end();++shaderIt,++i)
+        {
+            if(ImGui::TreeNode(getNum((*shaderIt)-game.getAssetManager().getShader(ShaderIds::DEFAULT))))
+            {
+                ImGui::TextUnformatted((*shaderIt)->sourceCode.c_str());
+                ImGui::TreePop();
+            }
+        }
     }
 
-    void drawMaterial(MaterialAsset& mat)
+    void drawMaterial(Game& game, MaterialAsset& mat)
     {
         if(ImGui::TreeNode("Properties"))
         {
@@ -211,7 +218,7 @@ private:
         //draw atttached shader program
         if(ImGui::TreeNode("Shader Program"))
         {
-            drawShaderProgram(*mat.shader);
+            drawShaderProgram(game,*mat.shader);
             ImGui::TreePop();
         }
 
@@ -358,7 +365,32 @@ public:
                     {
                         if(ImGui::TreeNode(getNum(i)))
                         {
-                            drawMaterial(*game->getAssetManager().getMaterial(i));
+                            drawMaterial(*game,*game->getAssetManager().getMaterial(i));
+                            ImGui::TreePop();
+                        }
+                    }
+                    ImGui::EndTabItem();
+                }
+                //endregion
+                //region Shaders
+                if (ImGui::BeginTabItem("Shaders"))
+                {
+                    for(unsigned int i = 0;i<ShaderIds::SHADER_COUNT;++i)
+                    {
+                        if(ImGui::CollapsingHeader(getNum(i)))
+                            ImGui::TextUnformatted(game->getAssetManager().getShader(i)->sourceCode.c_str());
+                    }
+                    ImGui::EndTabItem();
+                }
+                //endregion
+                //region Shader Programs
+                if (ImGui::BeginTabItem("Shader Programs"))
+                {
+                    for(unsigned int i = 0;i<ShaderProgramIds::SHADER_PROGRAM_COUNT;++i)
+                    {
+                        if(ImGui::TreeNode(getNum(i)))
+                        {
+                            drawShaderProgram(*game,*game->getAssetManager().getShaderProgram(i));
                             ImGui::TreePop();
                         }
                     }
