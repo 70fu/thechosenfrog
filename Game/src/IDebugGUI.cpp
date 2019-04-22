@@ -30,3 +30,8 @@ bool IDebugGUI::isWindowEnabled(unsigned int window) {
     return (enabled&window)!=0;
 }
 
+void IDebugGUI::Init(bool isFirstInit)
+{
+    IObject::Init(isFirstInit);
+}
+

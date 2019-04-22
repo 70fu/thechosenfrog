@@ -16,7 +16,8 @@ namespace DebugWindowIds
     enum DebugWindowIds : unsigned int
     {
         LOGGER=1<<0,
-        COMPONENT_VIEWER=1<<1
+        COMPONENT_VIEWER=1<<1,
+        ASSET_VIEWER=1<<2
     };
 }
 

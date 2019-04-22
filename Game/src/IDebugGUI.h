@@ -22,6 +22,7 @@ public:
     unsigned int enabled=0;
 
     virtual void Serialize(ISimpleSerializer *pSerializer) override;
+    virtual void Init(bool isFirstInit) override;
 
     //These four functions take a bitmask (see DebugWindowIds for possible values)
     void enableWindow(unsigned int window);
