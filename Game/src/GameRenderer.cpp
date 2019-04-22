@@ -82,6 +82,18 @@ private:
     }
 
 public:
+    void Init(bool isFirstInit) override
+    {
+        if(isFirstInit)
+        {
+            //activate depth testing
+            glEnable(GL_DEPTH_TEST);
+
+            //enable back-face culling
+            glEnable(GL_CULL_FACE);
+        }
+    }
+
     void render(Game& game, int width, int height) override
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
