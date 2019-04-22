@@ -29,6 +29,7 @@ SOFTWARE.
 #include <stddef.h>
 #include <stdarg.h>
 #include <ICompilerLogger.h>
+#include <fstream>
 
 // Must be at most 65535
 #ifndef IMGUIAL_LOG_MAX_LINE_SIZE
@@ -105,7 +106,7 @@ namespace ImGuiAl
   protected:
       inline Log()
       {
-        Init();
+        //Init();
       }
 
     void   Write( const void* data, size_t size );
@@ -133,5 +134,6 @@ namespace ImGuiAl
     const char*     m_CumulativeLabel;
     const char*     m_FilterHeaderLabel;
     const char*     m_FilterLabel;
+    std::ofstream fileOutput;
   };
 }

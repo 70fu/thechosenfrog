@@ -27,13 +27,10 @@ SOFTWARE.
 #include "imguial_log.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <fstream>
-#include <iostream>
-
-std::fstream file;
 
 ImGuiAl::Log::~Log()
 {
+  fileOutput.close();//should be done automatically on destroying stream, but better be safe than sorry
 }
 
 bool ImGuiAl::Log::Init( unsigned flags, const char** more_actions )
@@ -65,7 +62,10 @@ bool ImGuiAl::Log::Init( unsigned flags, const char** more_actions )
   m_CumulativeLabel   = "Cumulative";
   m_FilterHeaderLabel = NULL;
   m_FilterLabel       = "Filter (inc,-exc)";
-  
+
+  if(!fileOutput.is_open())
+      fileOutput.open("IMGUI_LogToFILE_LogOutput.txt", std::ios::out);
+
   return true;
 }
 
@@ -140,10 +140,9 @@ void ImGuiAl::Log::VPrintf( Level level, const char* format, va_list args )
 /*
 	Parse Output to file IMGUI_LogToFILE_LogOutput.txt inside /home/user/CMakeBuilds/[BuildID]/build/x64-Debug/Game
 */
-  
- // file.open("IMGUI_LogToFILE_LogOutput.txt", std::ios::out | std::ios::app);
- // file << line << std::endl;
- // file.close();
+
+  fileOutput << "[" << m_Labels[level] << "] " << line << std::endl;
+  fileOutput.flush();
  //-------------------------
 
   m_ScrollToBottom = true;
