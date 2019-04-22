@@ -31,6 +31,17 @@ public:
             game.meshComps.addComp(id).mesh=game.getAssetManager().getMesh(MeshIds::DEFAULT);
             game.materialComps.addComp(id).material = game.getAssetManager().getMaterial(MaterialIds::DEFAULT);
         }
+
+        //make a textured cube
+        {
+            EntityId id = game.createEntity();
+            TransformComponent& transform = game.transformComps.addComp(id);
+            transform.setTranslationAndRotation({2,0,-5},{30*TO_RADIANS,30*TO_RADIANS,30*TO_RADIANS});
+            transform.setScaling({1,1.5f,0.5f});
+
+            game.meshComps.addComp(id).mesh=game.getAssetManager().getMesh(MeshIds::UNIT_CUBE);
+            game.materialComps.addComp(id).material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
+        }
     }
 };
 REGISTERCLASS(MainScene)
