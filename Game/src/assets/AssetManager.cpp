@@ -252,8 +252,6 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         storeFilePaths(paths,musicList->loadAll(music,paths,MUSIC_SIZE,*this));
     if((assetBitmask&AssetType::MESH)!=0)
         storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE,*this));
-    if((assetBitmask&AssetType::MATERIAL)!=0)
-        storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
     if((assetBitmask&AssetType::SHADER)!=0)
     {
         storeFilePaths(paths, shaderList->loadAll(shaders, paths, SHADER_SIZE, *this));
@@ -264,6 +262,8 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         storeFilePaths(paths,shaderProgramList->loadAll(shaderPrograms,paths,SHADER_PROGRAM_SIZE,*this));
     if((assetBitmask&AssetType::TEXTURE)!=0)
         storeFilePaths(paths,textureList->loadAll(textures,paths,TEXTURE_SIZE,*this));
+    if((assetBitmask&AssetType::MATERIAL)!=0)
+        storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
     //...
 }
 
