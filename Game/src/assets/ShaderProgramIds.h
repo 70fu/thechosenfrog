@@ -13,6 +13,7 @@ namespace ShaderProgramIds
     enum ShaderProgramIds : unsigned char
     {
         DEFAULT,
+        UNLIT,
 
         SHADER_PROGRAM_COUNT
     };

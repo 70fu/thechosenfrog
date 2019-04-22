@@ -15,6 +15,8 @@ namespace ShaderIds
         DEFAULT,
         DEFAULT_VERT,
         DEFAULT_FRAG,
+        UNLIT_VERT,
+        UNLIT_FRAG,
 
         SHADER_COUNT
     };

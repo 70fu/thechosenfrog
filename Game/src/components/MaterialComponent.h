@@ -13,6 +13,11 @@ public:
      */
     MaterialData instanceProp;
     MaterialAsset* material;
+
+    /**
+     * Should be called after values are initialized and after properties have been added
+     */
+    void retrieveUniformLocations();
 };
 
 

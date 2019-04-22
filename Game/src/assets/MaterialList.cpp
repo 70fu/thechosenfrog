@@ -12,6 +12,15 @@ protected:
     void loadAssets(MaterialAsset *assets, size_t size, AssetManager& assetManager) override
     {
         loadDefault(assets[MaterialIds::DEFAULT],assetManager);
+        //region unlit material
+        {
+            MaterialAsset& unlit = assets[MaterialIds::UNLIT];
+            unlit.shader = assetManager.getShaderProgram(ShaderProgramIds::UNLIT);
+            unlit.data.setTexture("diffuseTex",assetManager.getTexture(TextureIds::DEFAULT));
+
+            unlit.data.retrieveLocations(*unlit.shader);
+        }
+        //endregion
     }
 
     bool loadAssetFromFile(const std::string &path, MaterialAsset &asset) override

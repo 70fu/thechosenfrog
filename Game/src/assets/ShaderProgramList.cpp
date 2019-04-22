@@ -12,6 +12,22 @@ protected:
     void loadAssets(ShaderProgramAsset *assets, size_t size, AssetManager& assetManager) override
     {
         loadDefault(assets[ShaderProgramIds::DEFAULT],assetManager);
+        //configure unlit shader program
+        {
+            ShaderProgramAsset& unlit = assets[ShaderProgramIds::UNLIT];
+            unlit.addShader(assetManager.getShader(ShaderIds::UNLIT_VERT));
+            unlit.addShader(assetManager.getShader(ShaderIds::UNLIT_FRAG));
+        }
+
+        //link all shader programs, skip default program
+        for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
+        {
+            if(!assets[i].link())
+            {
+                ImGuiAl::Log::getInstance().Error("Using default shader program due to linking error in shader program %d",i);
+                loadDefault(assets[i],assetManager);
+            }
+        }
         //...
     }
 
