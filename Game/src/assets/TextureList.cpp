@@ -66,7 +66,7 @@ protected:
         }
 
         asset.data = std::move(image);
-        asset.allocateOnGPU({});
+        asset.allocateOnGPU({GL_TEXTURE_2D,false,GL_NEAREST,GL_NEAREST,GL_REPEAT,GL_REPEAT});
     }
 };
 REGISTERCLASS(TextureList);
