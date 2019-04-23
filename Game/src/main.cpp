@@ -169,8 +169,12 @@ int main(int argc, char** argv)
     /* --------------------------------------------- */
     // Load settings.ini
     /* --------------------------------------------- */
+	// Release mode
+	//INIReader reader("assets/settings/settings.ini");
 
-    INIReader reader("assets/settings/settings.ini");
+	// build cmake-build-debug 
+	// .exe will now start with "settings.ini"
+	INIReader reader("../../Game/assets/settings/settings.ini");
 
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value

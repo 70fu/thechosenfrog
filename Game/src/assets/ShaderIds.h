@@ -15,6 +15,8 @@ namespace ShaderIds
         DEFAULT,
         DEFAULT_VERT,
         DEFAULT_FRAG,
+		SKYBOX_FRAG,
+		SKYBOX_VERT,
 
         SHADER_COUNT
     };

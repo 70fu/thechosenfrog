@@ -13,6 +13,7 @@ namespace ShaderProgramIds
     enum ShaderProgramIds : unsigned char
     {
         DEFAULT,
+		SKYBOX,
 
         SHADER_PROGRAM_COUNT
     };

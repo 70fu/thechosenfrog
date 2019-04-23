@@ -15,6 +15,9 @@ protected:
         loadAssetsFromFileHelper("/shaders/default.vert",ShaderIds::DEFAULT_VERT,assets[ShaderIds::DEFAULT_VERT],assetManager);
         loadAssetsFromFileHelper("/shaders/default.frag",ShaderIds::DEFAULT_FRAG,assets[ShaderIds::DEFAULT_FRAG],assetManager);
         //...
+
+		loadAssetsFromFileHelper("/shaders/skybox.vert", ShaderIds::SKYBOX_VERT, assets[ShaderIds::SKYBOX_VERT], assetManager);
+		loadAssetsFromFileHelper("/shaders/skybox.frag", ShaderIds::SKYBOX_FRAG, assets[ShaderIds::SKYBOX_FRAG], assetManager);
     }
 
     bool loadAssetFromFile(const std::string &path, ShaderAsset &asset) override
