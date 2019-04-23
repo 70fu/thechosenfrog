@@ -114,3 +114,30 @@ target_link_libraries(thechosenfrog soloud)
 #assimp
 target_include_directories(thechosenfrog PRIVATE ${ASSIMP_INCLUDE_DIR})
 target_link_libraries(thechosenfrog assimp)
+
+#Physx
+#include headers
+target_include_directories(thechosenfrog PRIVATE ${CMAKE_SOURCE_DIR}/physx/include)
+
+#link to correct libraries
+set(PHYSX_BUILD_CONFIG checked)#todo choose release on release build
+
+if(WIN32)
+	set(PHYSX_PLATFORM windows)
+elseif(UNIX)
+	set(PHYSX_PLATFORM linux)
+endif()
+
+set(PHYSX_LIB_PATH ${CMAKE_SOURCE_DIR}/physx/${PHYSX_PLATFORM}/${PHYSX_BUILD_CONFIG}/)
+
+find_library(PHYSX_LIB NAMES PhysX PhysX_static_32 PhysX_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_COMMON_LIB NAMES PhysXCommon PhysXCommon_static_32 PhysXCommon_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_EXTENSION_LIB NAMES PhysXExtensions PhysXExtensions_static_32 PhysXExtensions_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_FOUNDATION_LIB NAMES PhysXFoundation PhysXFoundation_static_32 PhysXFoundation_static_64 PATHS ${PHYSX_LIB_PATH})
+
+target_link_libraries(thechosenfrog ${PHYSX_LIB} ${PHYSX_COMMON_LIB} ${PHYSX_EXTENSION_LIB} ${PHYSX_FOUNDATION_LIB})
+
+#physx needs to have either NDEBUG or (exclusively) _DEBUG defined
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+	add_definitions(-D_DEBUG)
+endif()
