@@ -79,7 +79,9 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/components/CameraControllerComponent.cpp src/components/CameraControllerComponent.h
 		src/assets/ImageData.cpp src/assets/ImageData.h
 		src/assets/TextureList.cpp src/assets/TextureIds.h
-		src/util/Color.h)
+		src/util/Color.h
+		src/Physics.cpp src/Physics.h
+		src/components/PhysicsComponent.cpp src/components/PhysicsComponent.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)
@@ -134,8 +136,13 @@ find_library(PHYSX_LIB NAMES PhysX PhysX_static_32 PhysX_static_64 PATHS ${PHYSX
 find_library(PHYSX_COMMON_LIB NAMES PhysXCommon PhysXCommon_static_32 PhysXCommon_static_64 PATHS ${PHYSX_LIB_PATH})
 find_library(PHYSX_EXTENSION_LIB NAMES PhysXExtensions PhysXExtensions_static_32 PhysXExtensions_static_64 PATHS ${PHYSX_LIB_PATH})
 find_library(PHYSX_FOUNDATION_LIB NAMES PhysXFoundation PhysXFoundation_static_32 PhysXFoundation_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_PVD_LIB NAMES PhysXPvdSDK PhysXPvdSDK_static_32 PhysXPvdSDK_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_COOKING_LIB NAMES PhysXCooking PhysXCooking_static_32 PhysXCooking_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_CHARACTER_LIB NAMES PhysXCharacterKinematic PhysXCharacterKinematic_static_32 PhysXCharacterKinematic_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_VEHICLE_LIB NAMES PhysXVehicle PhysXVehicle_static_32 PhysXVehicle_static_64 PATHS ${PHYSX_LIB_PATH})
 
-target_link_libraries(thechosenfrog ${PHYSX_LIB} ${PHYSX_COMMON_LIB} ${PHYSX_EXTENSION_LIB} ${PHYSX_FOUNDATION_LIB})
+
+target_link_libraries(thechosenfrog -Wl,--start-group ${PHYSX_LIB} ${PHYSX_COMMON_LIB} ${PHYSX_EXTENSION_LIB} ${PHYSX_FOUNDATION_LIB} ${PHYSX_PVD_LIB} ${PHYSX_COOKING_LIB} ${PHYSX_CHARACTER_LIB} ${PHYSX_VEHICLE_LIB} -Wl,--end-group)
 
 #physx needs to have either NDEBUG or (exclusively) _DEBUG defined
 if (CMAKE_BUILD_TYPE MATCHES Debug)

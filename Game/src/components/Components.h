@@ -18,6 +18,7 @@ namespace Components
 		MATERIAL,
 		CAMERA,
 		CAMERA_CONTROLLER,
+		PHYSICS,
 
         COMPONENT_COUNT
     };
@@ -32,7 +33,8 @@ namespace Components
 		TRANSFORM_BIT = 1 << TRANSFORM,
 		MATERIAL_BIT = 1 << MATERIAL,
 		CAMERA_BIT = 1<<CAMERA,
-		CAMERA_CONTROLLER_BIT = 1<<CAMERA_CONTROLLER
+		CAMERA_CONTROLLER_BIT = 1<<CAMERA_CONTROLLER,
+		PHYSICS_BIT = 1<<PHYSICS
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -47,6 +49,7 @@ namespace Components
 				MAX_ENTITIES,   //MATERIAL
 				1,              //CAMERA
 				1,				//CAMERA_CONTROLLER
+				MAX_ENTITIES,
             };
 
     constexpr MaskBits typeToMask(Types componentType){return static_cast<MaskBits>(1<<componentType);}

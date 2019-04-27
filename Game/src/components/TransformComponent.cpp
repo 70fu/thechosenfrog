@@ -206,3 +206,10 @@ TransformComponent *TransformComponent::getPrevSibling() const
 {
     return prevSibling;
 }
+
+void TransformComponent::cleanup(Game &game)
+{
+    //detach children
+    for(TransformComponent* child = firstChild;child!=nullptr;child=child->nextSibling)
+        child->clearParent(true);
+}

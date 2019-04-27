@@ -91,5 +91,7 @@ public:
 	 */
     TransformComponent* getPrevSibling() const;
 
+    void cleanup(Game &game) override;
+
 };
 

@@ -6,8 +6,9 @@
 #include "RuntimeClasses.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <PxScene.h>
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -66,6 +67,9 @@ void Game::init(GLFWwindow* window)
     //init audio module
     soloud.init();
 
+    //init physx module
+    physics.init();
+
     //init asset manager to load all assets
     assetManager.init(runtimeObjectSystem);
 
@@ -76,6 +80,9 @@ void Game::init(GLFWwindow* window)
     gameUpdaterId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::GAME_UPDATER, &gameUpdater);
     mainSceneId = RuntimeCompileUtils::constructObject(runtimeObjectSystem, RuntimeClassNames::MAIN_SCENE, &mainScene);
     //...
+
+    //set physics simulation callback
+    physics.getScene()->setSimulationEventCallback(eventManager);
 
     //init debug gui
     debugGui->init(this);
@@ -142,6 +149,7 @@ void Game::cleanup()
 
     assetManager.cleanup();
     soloud.deinit();
+    physics.cleanup();
 
     if(runtimeObjectSystem!= nullptr) {
         runtimeObjectSystem->CleanObjectFiles();
@@ -236,7 +244,11 @@ void Game::deleteMarkedEntities()
 void Game::OnConstructorsAdded()
 {
     //reload runtime swappable members e.g. EventManager
-	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
+	if(RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager))
+    {
+        //set physics simulation callback
+        physics.getScene()->setSimulationEventCallback(eventManager);
+    }
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameUpdaterId, &gameUpdater);
@@ -258,6 +270,16 @@ AssetManager &Game::getAssetManager() {
 
 GLFWwindow *Game::getWindow() {
     return window;
+}
+
+SoLoud::Soloud &Game::getSoloud()
+{
+    return soloud;
+}
+
+Physics &Game::getPhysics()
+{
+    return physics;
 }
 
 glm::vec2 Game::getMouseMoveDelta() const

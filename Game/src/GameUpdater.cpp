@@ -12,6 +12,10 @@ class GameUpdater : public TInterface<RuntimeClassIds::GAME_UPDATER,IGameUpdater
 public:
     void update(Game& game) override
     {
+        //region update physics
+        game.getPhysics().step();
+        //endregion
+
         //region update camera controllers
         {
             for(CameraControllerComponent& controller : game.cameraControllerComps)

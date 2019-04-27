@@ -5,6 +5,8 @@
 #include "Game.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <PxScene.h>
+#include <PxRigidActor.h>
 
 class EventManager : public TInterface<EVENT_MANAGER, IEventManager>{
 
@@ -117,17 +119,40 @@ public:
 
 	void componentPreRemove(Game &game, EntityId entityId, ComponentId componentId) override
 	{
-		//region if transform component is removed, clear parent of children
-		{
-			if(componentId==Components::TRANSFORM)
-			{
-				TransformComponent& transform = game.transformComps[entityId];
-				for(TransformComponent* child = transform.getFirstChild();child!=nullptr;child=child->getNextSibling())
-					child->clearParent(true);
-			}
-		}
-		//endregion
+
 	}
+
+    void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) override
+    {
+
+    }
+
+    void onWake(physx::PxActor **actors, physx::PxU32 count) override
+    {
+
+    }
+
+    void onSleep(physx::PxActor **actors, physx::PxU32 count) override
+    {
+
+    }
+
+    void onContact(const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs,
+                   physx::PxU32 nbPairs) override
+    {
+
+    }
+
+    void onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count) override
+    {
+
+    }
+
+    void onAdvance(const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,
+                   const physx::PxU32 count) override
+    {
+
+    }
 
 private:
 	/**

@@ -20,6 +20,8 @@
 #include "components/CameraControllerComponent.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "Physics.h"
+#include "components/PhysicsComponent.h"
 
 class GLFWwindow;
 
@@ -123,8 +125,16 @@ public:
             //set component bit to zero
             entity.componentMask&=~Components::typeToMask(TYPE_ID);
 
+            //call cleanup function
+            components[pos].cleanup(game);
+
             //fill hole
-            components[pos] = components[--numActive];//TODO think about moving component instead of copying
+            if(numActive>0)
+            {
+                T& filler = components[--numActive];
+                components[pos] = filler;//TODO think about moving component instead of copying
+                game.entities[filler.entity].components[TYPE_ID]=pos;
+            }
         }
 
         Components::Types getType() const override {return TYPE_ID;}
@@ -178,6 +188,8 @@ private:
 
     //audio module
     SoLoud::Soloud soloud;
+    //physics module
+    Physics physics;
 
     //runtime compiled cpp systems
     IRuntimeObjectSystem* runtimeObjectSystem;
@@ -218,6 +230,7 @@ public:
 	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
     ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
     ComponentStore<CameraControllerComponent, Components::CAMERA_CONTROLLER> cameraControllerComps;
+    ComponentStore<PhysicsComponent,Components::PHYSICS> physicsComps;
 private:
     /**
      * This array is used to remove components from entities when an entity is deleted
@@ -230,7 +243,8 @@ private:
                     &transformComps,
                     &materialComps,
                     &cameraComps,
-                    &cameraControllerComps
+                    &cameraControllerComps,
+                    &physicsComps
             };
 
 public:
@@ -274,6 +288,8 @@ public:
 	IDebugGUI* getDebugGUI() const;
 	AssetManager& getAssetManager();
 	GLFWwindow* getWindow();
+	SoLoud::Soloud& getSoloud();
+	Physics& getPhysics();
 
 
 	/* --------------------------------------------- */
