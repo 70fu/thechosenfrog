@@ -57,6 +57,7 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     shaderListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_LIST,&shaderList);
     shaderProgramListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_PROGRAM_LIST,&shaderProgramList);
     textureListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::TEXTURE_LIST,&textureList);
+    cubeMapListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::CUBE_MAP_LIST,&cubeMapList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -132,6 +133,7 @@ void AssetManager::cleanup()
     cleanupMaterials();
     cleanupShaderPrograms();
     cleanupShaders();
+    cleanupCubeMaps();
     cleanupTextures();
 
 #ifndef NDEBUG
@@ -195,6 +197,14 @@ TextureAsset *AssetManager::getTexture(AssetId id)
         return &textures[TextureIds::DEFAULT];
 }
 
+CubeMapAsset *AssetManager::getCubeMap(AssetId id)
+{
+    if(id<CUBE_MAP_SIZE)
+        return &cubeMaps[id];
+    else
+        return &cubeMaps[CubeMapIds::DEFAULT];
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -232,12 +242,17 @@ void AssetManager::OnConstructorsAdded() {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,textureListId,&textureList))
             assetBitmask|=AssetType::TEXTURE;
     }
+    if(cubeMapList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,cubeMapListId,&cubeMapList))
+            assetBitmask|=AssetType::CUBE_MAP;
+    }
 
     //reload lists of asset types whose classes have changed
     loadAssets(assetBitmask);
 }
 
-void AssetManager::loadAssets(unsigned char assetBitmask)
+void AssetManager::loadAssets(std::underlying_type<AssetType>::type assetBitmask)
 {
     if(assetBitmask==0)
         return;
@@ -252,8 +267,6 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         storeFilePaths(paths,musicList->loadAll(music,paths,MUSIC_SIZE,*this));
     if((assetBitmask&AssetType::MESH)!=0)
         storeFilePaths(paths,meshList->loadAll(meshes,paths,MESH_SIZE,*this));
-    if((assetBitmask&AssetType::MATERIAL)!=0)
-        storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
     if((assetBitmask&AssetType::SHADER)!=0)
     {
         storeFilePaths(paths, shaderList->loadAll(shaders, paths, SHADER_SIZE, *this));
@@ -261,9 +274,26 @@ void AssetManager::loadAssets(unsigned char assetBitmask)
         assetBitmask|=AssetType::SHADER_PROGRAM;
     }
     if((assetBitmask&AssetType::SHADER_PROGRAM)!=0)
-        storeFilePaths(paths,shaderProgramList->loadAll(shaderPrograms,paths,SHADER_PROGRAM_SIZE,*this));
+    {
+        storeFilePaths(paths, shaderProgramList->loadAll(shaderPrograms, paths, SHADER_PROGRAM_SIZE, *this));
+
+        //if a reload of materials has not been requested, then at least the uniform locations have to be updated
+        if((assetBitmask&AssetType::MATERIAL)==0)
+        {
+            for(int j = 0;j<MATERIAL_SIZE && j<MaterialIds::MATERIAL_COUNT;++j)
+            {
+                MaterialAsset& material = materials[j];
+                material.data.clearLocations();
+                material.data.retrieveLocations(*material.shader);
+            }
+        }
+    }
     if((assetBitmask&AssetType::TEXTURE)!=0)
         storeFilePaths(paths,textureList->loadAll(textures,paths,TEXTURE_SIZE,*this));
+    if((assetBitmask&AssetType::MATERIAL)!=0)
+        storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
+    if((assetBitmask&AssetType::CUBE_MAP)!=0)
+        storeFilePaths(paths,cubeMapList->loadAll(cubeMaps,paths,CUBE_MAP_SIZE,*this));
     //...
 }
 
@@ -275,6 +305,7 @@ void AssetManager::reloadAssets()
     cleanupMaterials();
     cleanupShaderPrograms();
     cleanupShaders();
+    cleanupCubeMaps();
     cleanupTextures();
 
     loadAssets(AssetType::ALL);
@@ -316,14 +347,30 @@ void AssetManager::reloadFileAsset(const std::string& path)
                 if (shaderProgram.hasShader(shader))
                 {
                     //relink program
-                    shaderProgram.cleanup();
-                    shaderProgram.link();
+                    shaderProgram.relink();
+
+                    //let materials using this program retrieve uniforms again
+                    for(int j = 0;j<MATERIAL_SIZE && j<MaterialIds::MATERIAL_COUNT;++j)
+                    {
+                        MaterialAsset& material = materials[j];
+                        if(material.shader==&shaderPrograms[i])
+                        {
+                            material.data.clearLocations();
+                            material.data.retrieveLocations(*material.shader);
+                        }
+                    }
                 }
             }
             break;
         }
         case AssetType::TEXTURE:
-            textureList->loadFromFile(path,textures[id.id],*this);
+        {
+            Texture* texture = &textures[id.id];
+            textureList->loadFromFile(path, *texture, *this);
+        }
+        case AssetType::CUBE_MAP:
+            cubeMapList->loadFromFile(path,cubeMaps[id.id],*this);
+            break;
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
             break;
@@ -408,4 +455,15 @@ void AssetManager::cleanupTextures()
 void AssetManager::cleanupTexture(TextureAsset &textureAsset)
 {
     textureAsset.cleanup();
+}
+
+void AssetManager::cleanupCubeMaps()
+{
+    for (int i = 0; i < CUBE_MAP_SIZE && i < CubeMapIds::CUBE_MAP_COUNT; ++i)
+        cleanupCubeMap(cubeMaps[i]);
+}
+
+void AssetManager::cleanupCubeMap(CubeMapAsset &cubeMap)
+{
+    cubeMap.cleanup();
 }

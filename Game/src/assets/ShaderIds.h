@@ -17,6 +17,8 @@ namespace ShaderIds
         DEFAULT_FRAG,
 		SKYBOX_FRAG,
 		SKYBOX_VERT,
+        UNLIT_VERT,
+        UNLIT_FRAG,
 
         SHADER_COUNT
     };

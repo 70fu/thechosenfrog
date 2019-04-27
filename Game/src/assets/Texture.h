@@ -1,7 +1,6 @@
 #ifndef CGUE19_THECHOSENFROG_TEXTURE_H
 #define CGUE19_THECHOSENFROG_TEXTURE_H
 
-#include <glad/glad.h>
 #include "ImageData.h"
 
 struct TextureParameters

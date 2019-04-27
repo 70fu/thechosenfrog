@@ -13,6 +13,7 @@ namespace MaterialIds
     enum MaterialIds : unsigned char
     {
         DEFAULT,
+        UNLIT,
 
         MATERIAL_COUNT
     };

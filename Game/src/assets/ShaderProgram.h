@@ -46,12 +46,22 @@ public:
     ShaderProgram(std::initializer_list<Shader*> shaders);
 
     bool link();
+    /**
+     * Relink shader program with the same shaders
+     * @return
+     */
+    bool relink();
     void cleanup();
 
     GLint getUniformLocation(const std::string& name);
 
     void addShader(Shader* shader);
     bool hasShader(Shader* shader);
+
+    std::vector<Shader*>::iterator begin(){return shaders.begin();};
+    std::vector<Shader*>::iterator end(){return shaders.end();};
+    std::vector<Shader*>::const_iterator begin() const {return shaders.begin();};
+    std::vector<Shader*>::const_iterator end() const {return shaders.end();};
 
     const GLuint& getProgramHandle() const;
 

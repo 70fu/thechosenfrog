@@ -14,6 +14,7 @@ namespace ShaderProgramIds
     {
         DEFAULT,
 		SKYBOX,
+        UNLIT,
 
         SHADER_PROGRAM_COUNT
     };

@@ -38,7 +38,7 @@ void TransformComponent::updateTransformationMatrix()
 	rotationsMatrix = glm::orientate4(glm::vec3(rotation.x,rotation.z,rotation.y)); //TODO why this strange order, WTH, maybe look into quaternions
 
 	// multiply matrix
-	transformationMatrix = scalingMatrix * translationsMatrix * rotationsMatrix;
+	transformationMatrix = translationsMatrix * rotationsMatrix * scalingMatrix;
 
 	//reset dirty flag
 	dirty&=~DIRTY_LOCAL;

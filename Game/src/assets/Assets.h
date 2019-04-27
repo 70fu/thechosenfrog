@@ -14,6 +14,7 @@ class ShaderProgram;
 class Material;
 class Texture;
 class Shader;
+class CubeMap;
 //asset aliases
 using SoundAsset = SoLoud::Wav;
 using MusicAsset = SoLoud::WavStream;
@@ -22,13 +23,14 @@ using ShaderAsset=Shader;
 using ShaderProgramAsset = ShaderProgram;
 using MaterialAsset = Material;
 using TextureAsset = Texture;
+using CubeMapAsset = CubeMap;
 
 using AssetId = unsigned int;
 
 /**
  * Values are set such that bit masks are possible
  */
-enum AssetType : unsigned char
+enum AssetType : unsigned short
 {
     SOUND = 1,
     MUSIC = 2,
@@ -37,9 +39,10 @@ enum AssetType : unsigned char
     MATERIAL=16,
     TEXTURE=32,
     SHADER_PROGRAM=64,
+    CUBE_MAP = 128,
     //FONT=128,
 
-    ALL=255
+    ALL=65535
 };
 
 /**

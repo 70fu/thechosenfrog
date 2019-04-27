@@ -12,9 +12,31 @@ protected:
     void loadAssets(ShaderProgramAsset *assets, size_t size, AssetManager& assetManager) override
     {
 		loadDefault(assets[ShaderProgramIds::DEFAULT], assetManager);
-		 //...
-		loadSkybox(assets[ShaderProgramIds::SKYBOX],assetManager);
-       
+
+        //configure skybox shader program
+        {
+            ShaderProgramAsset& skybox = assets[ShaderProgramIds::SKYBOX];
+            skybox.addShader(assetManager.getShader(ShaderIds::SKYBOX_VERT));
+            skybox.addShader(assetManager.getShader(ShaderIds::SKYBOX_FRAG));
+        }
+
+        //configure unlit shader program
+        {
+            ShaderProgramAsset& unlit = assets[ShaderProgramIds::UNLIT];
+            unlit.addShader(assetManager.getShader(ShaderIds::UNLIT_VERT));
+            unlit.addShader(assetManager.getShader(ShaderIds::UNLIT_FRAG));
+        }
+
+        //link all shader programs, skip default program
+        for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
+        {
+            if(!assets[i].link())
+            {
+                ImGuiAl::Log::getInstance().Error("Using default shader program due to linking error in shader program %d",i);
+                loadDefault(assets[i],assetManager);
+            }
+        }
+        //...
     }
 
     bool loadAssetFromFile(const std::string &path, ShaderProgramAsset &asset) override
@@ -28,12 +50,5 @@ protected:
         asset.addShader(assetManager.getShader(ShaderIds::DEFAULT_FRAG));
         asset.link();
     }
-
-	void loadSkybox(ShaderProgramAsset &asset, AssetManager& assetManager)
-	{
-		asset.addShader(assetManager.getShader(ShaderIds::SKYBOX_VERT));
-		asset.addShader(assetManager.getShader(ShaderIds::SKYBOX_FRAG));
-		asset.link();
-	}
 };
 REGISTERCLASS(ShaderProgramList);

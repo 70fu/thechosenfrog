@@ -4,8 +4,6 @@
 #include "Assets.h"
 #include "Texture.h"
 #include "AssetManager.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 class TextureList : public TInterface<RuntimeClassIds::TEXTURE_LIST,AssetList<TextureAsset ,AssetType::TEXTURE>>
 {
@@ -19,22 +17,9 @@ protected:
 
     bool loadAssetFromFile(const std::string &path, TextureAsset &asset) override
     {
-        int width,height,channelCount;
-        unsigned char* data = stbi_load(path.c_str(),&width,&height,&channelCount,0);
-        if(data!=nullptr)
-        {
-            ImageData newImageData(width, height, channelCount);
-            newImageData.data = data;
-            asset.data = std::move(newImageData);
-            //use parameters set before loading from the first time
-            asset.allocateOnGPU();
-            return true;
-        }
-        else
-        {
-            ImGuiAl::Log::getInstance().Error("Loading of texture %s has failed: %s",path.c_str(),stbi_failure_reason());
-            return false;
-        }
+        asset.data.loadFromFile(path);
+        //use parameters set before loading from the first time
+        asset.allocateOnGPU();
     }
 
     void loadDefault(TextureAsset &asset, AssetManager& assetManager) override
@@ -66,7 +51,7 @@ protected:
         }
 
         asset.data = std::move(image);
-        asset.allocateOnGPU({});
+        asset.allocateOnGPU({GL_TEXTURE_2D,false,GL_NEAREST,GL_NEAREST,GL_REPEAT,GL_REPEAT});
     }
 };
 REGISTERCLASS(TextureList);

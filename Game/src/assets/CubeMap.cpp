@@ -1,42 +1,89 @@
-// https://learnopengl.com/Advanced-OpenGL/Cubemaps
+#include "CubeMap.h"
+#include "../logger/imguial_log.h"
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <glad/glad.h>
+using namespace ImGuiAl;
 
+void CubeMap::allocateOnGPU()
+{
+    //TODO only in debug?
+    if (allocated)
+    {
+        Log::getInstance().Warn("allocate called even though cube map has already been allocated, call ignored");
+        return;
+    }
 
-class CubeMap {
+    glGenTextures(1, &handle);
 
-	unsigned int loadCubemap(vector<std::string> faces)
-	{
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
 
-		int width, height, nrChannels;
-		for (unsigned int i = 0; i < faces.size(); i++)
-		{
-			unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
-			if (data)
-			{
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-					0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
-				);
-				stbi_image_free(data);
-			}
-			else
-			{
-				std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-				stbi_image_free(data);
-			}
-		}
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    //set parameters
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, parameters.minFilter);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, parameters.maxFilter);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, parameters.sWrap);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, parameters.tWrap);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, parameters.rWrap);
 
-		return textureID;
-	}
-};
+    //allocate texture data on gpu
+    for (int i = 0; i < 6; ++i)
+    {
+        ImageData& face = faces[i];
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i,0,face.getInternalFormat(),face.width,face.height,0,face.getFormat(),GL_UNSIGNED_BYTE,face.data);
+    }
+
+    //unbind texture
+    glBindTexture(GL_TEXTURE_CUBE_MAP,0);
+
+    allocated = true;
+}
+
+void CubeMap::allocateOnGPU(CubeMapParameters cubeMapParameters)
+{
+    parameters = cubeMapParameters;
+    allocateOnGPU();
+}
+
+void CubeMap::updateOnGPU()
+{
+    //TODO only in debug?
+    if(!allocated)
+    {
+        ImGuiAl::Log::getInstance().Warn("updateOnGPU called even though cube map has not been allocated yet, call ignored");
+        return;
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP,handle);
+
+    //update texture data on cpu
+    for (int i = 0; i < 6; ++i)
+    {
+        ImageData& face = faces[i];
+        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X,0,0,0,face.width,face.height,face.getFormat(),GL_UNSIGNED_BYTE,face.data);
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP,0);
+
+}
+
+void CubeMap::cleanup()
+{
+    //TODO only in debug?
+    if(!allocated)
+    {
+        ImGuiAl::Log::getInstance().Warn("cleanup called even though texture has not been allocated yet, call ignored");
+        return;
+    }
+
+    glDeleteTextures(1,&handle);
+
+    allocated = false;
+}
+
+const GLuint &CubeMap::getHandle() const
+{
+    return handle;
+}
+
+const CubeMapParameters &CubeMap::getParameters() const
+{
+    return parameters;
+}

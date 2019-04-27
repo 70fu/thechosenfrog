@@ -2,6 +2,8 @@
 #define CGUE19_THECHOSENFROG_IMAGEDATA_H
 
 #include "../util/Color.h"
+#include <glad/glad.h>
+#include <string>
 
 /**
  * Is an editable Image with fixed size and number of channels in RAM
@@ -15,16 +17,20 @@ class ImageData
 {
     friend class TextureList;
     friend class Texture;
+    friend class CubeMapList;
+    friend class CubeMap;
 private:
     unsigned int width = 0;
     unsigned int height = 0;
     unsigned int channelCount = 0;
-    unsigned char* data = nullptr   ;
+    unsigned char* data = nullptr;
 
     ImageData();
 
     bool isInBounds(unsigned int x, unsigned int y) const;
     unsigned int getIndex(unsigned int x, unsigned int y) const;
+
+    bool loadFromFile(const std::string& path);
 public:
     /**
      * @param width
@@ -57,6 +63,9 @@ public:
      * @param color is the new color at given position
      */
     void setPixel(unsigned int x, unsigned int y, const Color& color);
+
+    GLenum getInternalFormat() const;
+    GLenum getFormat() const;
 
     ImageData& operator=(const ImageData& other);
     ImageData& operator=(ImageData&& other) noexcept;

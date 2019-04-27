@@ -79,7 +79,10 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/components/CameraControllerComponent.cpp src/components/CameraControllerComponent.h
 		src/assets/ImageData.cpp src/assets/ImageData.h
 		src/assets/TextureList.cpp src/assets/TextureIds.h
-		src/util/Color.h)
+		src/util/Color.h
+		src/assets/CubeMap.cpp src/assets/CubeMap.h
+		src/assets/CubeMapIds.h
+		src/assets/CubeMapList.cpp)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

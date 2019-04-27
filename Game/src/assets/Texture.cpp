@@ -23,7 +23,7 @@ void Texture::allocateOnGPU()
     glTexParameteri(parameters.target, GL_TEXTURE_WRAP_S, parameters.tWrap);
 
     //allocate texture data structure on gpu
-    glTexImage2D(parameters.target,0,GL_RGBA8,data.width,data.height,0,GL_RGBA,GL_UNSIGNED_BYTE,data.data);
+    glTexImage2D(parameters.target,0,data.getInternalFormat(),data.width,data.height,0,data.getFormat(),GL_UNSIGNED_BYTE,data.data);
 
     if(parameters.generateMipMaps)
         glGenerateMipmap(parameters.target);
@@ -51,7 +51,7 @@ void Texture::updateOnGPU()
 
     glBindTexture(parameters.target,handle);
 
-    glTexSubImage2D(parameters.target,0,0,0,data.width,data.height,GL_RGBA,GL_UNSIGNED_BYTE,data.data);
+    glTexSubImage2D(parameters.target,0,0,0,data.width,data.height,data.getFormat(),GL_UNSIGNED_BYTE,data.data);
 
     glBindTexture(parameters.target,0);
 

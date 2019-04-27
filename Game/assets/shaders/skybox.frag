@@ -1,11 +1,14 @@
-#version 430 core
-out vec4 FragColor;
+#version 430
+//taken from https://learnopengl.com/Advanced-OpenGL/Cubemaps
 
-in vec3 TexCoords;
+in vec3 texCoords;
 
-uniform samplerCube skybox;
+layout(location=0) out vec4 fragColor;
+
+layout(location=4) uniform samplerCube skybox;
 
 void main()
 {    
-    FragColor = texture(skybox, TexCoords);
+    fragColor = texture(skybox, texCoords);
+    //fragColor=vec4(texCoords,1);
 }

@@ -142,6 +142,8 @@ private:
 				game.getDebugGUI()->toggleWindow(DebugWindowIds::LOGGER);
 			if(key==GLFW_KEY_2)
 				game.getDebugGUI()->toggleWindow(DebugWindowIds::COMPONENT_VIEWER);
+			if(key==GLFW_KEY_3)
+				game.getDebugGUI()->toggleWindow(DebugWindowIds::ASSET_VIEWER);
 			//...
 		}
 	}

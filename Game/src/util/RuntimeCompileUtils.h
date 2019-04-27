@@ -32,7 +32,11 @@ namespace RuntimeCompileUtils
                 Log::getInstance().Error("Could not construct rccpp object %s",name);
             }
             else
+            {
+                //initialize
+                pObj->Init(true);
                 return pObj->GetObjectId();
+            }
         }
         else
         {
