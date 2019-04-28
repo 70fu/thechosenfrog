@@ -53,6 +53,7 @@ namespace ImGuiAl
         return instance;
       }
 
+
     enum Level
     {
       kDebug = 0,

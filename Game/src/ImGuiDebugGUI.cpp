@@ -138,9 +138,18 @@ private:
 
     void drawTexture(const TextureAsset& texture)
     {
+        ImGui::Text("Handle: %d",texture.getTextureHandle());
         ImGui::Text("%dx%d, Channels: %d",texture.data.getWidth(),texture.data.getHeight(),texture.data.getChannelCount());
         //ImGui::Image((void *) texture.getTextureHandle(), ImVec2(128, 128*(texture.data.getHeight()/texture.data.getWidth())));
         ImGui::Image((void *) texture.getTextureHandle(), ImVec2(texture.data.getWidth(),texture.data.getHeight()));
+    }
+
+    void drawCubeMap(const CubeMapAsset& cubeMap)
+    {
+        ImGui::Text("Handle: %d",cubeMap.getHandle());
+        ImGui::Text("Faces: %dx%d, Channels: %d",cubeMap.faces[0].getWidth(),cubeMap.faces[0].getHeight(),cubeMap.faces[0].getChannelCount());
+        //ImGui::Image((void *) texture.getTextureHandle(), ImVec2(128, 128*(texture.data.getHeight()/texture.data.getWidth())));
+        //ImGui::Image((void *) cubeMap.getHandle(), ImVec2(cubeMap.faces[0].getWidth(),cubeMap.faces[0].getHeight()));
     }
 
     void drawShaderProgram(Game& game, ShaderProgramAsset& program)
@@ -354,6 +363,17 @@ public:
                     {
                         if(ImGui::CollapsingHeader(getNum(i)))
                             drawTexture(*game->getAssetManager().getTexture(i));
+                    }
+                    ImGui::EndTabItem();
+                }
+                //endregion
+                //region cube maps
+                if (ImGui::BeginTabItem("Cube Maps"))
+                {
+                    for(unsigned int i = 0;i<CubeMapIds::CUBE_MAP_COUNT;++i)
+                    {
+                        if(ImGui::CollapsingHeader(getNum(i)))
+                            drawCubeMap(*game->getAssetManager().getCubeMap(i));
                     }
                     ImGui::EndTabItem();
                 }

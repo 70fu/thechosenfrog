@@ -23,6 +23,8 @@
 #include "ShaderIds.h"
 #include "ShaderProgramIds.h"
 #include "TextureIds.h"
+#include "CubeMap.h"
+#include "CubeMapIds.h"
 
 //#include "SoundList.cpp"
 //#include "MusicList.cpp"
@@ -44,7 +46,8 @@ static constexpr size_t MATERIAL_SIZE = MaterialIds::MATERIAL_COUNT+EXTRA_ASSET_
 static constexpr size_t SHADER_SIZE = ShaderIds::SHADER_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t SHADER_PROGRAM_SIZE = ShaderProgramIds::SHADER_PROGRAM_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t TEXTURE_SIZE = TextureIds::TEXTURE_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE});
+static constexpr size_t CUBE_MAP_SIZE = CubeMapIds::CUBE_MAP_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE,CUBE_MAP_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -60,6 +63,7 @@ private:
     ShaderAsset shaders[SHADER_SIZE];
     ShaderProgramAsset shaderPrograms[SHADER_PROGRAM_SIZE];
     TextureAsset textures[TEXTURE_SIZE];
+    CubeMapAsset cubeMaps[CUBE_MAP_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -82,6 +86,8 @@ private:
     ObjectId shaderProgramListId;
     AssetList<TextureAsset ,AssetType::TEXTURE>* textureList;
     ObjectId textureListId;
+    AssetList<CubeMapAsset ,AssetType::CUBE_MAP>* cubeMapList;
+    ObjectId cubeMapListId;
 
 #ifndef NDEBUG
     //file watcher
@@ -154,12 +160,18 @@ public:
      * @return pointer to texture asset with given id, or default texture if there is no texture with given id, never returns nullptr
      */
     TextureAsset* getTexture(AssetId id);
+
+    /**
+     * @param id
+     * @return pointer to cube map asset with given id, or default cube map if there is no cube map with given id, never returns nullptr
+     */
+    CubeMapAsset * getCubeMap(AssetId id);
 private:
     /**
      * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
      * @param assetBitmask
      */
-    void loadAssets(unsigned char assetBitmask);
+    void loadAssets(std::underlying_type<AssetType>::type assetBitmask);
     void reloadFileAsset(const std::string& path);
     /**
      * Reloads all assets
@@ -194,6 +206,9 @@ private:
 
     void cleanupTextures();
     void cleanupTexture(Texture& textures);
+
+    void cleanupCubeMaps();
+    void cleanupCubeMap(CubeMapAsset& cubeMap);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

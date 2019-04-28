@@ -224,13 +224,18 @@ private:
     inline void deleteMarkedEntities();
 
 public:
-	//components
+    /* --------------------------------------------- */
+    // Components
+    /* --------------------------------------------- */
 	ComponentStore<MeshComponent,Components::MESH> meshComps;
 	ComponentStore<TransformComponent, Components::TRANSFORM> transformComps;
 	ComponentStore<MaterialComponent, Components::MATERIAL> materialComps;
     ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
     ComponentStore<CameraControllerComponent, Components::CAMERA_CONTROLLER> cameraControllerComps;
     ComponentStore<PhysicsComponent,Components::PHYSICS> physicsComps;
+
+    //Global Skybox, must never be nullptr
+    CubeMapAsset* activeSkybox;
 private:
     /**
      * This array is used to remove components from entities when an entity is deleted

@@ -12,6 +12,7 @@ namespace MeshIds {
     enum MeshIds : unsigned char {
         DEFAULT,
         UNIT_CUBE,
+        SKYBOX,
 
         MESH_COUNT
     };

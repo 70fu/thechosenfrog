@@ -11,7 +11,15 @@ class ShaderProgramList : public TInterface<RuntimeClassIds::SHADER_PROGRAM_LIST
 protected:
     void loadAssets(ShaderProgramAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        loadDefault(assets[ShaderProgramIds::DEFAULT],assetManager);
+		loadDefault(assets[ShaderProgramIds::DEFAULT], assetManager);
+
+        //configure skybox shader program
+        {
+            ShaderProgramAsset& skybox = assets[ShaderProgramIds::SKYBOX];
+            skybox.addShader(assetManager.getShader(ShaderIds::SKYBOX_VERT));
+            skybox.addShader(assetManager.getShader(ShaderIds::SKYBOX_FRAG));
+        }
+
         //configure unlit shader program
         {
             ShaderProgramAsset& unlit = assets[ShaderProgramIds::UNLIT];

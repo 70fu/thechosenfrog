@@ -1,6 +1,8 @@
 #include <cstring>
 #include "ImageData.h"
 #include "../logger/imguial_log.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 bool ImageData::isInBounds(unsigned int x, unsigned int y) const
 {
@@ -10,6 +12,24 @@ bool ImageData::isInBounds(unsigned int x, unsigned int y) const
 unsigned int ImageData::getIndex(unsigned int x, unsigned int y) const
 {
     return (y*width+x)*channelCount;
+}
+
+bool ImageData::loadFromFile(const std::string &path)
+{
+    int tmpWidth,tmpHeight,tmpChannelCount;
+    data = stbi_load(path.c_str(),&tmpWidth,&tmpHeight,&tmpChannelCount,0);
+    if(data!=nullptr)
+    {
+        width = tmpWidth;
+        height = tmpHeight;
+        channelCount = tmpChannelCount;
+        return true;
+    }
+    else
+    {
+        ImGuiAl::Log::getInstance().Error("Loading of texture %s has failed: %s",path.c_str(),stbi_failure_reason());
+        return false;
+    }
 }
 
 ImageData::ImageData()
@@ -140,6 +160,18 @@ void ImageData::setPixel(unsigned int x, unsigned int y, const Color& c)
         default:
             ImGuiAl::Log::getInstance().Warn("Image with channel count %d cannot be written to",channelCount);
     }
+}
+
+GLenum ImageData::getInternalFormat() const
+{
+    static constexpr GLenum channelCountToInternalFormat[]={0,GL_R8,GL_RG8,GL_RGB8,GL_RGBA8};
+    return channelCountToInternalFormat[channelCount];
+}
+
+GLenum ImageData::getFormat() const
+{
+    static constexpr GLenum channelCountToFormat[]={0,GL_RED,GL_RG,GL_RGB,GL_RGBA};
+    return channelCountToFormat[channelCount];
 }
 
 ImageData &ImageData::operator=(const ImageData &other)

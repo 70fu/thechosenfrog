@@ -1,7 +1,6 @@
 #ifndef CGUE19_THECHOSENFROG_TEXTURE_H
 #define CGUE19_THECHOSENFROG_TEXTURE_H
 
-#include <glad/glad.h>
 #include "ImageData.h"
 
 struct TextureParameters
@@ -29,9 +28,6 @@ class Texture
 {
     friend class TextureList;
 private:
-    static constexpr GLenum channelCountToInternalFormat[]={0,GL_R8,GL_RG8,GL_RGB8,GL_RGBA8};
-    static constexpr GLenum channelCountToFormat[]={0,GL_RED,GL_RG,GL_RGB,GL_RGBA};
-
     GLuint handle;
 
     TextureParameters parameters;

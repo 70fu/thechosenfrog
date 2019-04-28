@@ -9,6 +9,8 @@
 #include "assets/Material.h"
 #include "util/CameraUtil.h"
 
+
+
 class GameRenderer : public TInterface<RuntimeClassIds ::GAME_RENDERER,IGameRenderer>
 {
 private:
@@ -169,6 +171,32 @@ public:
             //unbind shader
             glUseProgram(0);
 
+            //endregion
+
+            /* --------------------------------------------- */
+            // Render SkyBox
+            /* --------------------------------------------- */
+            //region render skybox
+            //taken from https://learnopengl.com/Advanced-OpenGL/Cubemaps
+            // draw skybox as last
+            {
+                glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::SKYBOX)->getProgramHandle());
+                glm::mat4 skyboxPv = camera.getProjectionMatrix() * glm::mat4(glm::mat3(CameraUtil::getViewMatrix(cTransform.getGlobalTransform())));// remove translation from the view matrix
+                //bind projection view matrix uniform
+                glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX, 1, GL_FALSE, glm::value_ptr(skyboxPv));
+                // skybox cube
+                glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SKYBOX)->getVAOHandle());
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, game.activeSkybox->getHandle());
+                glUniform1i(4,0);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+                glBindVertexArray(0);
+                glDepthFunc(GL_LESS); // set depth function back to default
+
+                //unbind shader
+                glUseProgram(0);
+            }
             //endregion
         }
 

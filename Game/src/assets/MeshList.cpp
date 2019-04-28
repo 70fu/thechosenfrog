@@ -131,6 +131,58 @@ protected:
             cube.allocateOnGPU(GL_STATIC_DRAW);
         }
         //endregion
+        //region generate skybox
+        {
+            MeshAsset& skybox = assets[MeshIds::SKYBOX];
+            skybox.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT;
+            skybox.surface.positions = {
+                    // positions
+                    {-1.0f,  1.0f, -1.0f},
+                    {-1.0f, -1.0f, -1.0f},
+                    {1.0f, -1.0f, -1.0f},
+                    {1.0f, -1.0f, -1.0f},
+                    {1.0f,  1.0f, -1.0f},
+                    {-1.0f,  1.0f, -1.0f},
+
+                    {-1.0f, -1.0f,  1.0f},
+                    {-1.0f, -1.0f, -1.0f},
+                    {-1.0f,  1.0f, -1.0f},
+                    {-1.0f,  1.0f, -1.0f},
+                    {-1.0f,  1.0f,  1.0f},
+                    {-1.0f, -1.0f,  1.0f},
+
+                    {1.0f, -1.0f, -1.0f},
+                    {1.0f, -1.0f,  1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {1.0f,  1.0f, -1.0f},
+                    {1.0f, -1.0f, -1.0f},
+
+                    {-1.0f, -1.0f,  1.0f},
+                    {-1.0f,  1.0f,  1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {1.0f, -1.0f,  1.0f},
+                    {-1.0f, -1.0f,  1.0f},
+
+                    {-1.0f,  1.0f, -1.0f},
+                    {1.0f,  1.0f, -1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {1.0f,  1.0f,  1.0f},
+                    {-1.0f,  1.0f,  1.0f},
+                    {-1.0f,  1.0f, -1.0f},
+
+                    {-1.0f, -1.0f, -1.0f},
+                    {-1.0f, -1.0f,  1.0f},
+                    {1.0f, -1.0f, -1.0f},
+                    {1.0f, -1.0f, -1.0f},
+                    {-1.0f, -1.0f,  1.0f},
+                    {1.0f, -1.0f,  1.0f}
+            };
+
+            skybox.allocateOnGPU(GL_STATIC_DRAW);
+        }
+        //endregion
         //...
     }
 

@@ -16,6 +16,8 @@ protected:
         loadAssetsFromFileHelper("/shaders/default.frag",ShaderIds::DEFAULT_FRAG,assets[ShaderIds::DEFAULT_FRAG],assetManager);
         loadAssetsFromFileHelper("/shaders/unlit.vert",ShaderIds::UNLIT_VERT,assets[ShaderIds::UNLIT_VERT],assetManager);
         loadAssetsFromFileHelper("/shaders/unlit.frag",ShaderIds::UNLIT_FRAG,assets[ShaderIds::UNLIT_FRAG],assetManager);
+		loadAssetsFromFileHelper("/shaders/skybox.vert", ShaderIds::SKYBOX_VERT, assets[ShaderIds::SKYBOX_VERT], assetManager);
+		loadAssetsFromFileHelper("/shaders/skybox.frag", ShaderIds::SKYBOX_FRAG, assets[ShaderIds::SKYBOX_FRAG], assetManager);
         //...
     }
 
