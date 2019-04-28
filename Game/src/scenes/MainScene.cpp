@@ -10,6 +10,9 @@ class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
 public:
     void init(Game& game) override
     {
+        //set skybox
+        game.activeSkybox = game.getAssetManager().getCubeMap(CubeMapIds::DEFAULT);
+
         //init camera
         {
             EntityId id = game.createEntity();

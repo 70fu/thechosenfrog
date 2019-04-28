@@ -188,7 +188,7 @@ public:
                 // skybox cube
                 glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SKYBOX)->getVAOHandle());
                 glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_CUBE_MAP, game.getAssetManager().getCubeMap(CubeMapIds::DEFAULT)->getHandle());//TODO retrieve cube map from component or global variable in game
+                glBindTexture(GL_TEXTURE_CUBE_MAP, game.activeSkybox->getHandle());
                 glUniform1i(4,0);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
                 glBindVertexArray(0);
