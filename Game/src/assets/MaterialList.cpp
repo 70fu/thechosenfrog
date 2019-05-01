@@ -17,6 +17,7 @@ protected:
             MaterialAsset& unlit = assets[MaterialIds::UNLIT];
             unlit.shader = assetManager.getShaderProgram(ShaderProgramIds::UNLIT);
             unlit.data.setTexture("diffuseTex",assetManager.getTexture(TextureIds::DEFAULT));
+            unlit.data.setVec2("texRepeat",{1,1});
 
             unlit.data.retrieveLocations(*unlit.shader);
         }

@@ -101,6 +101,8 @@ public:
 
             MaterialComponent& material = game.materialComps.addComp(id);
             material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
+            material.instanceProp.setVec2("texRepeat",{10,10});
+            material.retrieveUniformLocations();
 
             PhysicsComponent& pComp = game.physicsComps.addComp(id);
             physx::PxRigidActor* actor = physx::PxCreatePlane(*game.getPhysics().getPhysics(),physx::PxPlane(0,1,0,1),*game.getPhysics().getNullMaterial());
