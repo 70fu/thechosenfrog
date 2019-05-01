@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <PxScene.h>
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -108,6 +108,19 @@ bool Game::update(){
     runtimeObjectSystem->GetFileChangeNotifier()->Update(FIXED_DELTA);
 #endif
 
+    if(reloadSceneOnNextFrame)
+    {
+        //delete all entities
+        for(EntityId i = MAX_ENTITIES-1;i>=0;--i)
+            deleteEntity(i);
+        deleteMarkedEntities();
+
+        //load scene
+        mainScene->init(*this);
+
+        reloadSceneOnNextFrame = false;
+    }
+
     assetManager.update();
 
     gameUpdater->update(*this);
@@ -160,6 +173,11 @@ void Game::cleanup()
     delete runtimeObjectSystem;
 }
 
+void Game::reloadScene()
+{
+    reloadSceneOnNextFrame = true;
+}
+
 EntityId Game::createEntity()
 {
     //get free id
@@ -168,6 +186,15 @@ EntityId Game::createEntity()
     {
         std::pop_heap(std::begin(freeIds), std::begin(freeIds) + freeCount,std::greater<>());
         id = freeIds[--freeCount];//smallest id is now at the end
+
+        //check if ids in heap are bigger than biggest active entity id
+        if(id>=endActives)
+        {
+            //clear heap
+            freeCount=0;
+            //simply take next id
+            id=endActives++;
+        }
     }
     else
         id=endActives++;
@@ -225,20 +252,26 @@ void Game::deleteMarkedEntities()
         //reset component mask
         entity.componentMask=0;
 
-        //add id to free id list
-        std::push_heap(std::begin(freeIds), std::begin(freeIds) + freeCount,std::greater<>());
-        ++freeCount;
-
-        //if deleted entity was the last (=on position endActive-1), change endActive accordingly
+        //check if deleted entity was the last (=on position endActive-1)
         if(id==endActives-1)
         {
+            //change endActive accordingly
             do
             {
                 endActives--;
             }while(endActives>=0 && entities[endActives].deleted);
             ++endActives;//point one past the last active entity
         }
+        else if(id<endActives)
+        {
+            //add id to free id list
+            freeIds[freeCount++]=id;
+            std::push_heap(std::begin(freeIds), std::begin(freeIds) + freeCount,std::greater<>());
+        }
     }
+
+    //everything deleted
+    deleteCount = 0;
 }
 
 void Game::OnConstructorsAdded()

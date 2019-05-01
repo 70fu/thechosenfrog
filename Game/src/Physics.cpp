@@ -31,6 +31,12 @@ void Physics::init()
     desc.cpuDispatcher = cpuDispatcher;
 
     scene = physics->createScene(desc);
+
+    //create controller manager
+    controllerManager = PxCreateControllerManager(*scene);
+
+    //init null material
+    nullMaterial = physics->createMaterial(0,0,0);
 }
 
 void Physics::step()
@@ -41,6 +47,8 @@ void Physics::step()
 
 void Physics::cleanup()
 {
+    nullMaterial->release();
+    controllerManager->release();
     PxCloseExtensions();
     physics->release();
     foundation->release();
@@ -51,6 +59,16 @@ PxScene *Physics::getScene() const
     return scene;
 }
 
+physx::PxControllerManager *Physics::getControllerManager() const
+{
+    return controllerManager;
+}
+
+physx::PxMaterial *Physics::getNullMaterial() const
+{
+    return nullMaterial;
+}
+
 void Physics::reportError(PxErrorCode::Enum code, const char *message, const char *file, int line)
 {
     if(code==PxErrorCode::eDEBUG_INFO)
@@ -59,4 +77,9 @@ void Physics::reportError(PxErrorCode::Enum code, const char *message, const cha
         Log::getInstance().Warn("%s (%d): %s",file,line,message);
     else
         Log::getInstance().Error("%s (%d): %s",file,line,message);
+}
+
+PxPhysics *Physics::getPhysics() const
+{
+    return physics;
 }

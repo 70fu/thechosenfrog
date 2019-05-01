@@ -31,35 +31,9 @@ public:
 		//toggle debug windows
 		keyToggleDebugWindows(game,key,scancode,action,mods);
 
-		// move forward
-		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-			std::cout << "You pressed W" << std::endl;
-		}
+		keyDebugControls(game,key,scancode,action,mods);
 
-		// move left
-		if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-			std::cout << "You pressed A" << std::endl;
-		}
-
-		// move back
-		if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-			std::cout << "You pressed S" << std::endl;
-		}
-
-		// move right
-		if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-			std::cout << "You pressed D" << std::endl;
-		}
-
-		// jump
-		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-			std::cout << "You pressed Space" << std::endl;
-		}
-
-		// special key
-		if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-			std::cout << "You pressed F" << std::endl;
-		}
+        updatePlayerKeyInput(game, key, scancode, action, mods);
 	}
 
 	void mousePosCallback(Game& game, double x, double y) override
@@ -69,17 +43,7 @@ public:
 
 	void mouseButtonCallback(Game& game, int button, int action, int mods) override
 	{
-		if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-			std::cout << "You pressed the right Mouse-Button" << std::endl;
-		}
-
-		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			std::cout << "You pressed the left Mouse-Button" << std::endl;
-		}
-
-		if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
-			std::cout << "You pressed the middle Mouse-Button" << std::endl;
-		}
+        updatePlayerMouseInput(game,button,action,mods);
 	}
 
 	void mouseScrollCallback(Game& game, double xOffset, double yOffset) override
@@ -154,6 +118,23 @@ public:
 
     }
 
+    void onShapeHit(const physx::PxControllerShapeHit &hit) override
+    {
+        //TODO if platform, set platform of character controller component
+        //set grounded on
+        //game.charControllerComps[*((EntityId*)hit.controller->getUserData())].groundedOn = hit.actor;
+    }
+
+    void onControllerHit(const physx::PxControllersHit &hit) override
+    {
+
+    }
+
+    void onObstacleHit(const physx::PxControllerObstacleHit &hit) override
+    {
+
+    }
+
 private:
 	/**
 	 * this is only used to make the key callback function more readable (
@@ -172,6 +153,57 @@ private:
 			//...
 		}
 	}
+
+	inline void keyDebugControls(Game& game, int key, int scancode, int action, int mods)
+    {
+	    if(action==GLFW_PRESS)
+        {
+	        if(key==GLFW_KEY_F12)
+            {
+	            game.reloadScene();
+            }
+        }
+    }
+
+    inline void updatePlayerKeyInput(Game &game, int key, int scancode, int action, int mods)
+    {
+	    for(PlayerComponent& player : game.playerComps)
+        {
+	        if(player.activeInput==PlayerComponent::PlayerInput::KEYBOARD_MOUSE)
+            {
+	            //jump button
+                if (player.input.keyboard.jumpKey == key &&
+                        action == GLFW_RELEASE &&
+                        game.hasComponents(player.entity, Components::CHAR_CONTROLLER_BIT))
+                {
+                    game.charControllerComps[player.entity].wantJump = true;
+                }
+
+                //tongue key
+                if(player.input.keyboard.tongueKey==key && action==GLFW_PRESS)
+                {
+                    //TODO activate tongue
+                }
+            }
+
+        }
+    }
+
+    inline void updatePlayerMouseInput(Game& game, int button, int action, int mods)
+    {
+        for(PlayerComponent& player : game.playerComps)
+        {
+            if(player.activeInput==PlayerComponent::PlayerInput::KEYBOARD_MOUSE)
+            {
+                //tongue mouse button
+                if(player.input.keyboard.tongueMouseButton==button && action==GLFW_PRESS)
+                {
+                    //TODO activate tongue
+                }
+            }
+
+        }
+    }
 };
 
 REGISTERCLASS(EventManager);

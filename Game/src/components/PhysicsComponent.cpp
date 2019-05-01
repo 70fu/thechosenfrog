@@ -76,7 +76,7 @@ physx::PxRigidActor *PhysicsComponent::getActor() const
     return actor;
 }
 
-void PhysicsComponent::setActor(physx::PxRigidActor *actor)
+void PhysicsComponent::setActor(physx::PxRigidActor *a)
 {
 #ifndef NDEBUG
     if(actor!=nullptr)
@@ -86,6 +86,6 @@ void PhysicsComponent::setActor(physx::PxRigidActor *actor)
     }
 #endif
 
-    PhysicsComponent::actor = actor;
+    actor = a;
     actor->userData = &entity;
 }

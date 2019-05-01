@@ -28,7 +28,9 @@ public:
         PLAYER=1<<0,
         PLATFORM=1<<1,
         TOWEL=1<<2,
-        TONGUE=1<<3
+        TONGUE=1<<3,
+
+        ALL=255
     };
 
     physx::PxRigidActor *getActor() const;

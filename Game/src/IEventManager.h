@@ -6,11 +6,12 @@
 #include <IObject.h>
 #include <PxBroadPhase.h>
 #include <PxSimulationEventCallback.h>
+#include <characterkinematic/PxController.h>
 #include "components/Entity.h"
 
 class Game;
 
-class IEventManager : public IObject,public physx::PxSimulationEventCallback {
+class IEventManager : public IObject,public physx::PxSimulationEventCallback,public physx::PxUserControllerHitReport {
 public:
 	virtual void keyCallback(Game& game, int key, int scancode, int action, int mods) = 0;
 	virtual void mousePosCallback(Game& game, double x, double y) = 0;

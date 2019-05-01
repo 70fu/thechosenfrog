@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value
-    int width = reader.GetInteger("window", "width", 800);
+    int width = reader.GetInteger("window", "width", 1280);
     int height = reader.GetInteger("window", "height", 800);
     float fov = reader.GetReal("camera", "fov",60);
     float nearParam = reader.GetReal("camera", "near", 0.1);

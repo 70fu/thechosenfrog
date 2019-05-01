@@ -234,6 +234,23 @@ private:
         if(ImGui::Button("Reload Uniform locations"))
             mat.data.retrieveLocations(*mat.shader);
     }
+
+    ComponentId componentCommon(unsigned int numActive,Components::Types type)
+    {
+        ImGui::Text("Active Components: %d", numActive);
+
+        ComponentId step = 1;
+        ImGui::InputScalar("Chosen Component", ImGuiDataType_S16, &componentIndices[type],
+                           &step);
+
+        //clamp value
+        componentIndices[type] = std::clamp<ComponentId>(
+                componentIndices[type], 0, numActive);
+
+        if(numActive>0)
+            return componentIndices[type];
+        return INVALID_COMPONENT_ID;
+    }
 public:
     void Init(bool isFirstInit) override
     {
@@ -300,20 +317,11 @@ public:
                 //region transform components
                 if (ImGui::BeginTabItem("Transforms"))
                 {
-                    ImGui::Text("Active Components: %d", game->transformComps.getNumActive());
-
-                    ComponentId step = 1;
-                    ImGui::InputScalar("Chosen Component", ImGuiDataType_S16, &componentIndices[Components::TRANSFORM],
-                                       &step);
-
-                    //clamp value
-                    componentIndices[Components::TRANSFORM] = std::clamp<ComponentId>(
-                            componentIndices[Components::TRANSFORM], 0, game->transformComps.getNumActive());
-
                     //render transform component
-                    if (game->transformComps.getNumActive() > 0)
+                    ComponentId id = componentCommon(game->transformComps.getNumActive(),Components::TRANSFORM);
+                    if (id!=INVALID_COMPONENT_ID)
                     {
-                        TransformComponent &transform = game->transformComps[componentIndices[Components::TRANSFORM]];
+                        TransformComponent &transform = game->transformComps[id];
                         glm::vec3 pos = transform.getTranslation();
                         if (ImGui::InputFloat3("Position: ", glm::value_ptr(pos)))
                             transform.setTranslation(pos);
@@ -329,6 +337,68 @@ public:
 
                         ImGui::Text("Global Matrix");
                         drawCMat(transform.getGlobalTransform());
+                    }
+
+                    ImGui::EndTabItem();
+                }
+                //endregion
+                //region character controller components
+                if (ImGui::BeginTabItem("Char Controller"))
+                {
+
+                    ComponentId id = componentCommon(game->charControllerComps.getNumActive(),Components::CHAR_CONTROLLER);
+                    if (id!=INVALID_COMPONENT_ID)
+                    {
+                        CharControllerComponent& con = game->charControllerComps[id];
+
+                        //render state
+                        bool grounded = con.grounded;
+                        ImGui::Checkbox("Grounded",&grounded);
+                        bool jumping = con.jumping;
+                        ImGui::Checkbox("Jumping",&jumping);
+                        bool wantJump = con.wantJump;
+                        float airTime = con.airTime;
+                        ImGui::InputFloat("Air Time",&airTime);
+                        ImGui::Checkbox("WantJump",&wantJump);
+                        glm::vec2 direction = con.direction;
+                        ImGui::InputFloat2("Direction",glm::value_ptr(direction));
+                        float jumpStrength = con.jumpStrength;
+                        ImGui::InputFloat("Jump Strength",&jumpStrength);
+                        glm::vec3 acc = con.acc;
+                        ImGui::InputFloat3("Acceleration",glm::value_ptr(acc));
+                        glm::vec3 vel = con.vel;
+                        ImGui::InputFloat3("Velocity",glm::value_ptr(vel));
+
+                        glm::vec3 lastJump = con.landedOn-con.jumpedFrom;
+                        float lastJumpHeight=con.lastJumpHeight;
+                        float lastJumpDist = glm::length(lastJump);
+                        ImGui::PushItemWidth(64);
+                        ImGui::InputFloat("Dist",&lastJumpDist);
+                        ImGui::SameLine();
+                        ImGui::InputFloat("Height",&lastJumpHeight);
+                        ImGui::SameLine();
+                        ImGui::Text("Last Jump");
+                        ImGui::PopItemWidth();
+                        float cachedJumpHeight = con.cachedJumpHeight;
+                        ImGui::InputFloat("Jump Height Cache",&cachedJumpHeight);
+                        float cachedJumpDistance = con.cachedJumpDistance;
+                        ImGui::InputFloat("Jump Cache",&cachedJumpDistance);
+                        float cachedJumpDuration = con.cachedJumpDuration;
+                        ImGui::InputFloat("Jump Cache",&cachedJumpDuration);
+
+                        //render config
+                        if(ImGui::CollapsingHeader("Config"))
+                        {
+                            ImGui::InputFloat("Ground Walk Force",&con.groundWalkForce);
+                            ImGui::InputFloat("Air Walk Speed",&con.airWalkSpeed);
+                            ImGui::InputFloat("Min Jump Distance",&con.minJumpDistance);
+                            ImGui::InputFloat("Max Jump Distance",&con.maxJumpDistance);
+                            ImGui::InputFloat("Min Jump Height",&con.minJumpHeight);
+                            ImGui::InputFloat("Max Jump Height",&con.maxJumpHeight);
+                            ImGui::InputFloat("Min Jump Duration",&con.minJumpDuration);
+                            ImGui::InputFloat("Max Jump Duration",&con.maxJumpDuration);
+                            ImGui::InputFloat("Max Ground Speed",&con.maxGroundSpeed);
+                        }
                     }
 
                     ImGui::EndTabItem();

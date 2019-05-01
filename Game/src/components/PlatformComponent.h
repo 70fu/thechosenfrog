@@ -1,0 +1,13 @@
+#ifndef CGUE19_THECHOSENFROG_PLATFORMCOMPONENT_H
+#define CGUE19_THECHOSENFROG_PLATFORMCOMPONENT_H
+
+
+#include "Component.h"
+
+class PlatformComponent : public Component
+{
+    //TODO
+};
+
+
+#endif //CGUE19_THECHOSENFROG_PLATFORMCOMPONENT_H

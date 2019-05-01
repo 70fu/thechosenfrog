@@ -22,6 +22,8 @@
 #include <GLFW/glfw3.h>
 #include "Physics.h"
 #include "components/PhysicsComponent.h"
+#include "components/CharControllerComponent.h"
+#include "components/PlayerComponent.h"
 
 class GLFWwindow;
 
@@ -210,6 +212,8 @@ private:
 	IScene* mainScene;
 	ObjectId mainSceneId;
 
+	bool reloadSceneOnNextFrame = false;
+
 	/* --------------------------------------------- */
 	// Input Helper
 	/* --------------------------------------------- */
@@ -233,6 +237,8 @@ public:
     ComponentStore<CameraComponent, Components::CAMERA> cameraComps;
     ComponentStore<CameraControllerComponent, Components::CAMERA_CONTROLLER> cameraControllerComps;
     ComponentStore<PhysicsComponent,Components::PHYSICS> physicsComps;
+    ComponentStore<CharControllerComponent,Components::CHAR_CONTROLLER> charControllerComps;
+    ComponentStore<PlayerComponent,Components::PLAYER> playerComps;
 
     //Global Skybox, must never be nullptr
     CubeMapAsset* activeSkybox;
@@ -249,7 +255,9 @@ private:
                     &materialComps,
                     &cameraComps,
                     &cameraControllerComps,
-                    &physicsComps
+                    &physicsComps,
+                    &charControllerComps,
+                    &playerComps
             };
 
 public:
@@ -263,6 +271,11 @@ public:
     bool update();
     void render();
     void cleanup();
+
+    /**
+     * Reloads the scene at the beginning of the next frame
+     */
+    void reloadScene();
 
     //entity management methods
     /**

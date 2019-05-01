@@ -84,7 +84,11 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/components/PhysicsComponent.cpp src/components/PhysicsComponent.h
 		src/assets/CubeMap.cpp src/assets/CubeMap.h
 		src/assets/CubeMapIds.h
-		src/assets/CubeMapList.cpp)
+		src/assets/CubeMapList.cpp
+		src/components/CharControllerComponent.cpp src/components/CharControllerComponent.h
+		src/components/PlayerComponent.cpp src/components/PlayerComponent.h
+		src/components/PlatformComponent.cpp src/components/PlatformComponent.h
+		src/util/GLMPXConversion.cpp src/util/GLMPXConversion.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)
@@ -98,6 +102,7 @@ target_include_directories(thechosenfrog PRIVATE ${CMAKE_SOURCE_DIR}/RuntimeComp
 target_link_libraries(thechosenfrog RuntimeObjectSystem)
 
 #glm
+add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 target_include_directories(thechosenfrog PRIVATE libs/glm)
 
 

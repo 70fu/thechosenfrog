@@ -1,5 +1,4 @@
 #include "TransformComponent.h"
-#define GLM_ENABLE_EXPERIMENTAL
 //#include <iostream> // will be commented out
 //#include <ext.hpp> // will be commented out with all the test prints
 #include <gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
@@ -210,6 +209,14 @@ TransformComponent *TransformComponent::getPrevSibling() const
 void TransformComponent::cleanup(Game &game)
 {
     //detach children
-    for(TransformComponent* child = firstChild;child!=nullptr;child=child->nextSibling)
-        child->clearParent(true);
+    while(firstChild!=nullptr)
+        firstChild->clearParent(true);
+    //detach from parent
+    clearParentNoPropagate(false);
+
+    //clear vectors and matrices
+    translation = rotation = {0,0,0};
+    scaling = {1,1,1};
+    globalTrans=transformationMatrix=glm::mat4(1);
+    dirty = 0;
 }
