@@ -7,6 +7,7 @@
 #include <characterkinematic/PxControllerManager.h>
 #include <PxPhysicsAPI.h>
 #include <PxRigidActor.h>
+#include <PxPhysics.h>
 
 
 class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
@@ -109,6 +110,32 @@ public:
             game.getPhysics().getScene()->addActor(*actor);
             pComp.setActor(actor);
             pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM,PhysicsComponent::ALL);
+        }
+
+        //make some platforms
+        {
+            physx::PxShape* cube = game.getPhysics().getPhysics()->createShape(physx::PxBoxGeometry(0.5,0.5,0.5),*game.getPhysics().getNullMaterial());
+            for (int i = 0; i < 5; ++i)
+            {
+                EntityId id = game.createEntity();
+                TransformComponent &transform = game.transformComps.addComp(id);
+                transform.setTranslation({0, 8 * (i + 1), -(i + 1) * 18});
+                transform.setScaling({4, 0.1f, 4});
+
+                game.meshComps.addComp(id).mesh = game.getAssetManager().getMesh(MeshIds::UNIT_CUBE);
+
+                MaterialComponent &material = game.materialComps.addComp(id);
+                material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
+                material.instanceProp.setVec2("texRepeat",{2,2});
+                material.retrieveUniformLocations();
+
+                PhysicsComponent &pComp = game.physicsComps.addComp(id);
+                physx::PxRigidActor *actor = physx::PxCreateStatic(*game.getPhysics().getPhysics(),physx::PxTransform(GLMPXConversion::glmToPx(transform.getTranslation())),physx::PxBoxGeometry(2,0.05,2),*game.getPhysics().getNullMaterial());
+                game.getPhysics().getScene()->addActor(*actor);
+                pComp.setActor(actor);
+                pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM, PhysicsComponent::ALL);
+            }
+            cube->release();
         }
     }
 };
