@@ -17,7 +17,6 @@ private:
     physx::PxController* controller;
 public:
     //TODO put configuration in struct
-    //TODO max speed
 
     /* --------------------------------------------- */
     // Configuration
@@ -105,6 +104,24 @@ public:
     void setController(physx::PxController *controller);
 
     void cleanup(Game &game) override;
+
+    /**
+     * Calculates the initial speed and gravity of a jump, if the controller would jump with currently set parameters and jumpStrength
+     * updates and sets the cache variables.
+     * jumpStrength is clamped between 0 and 1
+     * @return initial speed and gravity of the jump
+     */
+    glm::vec3 calculateJump();
+
+    /**
+     * Calculates the gravity and velocity needed to perform a jump with given distance height at peak of the jump in given time
+     * the calculations are based on this talk: https://www.youtube.com/watch?v=hG9SzQxaCm8
+     * @param jumpDistance
+     * @param jumpHeight
+     * @param jumpDuration
+     * @return {horizontal initial speed,vertical initial speed, gravity}
+     */
+    static glm::vec3 calculateGravityAndSpeed(float jumpDistance, float jumpHeight, float jumpDuration);
 };
 
 

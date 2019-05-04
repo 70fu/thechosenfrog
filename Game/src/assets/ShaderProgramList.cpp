@@ -35,6 +35,14 @@ protected:
             font.addShader(assetManager.getShader(ShaderIds::FONT_FRAG));
         }
 
+        //configure parabola shader program
+        {
+            ShaderProgramAsset& font = assets[ShaderProgramIds::PARABOLA];
+            font.addShader(assetManager.getShader(ShaderIds::PARABOLA_VERT));
+            font.addShader(assetManager.getShader(ShaderIds::PARABOLA_GEOM));
+            font.addShader(assetManager.getShader(ShaderIds::PARABOLA_FRAG));
+        }
+
         //link all shader programs, skip default program
         for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
         {

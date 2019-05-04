@@ -181,23 +181,14 @@ private:
                 //perform jump if requested and possible
                 if(c.wantJump && c.grounded)
                 {
-                    //clamp jump strength
-                    c.jumpStrength = std::clamp(c.jumpStrength,0.0f,1.0f);
-
-                    //calculate properties of jump
-                    c.cachedJumpDistance = (c.maxJumpDistance-c.minJumpDistance)*c.jumpStrength+c.minJumpDistance;
-                    c.cachedJumpHeight = (c.maxJumpHeight-c.minJumpHeight)*c.jumpStrength+c.minJumpHeight;
-                    c.cachedJumpDuration = (c.maxJumpDuration-c.minJumpDuration)*c.jumpStrength+c.minJumpDuration;
-
-                    //calculate and set initial velocity and acceleration to achieve desired jump properties
-                    //these calculations are based on this talk: https://www.youtube.com/watch?v=hG9SzQxaCm8
-                    c.vel = glm::rotateY(glm::vec3({0,0,-c.cachedJumpDistance/c.cachedJumpDuration}),transform.getRotation().y);
-                    c.vel.y = (4*c.cachedJumpHeight)/c.cachedJumpDuration;
-                    oldAcc.y = c.acc.y = -(8*c.cachedJumpHeight)/(c.cachedJumpDuration*c.cachedJumpDuration);
+                    //initial velocity and acceleration to achieve desired jump properties
+                    glm::vec3 jump = c.calculateJump();
+                    c.vel = glm::rotateY(glm::vec3({0,0,-jump.x}),transform.getRotation().y);
+                    c.vel.y = jump.y;
+                    oldAcc.y = c.acc.y = jump.z;
 
                     //set state
                     c.jumping = true;
-
                     c.jumpStrength = 0;
 
                     //debug
@@ -259,6 +250,9 @@ private:
                 //apply gravity if falling
                 if(!touchFloor)
                 {
+                    //reset jumpStrength
+                    c.jumpStrength = 0;
+
                     if(c.grounded)
                     {
                         //TODO emit not grounded anymore event

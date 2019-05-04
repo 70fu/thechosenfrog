@@ -22,6 +22,9 @@ namespace ShaderIds
         FONT_VERT,
         FONT_FRAG,
         FONT_GEOM,
+        PARABOLA_VERT,
+        PARABOLA_FRAG,
+        PARABOLA_GEOM,
 
         SHADER_COUNT
     };

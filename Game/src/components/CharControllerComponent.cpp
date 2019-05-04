@@ -2,6 +2,7 @@
 #include "../logger/imguial_log.h"
 #include <characterkinematic/PxController.h>
 #include <PxRigidDynamic.h>
+#include <algorithm>
 
 physx::PxController *CharControllerComponent::getController() const
 {
@@ -34,4 +35,27 @@ void CharControllerComponent::cleanup(Game &game)
     controller->release();
 
     controller = nullptr;
+}
+
+glm::vec3 CharControllerComponent::calculateJump()
+{
+    //TODO move these calculations where jump strength is charged up, such that these can be hot reloaded (I could imagine, that the interpolation needs much tweaking)
+    //clamp jump strength
+    jumpStrength = std::clamp(jumpStrength,0.0f,1.0f);
+
+    //calculate properties of jump from jump strength and parameters
+    cachedJumpDistance = (maxJumpDistance-minJumpDistance)*jumpStrength+minJumpDistance;
+    cachedJumpHeight = (maxJumpHeight-minJumpHeight)*jumpStrength+minJumpHeight;
+    cachedJumpDuration = (maxJumpDuration-minJumpDuration)*jumpStrength+minJumpDuration;
+
+    return calculateGravityAndSpeed(cachedJumpDistance,cachedJumpHeight,cachedJumpDuration);
+}
+
+glm::vec3 CharControllerComponent::calculateGravityAndSpeed(float jumpDistance, float jumpHeight, float jumpDuration)
+{
+    return {
+        jumpDistance/jumpDuration,//horizontal initial speed
+        (4*jumpHeight)/jumpDuration,//vertical initial speed
+        -(8*jumpHeight)/(jumpDuration*jumpDuration)//gravity
+    };
 }

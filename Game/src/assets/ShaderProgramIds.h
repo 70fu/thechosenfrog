@@ -16,6 +16,7 @@ namespace ShaderProgramIds
 		SKYBOX,
         UNLIT,
         FONT,
+        PARABOLA,
 
         SHADER_PROGRAM_COUNT
     };

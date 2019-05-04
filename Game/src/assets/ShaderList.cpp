@@ -21,6 +21,9 @@ protected:
         loadAssetsFromFileHelper("/shaders/font.vert", ShaderIds::FONT_VERT, assets[ShaderIds::FONT_VERT], assetManager);
         loadAssetsFromFileHelper("/shaders/font.frag", ShaderIds::FONT_FRAG, assets[ShaderIds::FONT_FRAG], assetManager);
         loadAssetsFromFileHelper("/shaders/font.geom", ShaderIds::FONT_GEOM, assets[ShaderIds::FONT_GEOM], assetManager);
+        loadAssetsFromFileHelper("/shaders/parabola.vert", ShaderIds::PARABOLA_VERT, assets[ShaderIds::PARABOLA_VERT], assetManager);
+        loadAssetsFromFileHelper("/shaders/parabola.frag", ShaderIds::PARABOLA_FRAG, assets[ShaderIds::PARABOLA_FRAG], assetManager);
+        loadAssetsFromFileHelper("/shaders/parabola.geom", ShaderIds::PARABOLA_GEOM, assets[ShaderIds::PARABOLA_GEOM], assetManager);
         //...
     }
 
