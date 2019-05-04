@@ -162,6 +162,11 @@ void ImageData::setPixel(unsigned int x, unsigned int y, const Color& c)
     }
 }
 
+unsigned char *ImageData::getData()
+{
+    return data;
+}
+
 GLenum ImageData::getInternalFormat() const
 {
     static constexpr GLenum channelCountToInternalFormat[]={0,GL_R8,GL_RG8,GL_RGB8,GL_RGBA8};

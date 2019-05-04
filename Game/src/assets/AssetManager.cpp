@@ -58,6 +58,7 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     shaderProgramListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_PROGRAM_LIST,&shaderProgramList);
     textureListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::TEXTURE_LIST,&textureList);
     cubeMapListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::CUBE_MAP_LIST,&cubeMapList);
+    bitmapFontListId= RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::BITMAP_FONT_LIST,&bitmapFontList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -104,6 +105,12 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     if(!filewatch_start_watching(filewatches[i], FILEWATCH_TEXTURE_PATH, AssetManager::filewatchCallback, this))
         Log::getInstance().Error("Failed to start watching textures directory");
     ++i;
+
+    if(!filewatch_mount(filewatches[i], "../../Game/assets/fonts", FILEWATCH_FONT_PATH))
+        Log::getInstance().Error("Failed to mount file watcher to font directory");
+    if(!filewatch_start_watching(filewatches[i], FILEWATCH_FONT_PATH, AssetManager::filewatchCallback, this))
+        Log::getInstance().Error("Failed to start watching font directory");
+    ++i;
 #endif
 }
 
@@ -135,6 +142,7 @@ void AssetManager::cleanup()
     cleanupShaders();
     cleanupCubeMaps();
     cleanupTextures();
+    cleanupBitmapFonts();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -205,6 +213,14 @@ CubeMapAsset *AssetManager::getCubeMap(AssetId id)
         return &cubeMaps[CubeMapIds::DEFAULT];
 }
 
+BitmapFontAsset *AssetManager::getBitmapFont(AssetId id)
+{
+    if(id<BITMAP_FONT_SIZE)
+        return &bitmapFonts[id];
+    else
+        return &bitmapFonts[BitmapFontIds::DEFAULT];
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -246,6 +262,11 @@ void AssetManager::OnConstructorsAdded() {
     {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,cubeMapListId,&cubeMapList))
             assetBitmask|=AssetType::CUBE_MAP;
+    }
+    if(bitmapFontList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,bitmapFontListId,&bitmapFontList))
+            assetBitmask|=AssetType::BITMAP_FONT;
     }
 
     //reload lists of asset types whose classes have changed
@@ -294,6 +315,8 @@ void AssetManager::loadAssets(std::underlying_type<AssetType>::type assetBitmask
         storeFilePaths(paths,materialList->loadAll(materials,paths,MATERIAL_SIZE,*this));
     if((assetBitmask&AssetType::CUBE_MAP)!=0)
         storeFilePaths(paths,cubeMapList->loadAll(cubeMaps,paths,CUBE_MAP_SIZE,*this));
+    if((assetBitmask&AssetType::BITMAP_FONT)!=0)
+        storeFilePaths(paths,bitmapFontList->loadAll(bitmapFonts,paths,BITMAP_FONT_SIZE,*this));
     //...
 }
 
@@ -307,6 +330,7 @@ void AssetManager::reloadAssets()
     cleanupShaders();
     cleanupCubeMaps();
     cleanupTextures();
+    cleanupBitmapFonts();
 
     loadAssets(AssetType::ALL);
 }
@@ -370,6 +394,9 @@ void AssetManager::reloadFileAsset(const std::string& path)
         }
         case AssetType::CUBE_MAP:
             cubeMapList->loadFromFile(path,cubeMaps[id.id],*this);
+            break;
+        case AssetType::BITMAP_FONT:
+            bitmapFontList->loadFromFile(path,bitmapFonts[id.id],*this);
             break;
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
@@ -466,4 +493,15 @@ void AssetManager::cleanupCubeMaps()
 void AssetManager::cleanupCubeMap(CubeMapAsset &cubeMap)
 {
     cubeMap.cleanup();
+}
+
+void AssetManager::cleanupBitmapFonts()
+{
+    for(int i = 0;i<BITMAP_FONT_SIZE && i<BitmapFontIds::BITMAP_FONT_COUNT;++i)
+        cleanupBitmapFont(bitmapFonts[i]);
+}
+
+void AssetManager::cleanupBitmapFont(BitmapFontAsset &bitmapFont)
+{
+    bitmapFont.cleanup();
 }

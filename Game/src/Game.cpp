@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <PxScene.h>
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this),textComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?

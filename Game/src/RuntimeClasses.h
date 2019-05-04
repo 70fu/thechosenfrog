@@ -28,7 +28,8 @@ enum RuntimeClassIds : unsigned char
 	GAME_UPDATER,
 	MAIN_SCENE,
 	TEXTURE_LIST,
-	CUBE_MAP_LIST
+	CUBE_MAP_LIST,
+	BITMAP_FONT_LIST
 };
 
 /**
@@ -49,6 +50,7 @@ namespace RuntimeClassNames
 	static constexpr const char* MAIN_SCENE = "MainScene";
 	static constexpr const char* TEXTURE_LIST = "TextureList";
     static constexpr const char* CUBE_MAP_LIST = "CubeMapList";
+    static constexpr const char* BITMAP_FONT_LIST = "BitmapFontList";
 };
 
 #endif //CGUE19_THECHOSENFROG_RUNTIMECLASSES_H

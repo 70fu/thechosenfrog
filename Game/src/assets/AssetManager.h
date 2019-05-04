@@ -25,9 +25,8 @@
 #include "TextureIds.h"
 #include "CubeMap.h"
 #include "CubeMapIds.h"
-
-//#include "SoundList.cpp"
-//#include "MusicList.cpp"
+#include "BitmapFont.h"
+#include "BitmapFontIds.h"
 
 #ifndef NDEBUG
 #define EXTRA_ASSET_SPACE 16
@@ -47,7 +46,8 @@ static constexpr size_t SHADER_SIZE = ShaderIds::SHADER_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t SHADER_PROGRAM_SIZE = ShaderProgramIds::SHADER_PROGRAM_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t TEXTURE_SIZE = TextureIds::TEXTURE_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t CUBE_MAP_SIZE = CubeMapIds::CUBE_MAP_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE,CUBE_MAP_SIZE});
+static constexpr size_t BITMAP_FONT_SIZE = BitmapFontIds::BITMAP_FONT_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE,CUBE_MAP_SIZE,BITMAP_FONT_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -64,6 +64,8 @@ private:
     ShaderProgramAsset shaderPrograms[SHADER_PROGRAM_SIZE];
     TextureAsset textures[TEXTURE_SIZE];
     CubeMapAsset cubeMaps[CUBE_MAP_SIZE];
+    BitmapFontAsset bitmapFonts[BITMAP_FONT_SIZE];
+
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -88,13 +90,15 @@ private:
     ObjectId textureListId;
     AssetList<CubeMapAsset ,AssetType::CUBE_MAP>* cubeMapList;
     ObjectId cubeMapListId;
+    AssetList<BitmapFontAsset ,AssetType::BITMAP_FONT>* bitmapFontList;
+    ObjectId bitmapFontListId;
 
 #ifndef NDEBUG
     //file watcher
     static constexpr double FILEWATCH_UPDATE_INTERVAL = 1;
     double fileWatchUpdateCounter = FILEWATCH_UPDATE_INTERVAL;
     assetsys_t* assetsys;
-    filewatch_t* filewatches[6];
+    filewatch_t* filewatches[7];
 
     //virtual file watcher path
     static constexpr const char* FILEWATCH_SETTINGS_PATH = "/settings";
@@ -103,6 +107,7 @@ private:
     static constexpr const char* FILEWATCH_SOUND_PATH = "/sounds";
     static constexpr const char* FILEWATCH_MESH_PATH = "/meshes";
     static constexpr const char* FILEWATCH_TEXTURE_PATH = "/textures";
+    static constexpr const char* FILEWATCH_FONT_PATH = "/fonts";
     //...
 #endif
 public:
@@ -165,7 +170,13 @@ public:
      * @param id
      * @return pointer to cube map asset with given id, or default cube map if there is no cube map with given id, never returns nullptr
      */
-    CubeMapAsset * getCubeMap(AssetId id);
+    CubeMapAsset* getCubeMap(AssetId id);
+
+    /**
+     * @param id
+     * @return pointer to bitmap font asset with given id, or default bitmap font if there is no bitmap font with given id, never returns nullptr
+     */
+    BitmapFontAsset* getBitmapFont(AssetId id);
 private:
     /**
      * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
@@ -209,6 +220,9 @@ private:
 
     void cleanupCubeMaps();
     void cleanupCubeMap(CubeMapAsset& cubeMap);
+
+    void cleanupBitmapFonts();
+    void cleanupBitmapFont(BitmapFontAsset& bitmapFont);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

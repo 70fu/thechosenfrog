@@ -18,6 +18,9 @@ protected:
         loadAssetsFromFileHelper("/shaders/unlit.frag",ShaderIds::UNLIT_FRAG,assets[ShaderIds::UNLIT_FRAG],assetManager);
 		loadAssetsFromFileHelper("/shaders/skybox.vert", ShaderIds::SKYBOX_VERT, assets[ShaderIds::SKYBOX_VERT], assetManager);
 		loadAssetsFromFileHelper("/shaders/skybox.frag", ShaderIds::SKYBOX_FRAG, assets[ShaderIds::SKYBOX_FRAG], assetManager);
+        loadAssetsFromFileHelper("/shaders/font.vert", ShaderIds::FONT_VERT, assets[ShaderIds::FONT_VERT], assetManager);
+        loadAssetsFromFileHelper("/shaders/font.frag", ShaderIds::FONT_FRAG, assets[ShaderIds::FONT_FRAG], assetManager);
+        loadAssetsFromFileHelper("/shaders/font.geom", ShaderIds::FONT_GEOM, assets[ShaderIds::FONT_GEOM], assetManager);
         //...
     }
 
@@ -40,13 +43,15 @@ protected:
             return false;
         }
 
-        //TODO OH NO, hard coded valueasset.compile();s, plz remove
+        //TODO OH NO, hard coded values, plz remove
         //update trello doc if this is changed
         std::string fileEnding = path.substr(lastDotI+1);
         if(fileEnding=="vert")
             asset.type=GL_VERTEX_SHADER;
         else if(fileEnding=="frag")
             asset.type=GL_FRAGMENT_SHADER;
+        else if(fileEnding=="geom")
+            asset.type=GL_GEOMETRY_SHADER;
         else
         {
             ImGuiAl::Log::getInstance().Error("File Ending %s is not a valid file ending (.frag or .vert), shader type could not be deduced",fileEnding.c_str());

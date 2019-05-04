@@ -18,6 +18,8 @@ public:
         //set skybox
         game.activeSkybox = game.getAssetManager().getCubeMap(CubeMapIds::DEFAULT);
 
+        //TODO do some prefab system, construction methods, object file description system, ... its starting to get messy
+
         //init player
         {
             //init camera
@@ -28,7 +30,7 @@ public:
 
             CameraComponent& camera = game.cameraComps.addComp(camId);
             camera.setFar(100);
-            camera.setNear(0.1f);
+            camera.setNear(0.001f);
             camera.setFov(static_cast<float>(60*TO_RADIANS));
 
             CameraControllerComponent& camController = game.cameraControllerComps.addComp(camId);
@@ -75,7 +77,7 @@ public:
         //init default object
         {
             EntityId id = game.createEntity();
-            game.transformComps.addComp(id).setTranslation({0,0,-5});
+            game.transformComps.addComp(id).setTranslation({0,0,5});
             game.meshComps.addComp(id).mesh=game.getAssetManager().getMesh(MeshIds::DEFAULT);
             game.materialComps.addComp(id).material = game.getAssetManager().getMaterial(MaterialIds::DEFAULT);
         }
@@ -136,6 +138,32 @@ public:
                 pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM, PhysicsComponent::ALL);
             }
             cube->release();
+        }
+
+        //make a world space text
+        {
+            EntityId id = game.createEntity();
+            TransformComponent &transform = game.transformComps.addComp(id);
+            transform.setTranslation({0,0,0});
+            transform.setScaling({0.05,0.05,0.05});
+
+            TextComponent& text = game.textComps.addComp(id);
+            text.text="Hello Frog";
+            text.inScreenspace = false;
+            text.color = {30,200,30,255};
+            text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);
+        }
+
+        //make a screenspace text
+        {
+            /*EntityId id = game.createEntity();
+            TransformComponent &transform = game.transformComps.addComp(id);
+            transform.setTranslation({400,400,0});
+
+            TextComponent& text = game.textComps.addComp(id);
+            text.text="Hello Frog";
+            text.inScreenspace = true;
+            text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);*/
         }
     }
 };

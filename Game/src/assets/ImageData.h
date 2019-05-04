@@ -64,6 +64,11 @@ public:
      */
     void setPixel(unsigned int x, unsigned int y, const Color& color);
 
+    /**
+     * @return pointer to the bit data
+     */
+    unsigned char* getData();
+
     GLenum getInternalFormat() const;
     GLenum getFormat() const;
 

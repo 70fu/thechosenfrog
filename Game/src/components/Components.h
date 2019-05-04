@@ -21,6 +21,7 @@ namespace Components
 		PHYSICS,
 		CHAR_CONTROLLER,
 		PLAYER,
+		TEXT,
 
         COMPONENT_COUNT
     };
@@ -38,7 +39,8 @@ namespace Components
 		CAMERA_CONTROLLER_BIT = 1<<CAMERA_CONTROLLER,
 		PHYSICS_BIT = 1<<PHYSICS,
 		CHAR_CONTROLLER_BIT=1<<CHAR_CONTROLLER,
-		PLAYER_BIT=1<<PLAYER
+		PLAYER_BIT=1<<PLAYER,
+		TEXT_BIT=1<<TEXT,
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -56,6 +58,7 @@ namespace Components
 				MAX_ENTITIES,   //PHYSICS
 				1,              //CHAR_CONTROLLER
                 1,              //PLAYER
+                16,              //TEXT
             };
 
     constexpr MaskBits typeToMask(Types componentType){return static_cast<MaskBits>(1<<componentType);}

@@ -235,6 +235,12 @@ private:
             mat.data.retrieveLocations(*mat.shader);
     }
 
+    void drawBitmapFont(const BitmapFontAsset& font)
+    {
+        drawTexture(font.getBitmap());
+        //TODO other members
+    }
+
     ComponentId componentCommon(unsigned int numActive,Components::Types type)
     {
         ImGui::Text("Active Components: %d", numActive);
@@ -483,6 +489,17 @@ public:
                             drawShaderProgram(*game,*game->getAssetManager().getShaderProgram(i));
                             ImGui::TreePop();
                         }
+                    }
+                    ImGui::EndTabItem();
+                }
+                //endregion
+                //region Bitmap Fonts
+                if (ImGui::BeginTabItem("Bitmap Fonts"))
+                {
+                    for (unsigned int i = 0; i < BitmapFontIds::BITMAP_FONT_COUNT; ++i)
+                    {
+                        if (ImGui::CollapsingHeader(getNum(i)))
+                            drawBitmapFont(*game->getAssetManager().getBitmapFont(i));
                     }
                     ImGui::EndTabItem();
                 }

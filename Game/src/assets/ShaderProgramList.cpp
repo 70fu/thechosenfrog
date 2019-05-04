@@ -27,6 +27,14 @@ protected:
             unlit.addShader(assetManager.getShader(ShaderIds::UNLIT_FRAG));
         }
 
+        //configure font shader program
+        {
+            ShaderProgramAsset& font = assets[ShaderProgramIds::FONT];
+            font.addShader(assetManager.getShader(ShaderIds::FONT_VERT));
+            font.addShader(assetManager.getShader(ShaderIds::FONT_GEOM));
+            font.addShader(assetManager.getShader(ShaderIds::FONT_FRAG));
+        }
+
         //link all shader programs, skip default program
         for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
         {

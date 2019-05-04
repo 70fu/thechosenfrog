@@ -19,6 +19,9 @@ namespace ShaderIds
 		SKYBOX_VERT,
         UNLIT_VERT,
         UNLIT_FRAG,
+        FONT_VERT,
+        FONT_FRAG,
+        FONT_GEOM,
 
         SHADER_COUNT
     };

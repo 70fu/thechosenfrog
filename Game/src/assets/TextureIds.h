@@ -11,6 +11,7 @@ RUNTIME_MODIFIABLE_INCLUDE
 namespace TextureIds {
     enum TextureIds : unsigned char {
         DEFAULT,
+
         TEXTURE_COUNT
     };
 }

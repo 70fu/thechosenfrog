@@ -24,6 +24,7 @@
 #include "components/PhysicsComponent.h"
 #include "components/CharControllerComponent.h"
 #include "components/PlayerComponent.h"
+#include "components/TextComponent.h"
 
 class GLFWwindow;
 
@@ -239,6 +240,8 @@ public:
     ComponentStore<PhysicsComponent,Components::PHYSICS> physicsComps;
     ComponentStore<CharControllerComponent,Components::CHAR_CONTROLLER> charControllerComps;
     ComponentStore<PlayerComponent,Components::PLAYER> playerComps;
+    ComponentStore<TextComponent,Components::TEXT> textComps;
+
 
     //Global Skybox, must never be nullptr
     CubeMapAsset* activeSkybox;
@@ -257,7 +260,8 @@ private:
                     &cameraControllerComps,
                     &physicsComps,
                     &charControllerComps,
-                    &playerComps
+                    &playerComps,
+                    &textComps
             };
 
 public:

@@ -66,7 +66,10 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		libs/imgui/imgui_impl_opengl3.h
 
 		libs/stb_image/stb_image.h
-	#------end libs
+
+		libs/stb_truetype/stb_truetype.h
+
+		#------end libs
 		src/IGameRenderer.h
 		src/GameRenderer.cpp
 		src/IGameUpdater.h
@@ -88,13 +91,16 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/components/CharControllerComponent.cpp src/components/CharControllerComponent.h
 		src/components/PlayerComponent.cpp src/components/PlayerComponent.h
 		src/components/PlatformComponent.cpp src/components/PlatformComponent.h
-		src/util/GLMPXConversion.cpp src/util/GLMPXConversion.h)
+		src/util/GLMPXConversion.cpp src/util/GLMPXConversion.h src/assets/BitmapFont.cpp src/assets/BitmapFont.h src/assets/BitmapFontList.cpp src/assets/BitmapFontIds.h src/components/TextComponent.cpp src/components/TextComponent.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)
 
 #stb_image
 target_include_directories(thechosenfrog PRIVATE libs/stb_image)
+
+#stb_truetype
+target_include_directories(thechosenfrog PRIVATE libs/stb_truetype)
 
 #runtime compiled cpp
 target_include_directories(thechosenfrog PRIVATE ${CMAKE_SOURCE_DIR}/RuntimeCompiledCPlusPlus/RuntimeCompiler)

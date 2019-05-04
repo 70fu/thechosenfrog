@@ -15,6 +15,7 @@ namespace ShaderProgramIds
         DEFAULT,
 		SKYBOX,
         UNLIT,
+        FONT,
 
         SHADER_PROGRAM_COUNT
     };
