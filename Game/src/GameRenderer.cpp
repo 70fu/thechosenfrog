@@ -31,6 +31,8 @@ private:
     /* --------------------------------------------- */
     // Parabola Rendering
     /* --------------------------------------------- */
+    static constexpr unsigned int MAX_PARABOLA_POINTS = 32;
+    float parabolaX[MAX_PARABOLA_POINTS];//x values sent to the shader for the parabola formula
     GLuint parabolaVao;
     GLuint parabolaVbo;
 
@@ -134,10 +136,11 @@ public:
             glGenBuffers(1,&parabolaVbo);
             glBindVertexArray(parabolaVao);
             glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
-            glBufferData(GL_ARRAY_BUFFER,sizeof(float)*2,nullptr,GL_DYNAMIC_DRAW);//space for a and b component of parabola formula
-            glVertexAttribPointer(PARABOLA_VERTEX_ATTRIB_INDEX,2,GL_FLOAT,GL_FALSE,0,0);
+            glBufferData(GL_ARRAY_BUFFER,sizeof(float)*MAX_PARABOLA_POINTS,nullptr,GL_DYNAMIC_DRAW);
+            glVertexAttribPointer(PARABOLA_VERTEX_ATTRIB_INDEX,1,GL_FLOAT,GL_FALSE,1*sizeof(float),0);
             glEnableVertexAttribArray(PARABOLA_VERTEX_ATTRIB_INDEX);
-
+            glBindBuffer(GL_ARRAY_BUFFER,0);
+            glBindVertexArray(0);
         }
     }
 
@@ -232,72 +235,6 @@ public:
             //endregion
 
             /* --------------------------------------------- */
-            // Render jump Parabolas (CharControllerComp+Player)
-            /* --------------------------------------------- */
-            //region Render Jump Parabolas
-            {
-                /*
-                 * The parabolaVbo has space for exactly 1 vec2 which stores a and b component of the parabola.
-                 * a geometry shader generates the vertices out of the parabola components
-                 */
-                //uniform locations
-                static constexpr int MAX_X = 16;
-                static constexpr int JUMP_DISTANCE = 17;
-
-                //enable blending
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-                //bind shader
-                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::PARABOLA)->getProgramHandle());
-
-                //bind projection view matrix
-                glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX,1,GL_FALSE,glm::value_ptr(pv));
-
-                //bind vao
-                glBindVertexArray(parabolaVao);
-
-                for(PlayerComponent& player : game.playerComps)
-                {
-                    if(game.hasComponents(player.entity,Components::CHAR_CONTROLLER_BIT|Components::TRANSFORM_BIT))
-                    {
-                        CharControllerComponent& controller = game.charControllerComps[player.entity];
-
-                        //is the player charging a jump??, then render
-                        if(controller.jumpStrength>0 && controller.grounded)
-                        {
-                            TransformComponent& transform = game.transformComps[player.entity];
-
-                            //set parabola components
-                            glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
-                            glm::vec3 jump = controller.calculateJump();
-                            glm::vec2 parabolaComponents = {0.5f*jump.z,jump.y};//calculate parabola components
-                            glBufferSubData(GL_ARRAY_BUFFER,0,2*sizeof(float),glm::value_ptr(parabolaComponents));
-                            glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
-
-                            //bind uniforms
-                            glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getGlobalTransform()));
-                            glUniform1f(MAX_X,controller.cachedJumpDuration);//TODO make a physics query to stop at the first impact of the parabola
-                            glUniform1f(JUMP_DISTANCE,controller.cachedJumpDistance);
-
-                            //draw
-                            glDrawArrays(GL_POINTS,0,1);
-                        }
-                    }
-                }
-
-                //unbind vao
-                glBindVertexArray(0);
-
-                //unbind shader
-                glUseProgram(0);
-
-                //disable blending
-                glDisable(GL_BLEND);
-            }
-            //endregion
-
-            /* --------------------------------------------- */
             // Render SkyBox
             /* --------------------------------------------- */
             //region render skybox
@@ -323,6 +260,79 @@ public:
 
                 //unbind shader
                 glUseProgram(0);
+            }
+            //endregion
+
+            /* --------------------------------------------- */
+            // Render jump Parabolas (CharControllerComp+Player)
+            /* --------------------------------------------- */
+            //region Render Jump Parabolas
+            {
+                /*
+                 * The parabolaVbo contains the x values for which the parabola is evaluated and a point with coordinates is calculated in the vertex shader
+                 * a geometry shader generates more vertices out of the parabola components
+                 */
+                //uniform locations
+                static constexpr int MAX_X = 16;
+                static constexpr int JUMP_DISTANCE = 17;
+                static constexpr int PARABOLA=18;
+
+                //enable blending
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                //bind shader
+                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::PARABOLA)->getProgramHandle());
+
+                //bind projection view matrix and frame time
+                glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX,1,GL_FALSE,glm::value_ptr(pv));
+                glUniform1i(CommonShaderUniforms::FRAME,game.getFrame());
+
+                //bind vao
+                glBindVertexArray(parabolaVao);
+
+                for(PlayerComponent& player : game.playerComps)
+                {
+                    if(game.hasComponents(player.entity,Components::CHAR_CONTROLLER_BIT|Components::TRANSFORM_BIT))
+                    {
+                        CharControllerComponent& controller = game.charControllerComps[player.entity];
+
+                        //is the player charging a jump??, then render
+                        if(controller.jumpStrength>0 && controller.grounded)
+                        {
+                            TransformComponent& transform = game.transformComps[player.entity];
+
+                            //calculate parabola components
+                            glm::vec3 jump = controller.calculateJump();
+                            glm::vec2 parabolaComponents = {0.5f*jump.z,jump.y};//calculate parabola components
+
+                            //bind uniforms
+                            glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getGlobalTransform()));
+                            glUniform1f(MAX_X,controller.cachedJumpDuration);//TODO make a physics query to stop at the first impact of the parabola
+                            glUniform1f(JUMP_DISTANCE,controller.cachedJumpDistance);
+                            glUniform2fv(PARABOLA,1,glm::value_ptr(parabolaComponents));
+
+                            //set parabola points
+                            for(int i = 0;i<MAX_PARABOLA_POINTS;++i)
+                                parabolaX[i] = static_cast<float>(i)/(MAX_PARABOLA_POINTS-1);
+                            glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
+                            glBufferSubData(GL_ARRAY_BUFFER,0,MAX_PARABOLA_POINTS*sizeof(float),&parabolaX[0]);
+                            glBindBuffer(GL_ARRAY_BUFFER,0);
+
+                            //draw
+                            glDrawArrays(GL_POINTS,0,MAX_PARABOLA_POINTS);
+                        }
+                    }
+                }
+
+                //unbind vao
+                glBindVertexArray(0);
+
+                //unbind shader
+                glUseProgram(0);
+
+                //disable blending
+                glDisable(GL_BLEND);
             }
             //endregion
 

@@ -108,6 +108,9 @@ bool Game::update(){
     runtimeObjectSystem->GetFileChangeNotifier()->Update(FIXED_DELTA);
 #endif
 
+    //increase frame count
+    ++frame;
+
     if(reloadSceneOnNextFrame)
     {
         //delete all entities
@@ -351,4 +354,9 @@ const glm::vec2& Game::getMouseScrollDelta() const
 void Game::setMouseScrollDelta(const glm::vec2 &delta)
 {
     mouseScrollDelta = delta;
+}
+
+long long Game::getFrame() const
+{
+    return frame;
 }

@@ -154,13 +154,41 @@ private:
 		}
 	}
 
+	inline void toggleOpenGL(GLenum v)
+    {
+        if(glIsEnabled(v))
+            glDisable(v);
+        else
+            glEnable(v);
+    }
+
+	/**
+	 * F11 - Reload Scene
+	 * F10 - Toggle Backface culling
+	 * F9 - Toggle wireframe rendering
+	 * @param game
+	 * @param key
+	 * @param scancode
+	 * @param action
+	 * @param mods
+	 */
 	inline void keyDebugControls(Game& game, int key, int scancode, int action, int mods)
     {
 	    if(action==GLFW_PRESS)
         {
-	        if(key==GLFW_KEY_F12)
+	        if(key==GLFW_KEY_F11)
             {
 	            game.reloadScene();
+            }
+	        else if(key==GLFW_KEY_F10)
+            {
+	            toggleOpenGL(GL_CULL_FACE);
+            }
+	        else if(key==GLFW_KEY_F9)
+            {
+	            GLint mode[2];
+	            glGetIntegerv(GL_POLYGON_MODE,&mode[0]);
+                glPolygonMode(GL_FRONT_AND_BACK, mode[0]==GL_LINE?GL_FILL:GL_LINE);
             }
         }
     }

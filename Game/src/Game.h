@@ -247,6 +247,11 @@ public:
     CubeMapAsset* activeSkybox;
 private:
     /**
+     * current frame, is incremented at the beginning on every update (thus -1 is immediatly incremented to 0 on the first update)
+     */
+    long long frame = -1;
+
+    /**
      * This array is used to remove components from entities when an entity is deleted
      * a component store of every component type must be in this array.
      * Component store that manages components with type id T must be at index T
@@ -353,6 +358,11 @@ public:
 	 * @param delta
 	 */
 	void setMouseScrollDelta(const glm::vec2& delta);
+
+	/**
+	 * @return the current frame number = how often the game has been updated
+	 */
+	long long getFrame() const;
 };
 
 

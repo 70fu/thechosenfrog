@@ -8,7 +8,7 @@ class PlayerComponent : public Component
 {
 public:
     //increase of jump strength if jump key/button is pressed per second
-    static constexpr float JUMP_STRENGTH_INCREASE = 0.1;
+    static constexpr float JUMP_STRENGTH_INCREASE = 1/3.0f;
 
     /* --------------------------------------------- */
     // Input

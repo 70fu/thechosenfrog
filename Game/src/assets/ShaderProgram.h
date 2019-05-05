@@ -17,7 +17,8 @@ namespace CommonShaderUniforms
         MODEL_MAT,//mat4
         NORMAL_MAT,//mat4
         PROJECTION_VIEW_MATRIX, //mat4
-        VIEWER_POS //vec3
+        VIEWER_POS, //vec3
+        FRAME //the current frame number, can be used for animations over time, increases by one every update
     };
 }
 
