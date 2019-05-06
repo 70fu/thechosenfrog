@@ -103,7 +103,7 @@ public:
             CameraComponent& camera = game.cameraComps.addComp(camId);
             camera.setFar(100);
             camera.setNear(0.001f);
-            camera.setFov(static_cast<float>(60*TO_RADIANS));
+            camera.setFov(static_cast<float>(100*TO_RADIANS));
 
             CameraControllerComponent& camController = game.cameraControllerComps.addComp(camId);
             camController.controlFlags=CameraControllerComponent::ROTATE_VER;
