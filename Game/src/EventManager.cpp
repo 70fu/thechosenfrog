@@ -166,6 +166,7 @@ private:
 	 * F11 - Reload Scene
 	 * F10 - Toggle Backface culling
 	 * F9 - Toggle wireframe rendering
+	 * F8 - Toggle cursor
 	 * @param game
 	 * @param key
 	 * @param scancode
@@ -189,6 +190,11 @@ private:
 	            GLint mode[2];
 	            glGetIntegerv(GL_POLYGON_MODE,&mode[0]);
                 glPolygonMode(GL_FRONT_AND_BACK, mode[0]==GL_LINE?GL_FILL:GL_LINE);
+            }
+	        else if(key==GLFW_KEY_F8)
+            {
+                int mode = glfwGetInputMode(game.getWindow(),GLFW_CURSOR);
+                glfwSetInputMode(game.getWindow(),GLFW_CURSOR,mode==GLFW_CURSOR_DISABLED?GLFW_CURSOR_NORMAL:GLFW_CURSOR_DISABLED);
             }
         }
     }

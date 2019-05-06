@@ -218,6 +218,9 @@ int main(int argc, char** argv)
         return 2;
     }
 
+    //disable cursor
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+
     //make context active
     glfwMakeContextCurrent(window);
 
