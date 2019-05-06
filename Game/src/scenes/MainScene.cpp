@@ -175,18 +175,6 @@ public:
             }
         }
 
-        //make a screenspace text
-        {
-            /*EntityId id = game.createEntity();
-            TransformComponent &transform = game.transformComps.addComp(id);
-            transform.setTranslation({400,400,0});
-
-            TextComponent& text = game.textComps.addComp(id);
-            text.text="Hello Frog";
-            text.inScreenspace = true;
-            text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);*/
-        }
-
         makeSign(game,{{-1.5,-1,4},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"});
         makeSign(game,{{1.5,-1,4},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"});
         makeSign(game,{{1,-1,-3},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"});

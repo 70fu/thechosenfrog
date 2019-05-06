@@ -26,6 +26,8 @@ public:
 
         updateCameraControllers(game);
 
+        checkLooseCondition(game);
+
 
     }
 
@@ -293,6 +295,35 @@ private:
             //increase or reset air time
             if(!c.grounded)
                 c.airTime+=FIXED_DELTA;
+        }
+    }
+
+    inline void checkLooseCondition(Game& game)
+    {
+        for(PlayerComponent& player : game.playerComps)
+        {
+
+            if(!player.hasLost && game.hasComponents(player.entity,Components::TRANSFORM_BIT))
+            {
+                TransformComponent& transform = game.transformComps[player.entity];
+
+                //check height
+                if(transform.getTranslation().y<-2)
+                {
+                    player.hasLost = true;
+
+                    //make a screenspace text
+                    EntityId id = game.createEntity();
+                    TransformComponent &textTrans = game.transformComps.addComp(id);
+                    textTrans.setTranslation({game.settings.windowWidth/2-200,game.settings.windowHeight/2,0});
+
+                    TextComponent& text = game.textComps.addComp(id);
+                    text.text="      You Loose!\n\nPress F11 to Restart";
+                    text.inScreenspace = true;
+                    text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);
+                    text.color = {0,0,0,255};
+                }
+            }
         }
     }
 };
