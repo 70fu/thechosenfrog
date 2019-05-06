@@ -120,8 +120,8 @@ public:
             controller.maxJumpHeight=10;
             controller.minJumpDistance=2;
             controller.maxJumpDistance=20;
-            controller.minJumpDuration=1;
-            controller.maxJumpDuration=3;
+            controller.minJumpDuration=0.5;
+            controller.maxJumpDuration=2;
             controller.airWalkSpeed = 1;
             controller.groundWalkForce = 15;
             controller.maxGroundSpeed = 3;
