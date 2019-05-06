@@ -15,9 +15,9 @@ class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
 private:
     struct SignParameters
     {
-        glm::vec3 translation;
-        glm::vec3 rotation;
-        std::string text;
+        glm::vec3 translation={0,0,0};
+        glm::vec3 rotation={0,0,0};
+        std::string text="";
     };
 
     TransformComponent& makeSign(Game& game, SignParameters params)
@@ -53,6 +53,37 @@ private:
         return trans;
     }
 
+    struct PlatformParameters
+    {
+        glm::vec3 translation={0,0,0};
+        float yRotation = 0;
+        glm::vec2 size={1,1};//x and z size
+    };
+
+    TransformComponent& makePlatform(Game& game, PlatformParameters params)
+    {
+        EntityId id = game.createEntity();
+        TransformComponent &transform = game.transformComps.addComp(id);
+        transform.setTranslation(params.translation);
+        transform.setScaling({params.size.x, 0.1f, params.size.y});
+        transform.setRotation({0,params.yRotation,0});
+
+        game.meshComps.addComp(id).mesh = game.getAssetManager().getMesh(MeshIds::UNIT_CUBE);
+
+        MaterialComponent &material = game.materialComps.addComp(id);
+        material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
+        material.instanceProp.setVec2("texRepeat",{params.size.x,params.size.y});
+        material.instanceProp.setTexture("diffuseTex",game.getAssetManager().getTexture(TextureIds::DEFAULT));
+        material.retrieveUniformLocations();
+
+        PhysicsComponent &pComp = game.physicsComps.addComp(id);
+        physx::PxRigidActor *actor = physx::PxCreateStatic(*game.getPhysics().getPhysics(),physx::PxTransform(GLMPXConversion::glmToPx(transform.getTranslation())),physx::PxBoxGeometry(params.size.x/2,0.05,params.size.y/2),*game.getPhysics().getNullMaterial());
+        game.getPhysics().getScene()->addActor(*actor);
+        pComp.setActor(actor);
+        pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM, PhysicsComponent::ALL);
+
+        return transform;
+    }
 public:
     void init(Game& game) override
     {
@@ -115,26 +146,9 @@ public:
             camTrans.setParent(pTrans,false);
         }
 
-        //make a plane
+        //make initialPlatform
         {
-            EntityId id = game.createEntity();
-            TransformComponent& transform = game.transformComps.addComp(id);
-            transform.setTranslation({0,-1,0});
-            transform.setScaling({20,0.1f,20});
-
-            game.meshComps.addComp(id).mesh=game.getAssetManager().getMesh(MeshIds::UNIT_CUBE);
-
-            MaterialComponent& material = game.materialComps.addComp(id);
-            material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
-            material.instanceProp.setVec2("texRepeat",{10,10});
-            material.instanceProp.setTexture("diffuseTex",game.getAssetManager().getTexture(TextureIds::DEFAULT));
-            material.retrieveUniformLocations();
-
-            PhysicsComponent& pComp = game.physicsComps.addComp(id);
-            physx::PxRigidActor* actor = physx::PxCreatePlane(*game.getPhysics().getPhysics(),physx::PxPlane(0,1,0,1),*game.getPhysics().getNullMaterial());
-            game.getPhysics().getScene()->addActor(*actor);
-            pComp.setActor(actor);
-            pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM,PhysicsComponent::ALL);
+            makePlatform(game,{{0,-1,0},0,{20,20}});
         }
 
         //make some platforms
@@ -144,24 +158,11 @@ public:
             {
                 float size = 8-i;
 
-                EntityId id = game.createEntity();
-                TransformComponent &transform = game.transformComps.addComp(id);
-                transform.setTranslation({((i%2)*2-1)*8*(i&1), 7 * (i + 1), -(i + 1) * 15});
-                transform.setScaling({size, 0.1f, size});
+                PlatformParameters params;
+                params.translation={((i%2)*2-1)*8*(i&1), 7 * (i + 1), -(i + 1) * 15};
+                params.size={size,size};
 
-                game.meshComps.addComp(id).mesh = game.getAssetManager().getMesh(MeshIds::UNIT_CUBE);
-
-                MaterialComponent &material = game.materialComps.addComp(id);
-                material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
-                material.instanceProp.setVec2("texRepeat",{size/2,size/2});
-                material.instanceProp.setTexture("diffuseTex",game.getAssetManager().getTexture(TextureIds::DEFAULT));
-                material.retrieveUniformLocations();
-
-                PhysicsComponent &pComp = game.physicsComps.addComp(id);
-                physx::PxRigidActor *actor = physx::PxCreateStatic(*game.getPhysics().getPhysics(),physx::PxTransform(GLMPXConversion::glmToPx(transform.getTranslation())),physx::PxBoxGeometry(size/2,0.05,size/2),*game.getPhysics().getNullMaterial());
-                game.getPhysics().getScene()->addActor(*actor);
-                pComp.setActor(actor);
-                pComp.setLayerAndCollisionMask(PhysicsComponent::PLATFORM, PhysicsComponent::ALL);
+                TransformComponent &transform = makePlatform(game,params);
 
                 //place winning sign on last platform
                 if(i==PLATFORM_COUNT-1)
