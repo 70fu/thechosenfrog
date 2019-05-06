@@ -14,7 +14,7 @@ private:
 	};
 
 	glm::vec3 translation = { 0,0,0 }; // Verschiebung
-	glm::quat rotation = glm::identity<glm::quat>(); // Drehung Y X Z
+	glm::vec3 rotation = {0,0,0}; // Drehung Y X Z
 	glm::vec3 scaling = { 1,1,1 }; // vergr��ern / verkleinern
 
 
@@ -56,7 +56,7 @@ public:
 	glm::vec3 getGlobalTranslation();
 
 	// rotation
-	glm::vec3 getRotation() const;
+	const glm::vec3& getRotation() const;
 	void setRotation(glm::vec3 rotation);
 
 	// scaling

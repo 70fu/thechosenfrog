@@ -35,7 +35,7 @@ void TransformComponent::updateTransformationMatrix()
 	// fill each matrix
 	scalingMatrix = glm::scale(glm::mat4(1.0f), getScaling());
 	translationsMatrix = glm::translate(glm::mat4(1.0f), getTranslation());
-	rotationsMatrix = glm::mat4_cast(rotation);
+	rotationsMatrix = glm::orientate4(glm::vec3(rotation.x,rotation.z,rotation.y));
 
 	// multiply matrix
 	transformationMatrix = translationsMatrix * rotationsMatrix * scalingMatrix;
@@ -109,14 +109,14 @@ glm::vec3 TransformComponent::getGlobalTranslation()
 	return getGlobalTransform()[3];
 }
 
-glm::vec3 TransformComponent::getRotation() const
+const glm::vec3& TransformComponent::getRotation() const
 {
-    return glm::eulerAngles(rotation);
+    return rotation;
 }
 
 // Rotation setter + Update Transformationsmatrix
 void TransformComponent::setRotation(glm::vec3 eulerAngles) {
-	rotation = glm::quat(eulerAngles);
+	rotation = eulerAngles;
 	makeDirty();
 }
 
@@ -226,7 +226,7 @@ void TransformComponent::cleanup(Game &game)
 
     //clear vectors and matrices
     translation = {0,0,0};
-    rotation=glm::identity<glm::quat>();
+    rotation={0,0,0};
     scaling = {1,1,1};
     globalTrans=transformationMatrix=glm::mat4(1);
     dirty = 0;
@@ -236,6 +236,14 @@ void TransformComponent::decomposeLocalTrans()
 {
     glm::vec3 skewTmp;
     glm::vec4 perpectiveTmp;
-    if(!glm::decompose(transformationMatrix,scaling,rotation,translation,skewTmp,perpectiveTmp))
+    glm::quat q;
+    if(!glm::decompose(transformationMatrix,scaling,q,translation,skewTmp,perpectiveTmp))
+    {
         ImGuiAl::Log::getInstance().Error("Could not decompose matrix, WHY");
+    }
+    else
+    {
+        //convert quaternion to euler angles
+        rotation = glm::eulerAngles(q);
+    }
 }
