@@ -183,6 +183,7 @@ protected:
             skybox.allocateOnGPU(GL_STATIC_DRAW);
         }
         //endregion
+        loadAssetsFromFileHelper("/meshes/SignPost.obj",MeshIds::SIGNPOST,assets[MeshIds::SIGNPOST],assetManager);
         //...
     }
 

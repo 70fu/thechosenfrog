@@ -19,6 +19,8 @@ void MaterialData::clearLocations()
         u.second.location = -1;
     for(auto& u : textures)
         u.second.location = -1;
+    for(auto& u : colors)
+        u.second.location = -1;
 }
 
 void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
@@ -39,6 +41,8 @@ void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
         u.second.location = shaderAsset.getUniformLocation(u.first);
     for(auto& u : textures)
         u.second.location = shaderAsset.getUniformLocation(u.first);
+    for(auto& u : colors)
+        u.second.location = shaderAsset.getUniformLocation(u.first);
 }
 
 void MaterialData::clearProps()
@@ -51,6 +55,7 @@ void MaterialData::clearProps()
     mat3s.clear();
     mat4s.clear();
     textures.clear();
+    colors.clear();
 }
 
 void Material::clearMaterialProps()
@@ -96,6 +101,11 @@ void MaterialData::setMat4(const std::string &name, const glm::mat4& mat4)
 void MaterialData::setTexture(const std::string &name, TextureAsset *texture)
 {
     textures[name].value=texture;
+}
+
+void MaterialData::setColor(const std::string &name, const Color &color)
+{
+    colors[name].value=color;
 }
 
 /*

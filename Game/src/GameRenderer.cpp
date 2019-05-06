@@ -103,6 +103,11 @@ private:
                 ++nextFreeTextureUnit;
             }
         }
+        for(auto& p : mat.colors)
+        {
+            if (checkMask(p.second, uniformMask))
+                glUniform4fv(p.second.getLocation(), 1, glm::value_ptr(glm::vec4(p.second.value)/255.0f));
+        }
     }
 
 public:
@@ -388,7 +393,7 @@ public:
                         }
 
                         //fill buffer with quads
-                        charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,-1);
+                        charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,text.wrapWidth);
 
                         //update the vbo
                         int writeSize = std::min(charBufferSize,maxTextQuads);

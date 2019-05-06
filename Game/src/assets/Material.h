@@ -14,6 +14,7 @@
 #include "Assets.h"
 #include "Mesh.h"
 #include "ShaderProgram.h"
+#include "../util/Color.h"
 
 
 struct MaterialData
@@ -43,6 +44,7 @@ public:
     std::unordered_map<std::string,UniformValue<glm::mat3>> mat3s;
     std::unordered_map<std::string,UniformValue<glm::mat4>> mat4s;
     std::unordered_map<std::string,UniformValue<TextureAsset*>> textures;
+    std::unordered_map<std::string,UniformValue<Color>> colors;
 
     /**
      * resets uniform locations of material properties to -1
@@ -67,6 +69,7 @@ public:
     void setMat3(const std::string& name, const glm::mat3& mat3);
     void setMat4(const std::string& name, const glm::mat4& mat4);
     void setTexture(const std::string& name, TextureAsset* texture);
+    void setColor(const std::string& name, const Color& color);
 
     /*
     //iterators

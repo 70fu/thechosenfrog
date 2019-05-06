@@ -13,6 +13,7 @@ namespace MeshIds {
         DEFAULT,
         UNIT_CUBE,
         SKYBOX,
+        SIGNPOST,
 
         MESH_COUNT
     };

@@ -108,23 +108,26 @@ BitmapFont::fillQuadBuffer(const std::string &text, stbtt_aligned_quad *quads, u
     if(wrapWidth<0)
         wrapWidth = std::numeric_limits<float>::max();
 
-    unsigned int charactersWritten = std::min<unsigned int>(text.length(),quadSize);
-
     float currentX = x;
     float currentY = y;
-    for(unsigned int i = 0;i<charactersWritten;++i)
+    unsigned int quadIndex = 0;
+    for(unsigned int i = 0;quadIndex<quadSize && i<text.length();++i)
     {
-        stbtt_GetPackedQuad(charData,parameters.width,parameters.height,text[i]-parameters.firstChar,&currentX,&currentY,&quads[i],0);
-
         //wrapping
-        if(currentX >= wrapWidth)
+        if(currentX >= wrapWidth || text[i]=='\n')
         {
             currentX = x;
             currentY+=lineHeight+parameters.fontSize;
+
+            if(text[i]=='\n')
+                continue;
         }
+
+        stbtt_GetPackedQuad(charData,parameters.width,parameters.height,text[i]-parameters.firstChar,&currentX,&currentY,&quads[quadIndex],0);
+        ++quadIndex;
     }
 
-    return charactersWritten;
+    return quadIndex;
 }
 
 
