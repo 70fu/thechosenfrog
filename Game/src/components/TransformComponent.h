@@ -3,6 +3,7 @@
 #include <vec3.hpp>
 #include <mat4x4.hpp>
 #include "Component.h"
+#include <ext/quaternion_float.hpp>
 
 class TransformComponent : public Component {
 private:
@@ -13,7 +14,7 @@ private:
 	};
 
 	glm::vec3 translation = { 0,0,0 }; // Verschiebung
-	glm::vec3 rotation = { 0,0,0 }; // Drehung Y X Z
+	glm::quat rotation = glm::identity<glm::quat>(); // Drehung Y X Z
 	glm::vec3 scaling = { 1,1,1 }; // vergr��ern / verkleinern
 
 
@@ -34,6 +35,10 @@ private:
 	void parentChanged();
 	void makeDirty();
 	void clearParentNoPropagate(bool keepGlobalPos);
+	/**
+	 * calculates the translation, scale and rotation from the current local transformation matrix and updates the cached vectors
+	 */
+	void decomposeLocalTrans();
 public:
 	
 	// constructor
@@ -51,7 +56,7 @@ public:
 	glm::vec3 getGlobalTranslation();
 
 	// rotation
-	glm::vec3 const & getRotation() const { return this ->rotation; }
+	glm::vec3 getRotation() const;
 	void setRotation(glm::vec3 rotation);
 
 	// scaling

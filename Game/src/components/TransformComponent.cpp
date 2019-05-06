@@ -1,8 +1,9 @@
 #include "TransformComponent.h"
-//#include <iostream> // will be commented out
-//#include <ext.hpp> // will be commented out with all the test prints
+#include "../logger/imguial_log.h"
 #include <gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale
 #include <gtx/euler_angles.hpp>
+#include <gtx/matrix_decompose.hpp>
+#include <gtc/quaternion.hpp>
 
 TransformComponent::TransformComponent(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scaling) {
 	this->translation = translation;
@@ -34,7 +35,7 @@ void TransformComponent::updateTransformationMatrix()
 	// fill each matrix
 	scalingMatrix = glm::scale(glm::mat4(1.0f), getScaling());
 	translationsMatrix = glm::translate(glm::mat4(1.0f), getTranslation());
-	rotationsMatrix = glm::orientate4(glm::vec3(rotation.x,rotation.z,rotation.y)); //TODO why this strange order, WTH, maybe look into quaternions
+	rotationsMatrix = glm::mat4_cast(rotation);
 
 	// multiply matrix
 	transformationMatrix = translationsMatrix * rotationsMatrix * scalingMatrix;
@@ -108,9 +109,14 @@ glm::vec3 TransformComponent::getGlobalTranslation()
 	return getGlobalTransform()[3];
 }
 
+glm::vec3 TransformComponent::getRotation() const
+{
+    return glm::eulerAngles(rotation);
+}
+
 // Rotation setter + Update Transformationsmatrix
-void TransformComponent::setRotation(glm::vec3 rotation) {
-	this->rotation = rotation;
+void TransformComponent::setRotation(glm::vec3 eulerAngles) {
+	rotation = glm::quat(eulerAngles);
 	makeDirty();
 }
 
@@ -158,6 +164,7 @@ void TransformComponent::setParent(TransformComponent &newParent, bool keepGloba
 	else
 	{
 		transformationMatrix = glm::inverse(parent->getGlobalTransform())*transformationMatrix;
+		decomposeLocalTrans();
 	}
 }
 
@@ -168,7 +175,10 @@ void TransformComponent::clearParentNoPropagate(bool keepGlobalPos)
 
 	//set local transformation to global transformation if desired
 	if(keepGlobalPos)
-		transformationMatrix=getGlobalTransform();//call function, just in case global transform is dirty
+    {
+        transformationMatrix = getGlobalTransform();//call function, just in case global transform is dirty
+        decomposeLocalTrans();
+    }
 
 	if(prevSibling)
 		prevSibling->nextSibling = nextSibling;
@@ -215,8 +225,17 @@ void TransformComponent::cleanup(Game &game)
     clearParentNoPropagate(false);
 
     //clear vectors and matrices
-    translation = rotation = {0,0,0};
+    translation = {0,0,0};
+    rotation=glm::identity<glm::quat>();
     scaling = {1,1,1};
     globalTrans=transformationMatrix=glm::mat4(1);
     dirty = 0;
+}
+
+void TransformComponent::decomposeLocalTrans()
+{
+    glm::vec3 skewTmp;
+    glm::vec4 perpectiveTmp;
+    if(!glm::decompose(transformationMatrix,scaling,rotation,translation,skewTmp,perpectiveTmp))
+        ImGuiAl::Log::getInstance().Error("Could not decompose matrix, WHY");
 }
