@@ -12,6 +12,7 @@
 #include "util/INIReader.h"
 #include "Constants.h"
 #include "IEventManager.h"
+#include "AppSettings.h"
 
 static Game game=Game();
 
@@ -178,12 +179,11 @@ int main(int argc, char** argv)
 
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value
-    int width = reader.GetInteger("window", "width", 1280);
-    int height = reader.GetInteger("window", "height", 800);
-    float fov = reader.GetReal("camera", "fov",60);
-    float nearParam = reader.GetReal("camera", "near", 0.1);
-    float farParam = reader.GetReal("camera", "far", 100);
-    std::string window_title = reader.Get("window", "title", "ECG");
+    game.settings.windowWidth = reader.GetInteger("window", "width", 1280);
+    game.settings.windowHeight = reader.GetInteger("window", "height", 720);
+    game.settings.fullScreen = reader.GetBoolean("window","fullscreen",false);
+    game.settings.brightnessFactor = reader.GetReal("window","brightnessFactor",1);
+    game.settings.refreshRate = reader.GetInteger("window","refreshRate",60);
 
     /* --------------------------------------------- */
     // Initialize Window and OpenGL context with GLFW
@@ -210,7 +210,7 @@ int main(int argc, char** argv)
 #endif
 
     //create window
-    GLFWwindow* window = glfwCreateWindow(width, height, window_title.c_str(), nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(game.settings.windowWidth, game.settings.windowHeight, "The Chosen Frog", game.settings.fullScreen?glfwGetPrimaryMonitor():nullptr, nullptr);
     if (window == nullptr)
     {
         glfwTerminate();

@@ -25,6 +25,7 @@
 #include "components/CharControllerComponent.h"
 #include "components/PlayerComponent.h"
 #include "components/TextComponent.h"
+#include "AppSettings.h"
 
 class GLFWwindow;
 
@@ -245,6 +246,8 @@ public:
 
     //Global Skybox, must never be nullptr
     CubeMapAsset* activeSkybox;
+
+    AppSettings settings={};
 private:
     /**
      * current frame, is incremented at the beginning on every update (thus -1 is immediatly incremented to 0 on the first update)
@@ -363,6 +366,11 @@ public:
 	 * @return the current frame number = how often the game has been updated
 	 */
 	long long getFrame() const;
+
+	/**
+	 * apply the currently configured settings
+	 */
+	void applySettings() const;
 };
 
 

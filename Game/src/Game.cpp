@@ -35,6 +35,9 @@ void Game::init(GLFWwindow* window)
 {
     this->window=window;
 
+    //apply settings
+    applySettings();
+
     //init logger
     ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);
 
@@ -359,4 +362,10 @@ void Game::setMouseScrollDelta(const glm::vec2 &delta)
 long long Game::getFrame() const
 {
     return frame;
+}
+
+void Game::applySettings() const
+{
+    glfwSetWindowMonitor(window,settings.fullScreen?glfwGetPrimaryMonitor():nullptr,0,0,settings.windowWidth,settings.windowHeight,settings.refreshRate);
+
 }
