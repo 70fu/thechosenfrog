@@ -446,3 +446,6 @@ MigrationBackup/
 
 #whitelist our meshes in assets folder
 !Game/assets/meshes/*.obj
+#whitelist physx libraries in release folder
+!physx/linux/release
+!physx/windows/release
