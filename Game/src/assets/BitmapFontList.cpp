@@ -22,7 +22,7 @@ protected:
     bool loadAssetFromFile(const std::string &path, BitmapFontAsset &asset) override
     {
         //read whole file into byte array from https://stackoverflow.com/a/36658802
-        std::ifstream iStream(path);
+        std::ifstream iStream(path,std::ifstream::binary | std::ifstream::in);
 
         if(!iStream.is_open())
         {
