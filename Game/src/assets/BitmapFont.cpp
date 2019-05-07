@@ -4,6 +4,11 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb_truetype.h>
 
+//disable max macro from visual studio
+#ifdef max
+#undef max
+#endif
+
 using namespace ImGuiAl;
 
 BitmapFont::~BitmapFont()

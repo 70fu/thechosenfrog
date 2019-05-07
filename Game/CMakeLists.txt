@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.11)
 project(Game)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -156,8 +156,8 @@ find_library(PHYSX_CHARACTER_LIB NAMES PhysXCharacterKinematic PhysXCharacterKin
 find_library(PHYSX_VEHICLE_LIB NAMES PhysXVehicle PhysXVehicle_static_32 PhysXVehicle_static_64 PATHS ${PHYSX_LIB_PATH})
 
 
-target_link_libraries(thechosenfrog -Wl,--start-group ${PHYSX_LIB} ${PHYSX_COMMON_LIB} ${PHYSX_EXTENSION_LIB} ${PHYSX_FOUNDATION_LIB} ${PHYSX_PVD_LIB} ${PHYSX_COOKING_LIB} ${PHYSX_CHARACTER_LIB} ${PHYSX_VEHICLE_LIB} -Wl,--end-group)
-
+target_link_libraries(thechosenfrog ${PHYSX_FOUNDATION_LIB} ${PHYSX_COMMON_LIB} ${PHYSX_COOKING_LIB} ${PHYSX_PVD_LIB} ${PHYSX_LIB} ${PHYSX_EXTENSION_LIB} ${PHYSX_CHARACTER_LIB})
+target_link_libraries(thechosenfrog ${PHYSX_PVD_LIB})
 #physx needs to have either NDEBUG or (exclusively) _DEBUG defined
 if (CMAKE_BUILD_TYPE MATCHES Debug)
 	add_definitions(-D_DEBUG)
