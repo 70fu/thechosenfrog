@@ -24,6 +24,12 @@ protected:
         //read whole file into byte array from https://stackoverflow.com/a/36658802
         std::ifstream iStream(path);
 
+        if(!iStream.is_open())
+        {
+            ImGuiAl::Log::getInstance().Error("Failed to find bitmap font %s",path.c_str());
+            return false;
+        }
+
         //get length of file
         iStream.seekg(0, std::ifstream::end);
         size_t length = iStream.tellg();

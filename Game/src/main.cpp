@@ -175,8 +175,13 @@ int main(int argc, char** argv)
 
 	// build cmake-build-debug 
 	// .exe will now start with "settings.ini"
-	INIReader reader("../../Game/assets/settings/settings.ini");
 
+#ifndef NDEBUG
+    INIReader reader("../../Game/assets/settings/settings.ini");
+#else
+    INIReader reader("./assets/settings/settings.ini");
+#endif
+    
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value
     game.settings.windowWidth = reader.GetInteger("window", "width", 1280);
