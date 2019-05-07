@@ -146,14 +146,14 @@ endif()
 
 set(PHYSX_LIB_PATH ${CMAKE_SOURCE_DIR}/physx/${PHYSX_PLATFORM}/${PHYSX_BUILD_CONFIG}/)
 
-find_library(PHYSX_LIB NAMES PhysX PhysX_static_32 PhysX_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_COMMON_LIB NAMES PhysXCommon PhysXCommon_static_32 PhysXCommon_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_EXTENSION_LIB NAMES PhysXExtensions PhysXExtensions_static_32 PhysXExtensions_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_FOUNDATION_LIB NAMES PhysXFoundation PhysXFoundation_static_32 PhysXFoundation_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_PVD_LIB NAMES PhysXPvdSDK PhysXPvdSDK_static_32 PhysXPvdSDK_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_COOKING_LIB NAMES PhysXCooking PhysXCooking_static_32 PhysXCooking_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_CHARACTER_LIB NAMES PhysXCharacterKinematic PhysXCharacterKinematic_static_32 PhysXCharacterKinematic_static_64 PATHS ${PHYSX_LIB_PATH})
-find_library(PHYSX_VEHICLE_LIB NAMES PhysXVehicle PhysXVehicle_static_32 PhysXVehicle_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_LIB NAMES PhysX PhysX_32 PhysX_64 PhysX_static_32 PhysX_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_COMMON_LIB NAMES PhysXCommon PhysXCommon_32 PhysXCommon_64 PhysXCommon_static_32 PhysXCommon_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_EXTENSION_LIB NAMES PhysXExtensions PhysXExtensions_32 PhysXExtensions_64 PhysXExtensions_static_32 PhysXExtensions_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_FOUNDATION_LIB NAMES PhysXFoundation PhysXFoundation_32 PhysXFoundation_64 PhysXFoundation_static_32 PhysXFoundation_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_PVD_LIB NAMES PhysXPvdSDK PhysXPvdSDK_32 PhysXPvdSDK_64 PhysXPvdSDK_static_32 PhysXPvdSDK_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_COOKING_LIB NAMES PhysXCooking PhysXCooking_32 PhysXCooking_64 PhysXCooking_static_32 PhysXCooking_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_CHARACTER_LIB NAMES PhysXCharacterKinematic PhysXCharacterKinematic_32 PhysXCharacterKinematic_64 PhysXCharacterKinematic_static_32 PhysXCharacterKinematic_static_64 PATHS ${PHYSX_LIB_PATH})
+find_library(PHYSX_VEHICLE_LIB NAMES PhysXVehicle PhysXVehicle_32 PhysXVehicle_64 PhysXVehicle_static_32 PhysXVehicle_static_64 PATHS ${PHYSX_LIB_PATH})
 
 
 if(CMAKE_CXX_COMPILER_ID MATCHES GNU OR CMAKE_CXX_COMPILER_ID MATCHES CLANG)
