@@ -21,6 +21,8 @@ protected:
         asset.data.loadFromFile(path);
         //use parameters set before loading from the first time
         asset.allocateOnGPU();
+
+        return true;//TODO return false on failure
     }
 
     void loadDefault(TextureAsset &asset, AssetManager& assetManager) override
