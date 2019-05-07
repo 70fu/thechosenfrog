@@ -44,7 +44,7 @@ public:
     };
 
     PlayerInput activeInput=KEYBOARD_MOUSE;
-    Input input;
+    Input input={};
 
     bool hasLost = false;
 };
