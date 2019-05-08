@@ -269,6 +269,78 @@ public:
             //endregion
 
             /* --------------------------------------------- */
+            // Render Text+Transform
+            /* --------------------------------------------- */
+            //region Render Text
+            {
+                //font shader uniform locations
+                static constexpr int MODEL_MAT = 0;
+                static constexpr int VIEW_MATS = 1;
+                static constexpr int PROJ_MAT = 3;
+                static constexpr int IN_WORLD_SPACE = 5;
+                static constexpr int BITMAP_TEX = 6;
+                static constexpr int TEXT_COLOR = 7;
+
+                //enable blending
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+                //bind shader,textVao and texture unit
+                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FONT)->getProgramHandle());
+                glBindVertexArray(textVao);
+                glActiveTexture(GL_TEXTURE0);
+
+                //bind projection, view and texture unit uniforms
+                glm::mat4 viewMatrices[2] = {glm::mat4(1),view};
+                glm::mat4 projMatrices[2] = {glm::ortho<float>(0,width,0,height),projection};
+                glUniform1i(BITMAP_TEX,0);
+                glUniformMatrix4fv(VIEW_MATS,2,GL_FALSE,glm::value_ptr(viewMatrices[0]));
+                glUniformMatrix4fv(PROJ_MAT,2,GL_FALSE,glm::value_ptr(projMatrices[0]));
+
+                //keep last used font
+                BitmapFontAsset* lastBitmap = nullptr;
+
+                //render each text component with transform
+                for(TextComponent& text : game.textComps)
+                {
+                    if(game.hasComponents(text.entity,Components::TRANSFORM_BIT))
+                    {
+                        TransformComponent& transform = game.transformComps[text.entity];
+
+                        //bind uniforms
+                        glUniformMatrix4fv(MODEL_MAT,1,GL_FALSE,glm::value_ptr(transform.getGlobalTransform()));
+                        glUniform1i(IN_WORLD_SPACE,text.inScreenspace?0:1);
+                        glUniform3fv(TEXT_COLOR,1,glm::value_ptr(glm::vec3(text.color)/255.0f));
+
+                        //bind texture if not the correct one is bound
+                        if(text.font!=lastBitmap)
+                        {
+                            lastBitmap = text.font;
+                            glBindTexture(GL_TEXTURE_2D, text.font->getBitmap().getTextureHandle());
+                        }
+
+                        //fill buffer with quads
+                        charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,text.wrapWidth);
+
+                        //update the vbo
+                        int writeSize = std::min(charBufferSize,maxTextQuads);
+                        glBindBuffer(GL_ARRAY_BUFFER,textVbo);
+                        glBufferSubData(GL_ARRAY_BUFFER,0,writeSize*sizeof(stbtt_aligned_quad),&charBuffer[0]);
+                        glBindBuffer(GL_ARRAY_BUFFER,0);
+
+                        //draw text
+                        glDrawArrays(GL_LINES,0,writeSize*2);
+                    }
+                }
+
+                glUseProgram(0);
+
+                //disable blending
+                glDisable(GL_BLEND);
+            }
+            //endregion
+
+            /* --------------------------------------------- */
             // Render jump Parabolas (CharControllerComp+Player)
             /* --------------------------------------------- */
             //region Render Jump Parabolas
@@ -334,78 +406,6 @@ public:
                 glBindVertexArray(0);
 
                 //unbind shader
-                glUseProgram(0);
-
-                //disable blending
-                glDisable(GL_BLEND);
-            }
-            //endregion
-
-            /* --------------------------------------------- */
-            // Render Text+Transform
-            /* --------------------------------------------- */
-            //region Render Text
-            {
-                //font shader uniform locations
-                static constexpr int MODEL_MAT = 0;
-                static constexpr int VIEW_MATS = 1;
-                static constexpr int PROJ_MAT = 3;
-                static constexpr int IN_WORLD_SPACE = 5;
-                static constexpr int BITMAP_TEX = 6;
-                static constexpr int TEXT_COLOR = 7;
-
-                //enable blending
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-                //bind shader,textVao and texture unit
-                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FONT)->getProgramHandle());
-                glBindVertexArray(textVao);
-                glActiveTexture(GL_TEXTURE0);
-
-                //bind projection, view and texture unit uniforms
-                glm::mat4 viewMatrices[2] = {glm::mat4(1),view};
-                glm::mat4 projMatrices[2] = {glm::ortho<float>(0,width,0,height),projection};
-                glUniform1i(BITMAP_TEX,0);
-                glUniformMatrix4fv(VIEW_MATS,2,GL_FALSE,glm::value_ptr(viewMatrices[0]));
-                glUniformMatrix4fv(PROJ_MAT,2,GL_FALSE,glm::value_ptr(projMatrices[0]));
-
-                //keep last used font
-                BitmapFontAsset* lastBitmap = nullptr;
-
-                //render each text component with transform
-                for(TextComponent& text : game.textComps)
-                {
-                    if(game.hasComponents(text.entity,Components::TRANSFORM_BIT))
-                    {
-                        TransformComponent& transform = game.transformComps[text.entity];
-
-                        //bind uniforms
-                        glUniformMatrix4fv(MODEL_MAT,1,GL_FALSE,glm::value_ptr(transform.getGlobalTransform()));
-                        glUniform1i(IN_WORLD_SPACE,text.inScreenspace?0:1);
-                        glUniform3fv(TEXT_COLOR,1,glm::value_ptr(glm::vec3(text.color)/255.0f));
-
-                        //bind texture if not the correct one is bound
-                        if(text.font!=lastBitmap)
-                        {
-                            lastBitmap = text.font;
-                            glBindTexture(GL_TEXTURE_2D, text.font->getBitmap().getTextureHandle());
-                        }
-
-                        //fill buffer with quads
-                        charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,text.wrapWidth);
-
-                        //update the vbo
-                        int writeSize = std::min(charBufferSize,maxTextQuads);
-                        glBindBuffer(GL_ARRAY_BUFFER,textVbo);
-                        glBufferSubData(GL_ARRAY_BUFFER,0,writeSize*sizeof(stbtt_aligned_quad),&charBuffer[0]);
-                        glBindBuffer(GL_ARRAY_BUFFER,0);
-
-                        //draw text
-                        glDrawArrays(GL_LINES,0,writeSize*2);
-                    }
-                }
-
                 glUseProgram(0);
 
                 //disable blending
