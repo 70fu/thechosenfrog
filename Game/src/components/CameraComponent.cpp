@@ -12,25 +12,24 @@ const glm::mat4 &CameraComponent::getProjectionMatrix() const
     return projectionMatrix;
 }
 
-const glm::vec2 &CameraComponent::getViewportPos() const
+const glm::vec2 &CameraComponent::getScreenViewportPos() const
 {
-    return viewportPos;
+    return screenViewportPos;
 }
 
-void CameraComponent::setViewportPos(const glm::vec2& newViewportPos)
+void CameraComponent::setScreenViewportPos(const glm::vec2 &viewportPos)
 {
-    viewportPos = newViewportPos;
+    screenViewportPos = viewportPos;
 }
 
-const glm::vec2 &CameraComponent::getViewportSize() const
+const glm::vec2 &CameraComponent::getScreenViewportSize() const
 {
-    return viewportSize;
+    return screenViewportSize;
 }
 
-void CameraComponent::setViewportSize(const glm::vec2& newViewportSize)
+void CameraComponent::setScreenViewportSize(const glm::vec2 &viewportSize)
 {
-    viewportSize = newViewportSize;
-    updateProjectionMatrix();
+    screenViewportSize = viewportSize;
 }
 
 float CameraComponent::getFov() const
@@ -63,5 +62,16 @@ float CameraComponent::getFar() const
 void CameraComponent::setFar(float newFar)
 {
     farPlane=newFar;
+    updateProjectionMatrix();
+}
+
+const glm::vec2 &CameraComponent::getViewportSize() const
+{
+    return viewportSize;
+}
+
+void CameraComponent::setViewportSize(const glm::vec2 &viewportSize)
+{
+    CameraComponent::viewportSize = viewportSize;
     updateProjectionMatrix();
 }

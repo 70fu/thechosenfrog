@@ -370,7 +370,7 @@ public:
 	/**
 	 * apply the currently configured settings
 	 */
-	void applySettings() const;
+	void applySettings();
 };
 
 

@@ -44,6 +44,20 @@ public:
 	 * @param componentId
 	 */
 	virtual void componentPreRemove(Game &game, EntityId entityId, ComponentId componentId)=0;
+
+	/**
+	 * Called whenever the window size/resolution changes, and once right after initializing the game
+	 * @param game
+	 * @param width
+	 * @param height
+	 */
+    virtual void windowResizeCallback(Game& game, int width, int height)=0;
+
+    /**
+     * Called whenever the game settings change
+     * @param game
+     */
+    virtual void settingsChanged(Game& game)=0;
 };
 
 #endif //CGUE19_THECHOSENFROG_EVENTMANAGER_H

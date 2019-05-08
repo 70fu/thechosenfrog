@@ -161,6 +161,11 @@ void mouseCursorEnterCallback(GLFWwindow* window, int entered)
     game.getEventManager()->mouseCursorEnterCallback(game,entered);
 }
 
+void windowResizeCallback(GLFWwindow* window, int width, int height)
+{
+    game.getEventManager()->windowResizeCallback(game,width,height);
+}
+
 /* --------------------------------------------- */
 // Main
 /* --------------------------------------------- */
@@ -184,11 +189,11 @@ int main(int argc, char** argv)
     
     // load values from ini file
     // first param: section [window], second param: property name, third param: default value
-    game.settings.windowWidth = reader.GetInteger("window", "width", 1280);
-    game.settings.windowHeight = reader.GetInteger("window", "height", 720);
-    game.settings.fullScreen = reader.GetBoolean("window","fullscreen",false);
-    game.settings.brightnessFactor = reader.GetReal("window","brightnessFactor",1);
-    game.settings.refreshRate = reader.GetInteger("window","refreshRate",60);
+    game.settings.display.windowWidth = reader.GetInteger("window", "width", 1280);
+    game.settings.display.windowHeight = reader.GetInteger("window", "height", 720);
+    game.settings.display.fullScreen = reader.GetBoolean("window","fullscreen",false);
+    game.settings.display.brightnessFactor = reader.GetReal("window","brightnessFactor",1);
+    game.settings.display.refreshRate = reader.GetInteger("window","refreshRate",60);
 
     /* --------------------------------------------- */
     // Initialize Window and OpenGL context with GLFW
@@ -208,23 +213,20 @@ int main(int argc, char** argv)
     //disable fixed function pipeline
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //prevent window from being resized
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 #ifndef NDEBUG
     //activate debug context
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
 
     //create window
-    GLFWwindow* window = glfwCreateWindow(game.settings.windowWidth, game.settings.windowHeight, "The Chosen Frog", game.settings.fullScreen?glfwGetPrimaryMonitor():nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(game.settings.display.windowWidth, game.settings.display.windowHeight, "The Chosen Frog", game.settings.display.fullScreen?glfwGetPrimaryMonitor():nullptr, nullptr);
     if (window == nullptr)
     {
         glfwTerminate();
         std::cerr<<"GLFW Window Initialization failed"<<std::endl;
         return 2;
     }
-
-    //disable cursor
-    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 
     //make context active
     glfwMakeContextCurrent(window);
@@ -242,6 +244,13 @@ int main(int argc, char** argv)
     // Initialize Game
     /* --------------------------------------------- */
     game.init(window);
+
+    //trigger window resize
+    {
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        game.getEventManager()->windowResizeCallback(game, width, height);
+    }
 
     /* --------------------------------------------- */
     // Register callback functions (input, opengl errors, ...)
@@ -266,6 +275,12 @@ int main(int argc, char** argv)
 
     //setup joystick callbacks
     //TODO
+
+    //window resize callback
+    glfwSetWindowSizeCallback(window, windowResizeCallback);
+
+    //disable cursor
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 
     /* --------------------------------------------- */
     // Update/Render Loop (using fixed time step), used https://medium.com/@tglaiel/how-to-make-your-game-run-at-60fps-24c61210fe75 for some design decisions

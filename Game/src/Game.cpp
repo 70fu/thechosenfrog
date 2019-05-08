@@ -35,9 +35,6 @@ void Game::init(GLFWwindow* window)
 {
     this->window=window;
 
-    //apply settings
-    applySettings();
-
     //init logger
     ImGuiAl::Log::getInstance().Init(ImGuiAl::Log::kShowFilters,loggerActions);
 
@@ -89,6 +86,9 @@ void Game::init(GLFWwindow* window)
 
     //init debug gui
     debugGui->init(this);
+
+    //apply settings
+    applySettings();
 
     //init scene
     mainScene->init(*this);
@@ -364,8 +364,9 @@ long long Game::getFrame() const
     return frame;
 }
 
-void Game::applySettings() const
+void Game::applySettings()
 {
-    glfwSetWindowMonitor(window,settings.fullScreen?glfwGetPrimaryMonitor():nullptr,0,0,settings.windowWidth,settings.windowHeight,settings.refreshRate);
+    glfwSetWindowMonitor(window,settings.display.fullScreen?glfwGetPrimaryMonitor():nullptr,0,0,settings.display.windowWidth,settings.display.windowHeight,settings.display.refreshRate);
 
+    eventManager->settingsChanged(*this);
 }

@@ -315,7 +315,7 @@ private:
                     //make a screenspace text
                     EntityId id = game.createEntity();
                     TransformComponent &textTrans = game.transformComps.addComp(id);
-                    textTrans.setTranslation({game.settings.windowWidth/2-200,game.settings.windowHeight/2,0});
+                    textTrans.setTranslation({game.settings.display.windowWidth/2-200,game.settings.display.windowHeight/2,0});
 
                     TextComponent& text = game.textComps.addComp(id);
                     text.text="      You Loose!\n\nPress F11 to Restart";

@@ -10,5 +10,6 @@ static constexpr unsigned short MAX_ENTITIES = 256;
 
 static constexpr double PI = 3.14159265358979323846;
 static constexpr double TO_RADIANS = PI / 180;
+static constexpr double TO_DEGREES = 180/PI;
 
 #endif //CGUE19_THECHOSENFROG_CONSTANTS_H

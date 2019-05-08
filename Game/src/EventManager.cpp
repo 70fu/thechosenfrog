@@ -25,6 +25,37 @@ private:
 		game.deleteEntity(transform.entity);
 	}
 
+	void updateCameraViewports(Game& game, int width, int height)
+    {
+        for(CameraComponent& camera : game.cameraComps)
+        {
+            switch(game.settings.gameplay.viewportMode)
+            {
+                case GameplaySettings::ViewportMode::STRETCH:
+                {
+                    camera.setViewportSize(glm::vec2(width, height));
+                    camera.setScreenViewportPos({0,0});
+                    camera.setScreenViewportSize({1,1});
+                    break;
+                }
+                case GameplaySettings::ViewportMode::FIXED_WIDTH:
+                {
+                    glm::vec2 newSize = glm::vec2(height*(game.settings.gameplay.horFov/camera.getFov()),height);
+                    camera.setViewportSize(newSize);
+
+                    //center horizontally
+                    float sizeFraction = (newSize.x/width);
+                    camera.setScreenViewportPos(glm::vec2((1-sizeFraction)/2.0f,0));
+                    camera.setScreenViewportSize(glm::vec2(sizeFraction,1));
+                    break;
+                }
+                default:
+                    ImGuiAl::Log::getInstance().Error("Unknown viewport mode %d, cannot be handled",game.settings.gameplay.viewportMode);
+            }
+            //this is where different viewport scaling/stretching strategies would be implemented
+        }
+    }
+
 public:
 	void keyCallback(Game& game, int key, int scancode, int action, int mods) override
 	{
@@ -85,6 +116,19 @@ public:
 	{
 
 	}
+
+    void windowResizeCallback(Game &game, int width, int height) override
+    {
+        updateCameraViewports(game,width,height);
+    }
+
+    void settingsChanged(Game &game) override
+    {
+	    //update viewports again, in case camera changes have been made, but no window resize is triggered
+        int width,height;
+        glfwGetWindowSize(game.getWindow(),&width,&height);
+        updateCameraViewports(game,width,height);
+    }
 
     void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) override
     {
@@ -150,6 +194,8 @@ private:
 				game.getDebugGUI()->toggleWindow(DebugWindowIds::COMPONENT_VIEWER);
 			if(key==GLFW_KEY_3)
 				game.getDebugGUI()->toggleWindow(DebugWindowIds::ASSET_VIEWER);
+            if(key==GLFW_KEY_4)
+                game.getDebugGUI()->toggleWindow(DebugWindowIds::APP_SETTINGS);
 			//...
 		}
 	}

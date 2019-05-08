@@ -172,7 +172,9 @@ public:
                 continue;
 
             //set viewport
-            glViewport(camera.getViewportPos().x*width,camera.getViewportPos().y*height,camera.getViewportSize().x*width,camera.getViewportSize().y*height);
+            glViewport(camera.getScreenViewportPos().x*width, camera.getScreenViewportPos().y*height,
+                       camera.getScreenViewportSize().x*width,
+                       camera.getScreenViewportSize().y*height);
 
             TransformComponent& cTransform = game.transformComps[camera.entity];
 
