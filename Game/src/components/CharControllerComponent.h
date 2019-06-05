@@ -32,6 +32,12 @@ public:
     float maxJumpDuration = 0;
     float maxGroundSpeed = 0;
 
+    //see doc on distanceHeightRatio
+    float maxDistLookingFactor = 1;
+    float minDistLookingFactor = 1;
+    float maxHeightLookingFactor=1;
+    float minHeightLookingFactor=1;
+
     /* --------------------------------------------- */
     // State
     /* --------------------------------------------- */
@@ -58,6 +64,15 @@ public:
      * Should be in range 0-1
      */
     float jumpStrength = 0;
+
+    /**
+     * Should be in range 0-1
+     * 0 means distance=calculated max distance * maxDistLookingFactor AND height=calculated max height*minHeightLookingFactor
+     * 1 means distance=calculated max distance * minDistLookingFactor AND height=calculated max height*maxHeightLookingFactor
+     * values inbetween are interpolated using cubicEaseOut between mmin and max looking factors
+     * This value is set by for the player depending on where he/she looks, straight up = 1 -> jump high not far, forward=0 -> jump far not high
+     */
+    float distanceHeightRatio = 0;
 
     /* --------------------------------------------- */
     // DEBUG

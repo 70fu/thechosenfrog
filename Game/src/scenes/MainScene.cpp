@@ -125,6 +125,8 @@ public:
             controller.airWalkSpeed = 1;
             controller.groundWalkForce = 15;
             controller.maxGroundSpeed = 3;
+            controller.maxHeightLookingFactor=controller.maxDistLookingFactor=1;
+            controller.minHeightLookingFactor=controller.minDistLookingFactor=0.1f;
 
             physx::PxCapsuleControllerDesc cDesc;
             //player is 1.5 meters tall

@@ -372,6 +372,8 @@ public:
                         InputFloat3("Acceleration",glm::value_ptr(acc));
                         glm::vec3 vel = con.vel;
                         InputFloat3("Velocity",glm::value_ptr(vel));
+                        float distanceHeightRation = con.distanceHeightRatio;
+                        InputFloat("Dist Height Ratio",&distanceHeightRation);
 
                         glm::vec3 lastJump = con.landedOn-con.jumpedFrom;
                         float lastJumpHeight=con.lastJumpHeight;
@@ -402,6 +404,10 @@ public:
                             InputFloat("Min Jump Duration",&con.minJumpDuration);
                             InputFloat("Max Jump Duration",&con.maxJumpDuration);
                             InputFloat("Max Ground Speed",&con.maxGroundSpeed);
+                            InputFloat("Min Dist Looking Factor",&con.minDistLookingFactor);
+                            InputFloat("Max Dist Looking Factor",&con.maxDistLookingFactor);
+                            InputFloat("Min Height Looking Factor",&con.minHeightLookingFactor);
+                            InputFloat("Max Height Looking Factor",&con.maxHeightLookingFactor);
                         }
                     }
 

@@ -17,14 +17,14 @@ class GameUpdater : public TInterface<RuntimeClassIds::GAME_UPDATER,IGameUpdater
 public:
     void update(Game& game) override
     {
+        updateCameraControllers(game);
+
         updatePlayers(game);
 
         updateCharControllers(game);
 
         //update physics
         game.getPhysics().step();
-
-        updateCameraControllers(game);
 
         checkLooseCondition(game);
 
@@ -69,6 +69,25 @@ private:
                 }
                 default:
                     ImGuiAl::Log::getInstance().Warn("Unknown player input type");
+            }
+
+            //if there is also a camera controller on a child object, then set distanceHeightRation based on vertical looking angle
+            //1=looking straight up, 0=looking straight or down
+            if(game.hasComponents(player.entity,Components::TRANSFORM_BIT))
+            {
+                TransformComponent& transform = game.transformComps[player.entity];
+                for(TransformComponent* child = transform.getFirstChild();child!=nullptr;child = child->getNextSibling())
+                {
+                    if(game.hasComponents(child->entity,Components::CAMERA_CONTROLLER_BIT))
+                    {
+                        CameraControllerComponent &camController = game.cameraControllerComps[child->entity];
+                        static constexpr float ANGLE_MAX = PI/2;
+                        static constexpr float ANGLE_MIN = -PI/4;
+                        static constexpr float ANGLE_RANGE = ANGLE_MAX-ANGLE_MIN;
+                        controller.distanceHeightRatio = (std::max(ANGLE_MIN, camController.coordinates.y)-ANGLE_MIN) / ANGLE_RANGE;//TODO replace constants if this becomes configurable in the component
+                        break;
+                    }
+                }
             }
         }
     }
