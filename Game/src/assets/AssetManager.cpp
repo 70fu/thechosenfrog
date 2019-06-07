@@ -58,7 +58,8 @@ void AssetManager::init(IRuntimeObjectSystem *ros)
     shaderProgramListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::SHADER_PROGRAM_LIST,&shaderProgramList);
     textureListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::TEXTURE_LIST,&textureList);
     cubeMapListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::CUBE_MAP_LIST,&cubeMapList);
-    bitmapFontListId= RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::BITMAP_FONT_LIST,&bitmapFontList);
+    bitmapFontListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::BITMAP_FONT_LIST,&bitmapFontList);
+    framebufferListId = RuntimeCompileUtils::constructObject(runtimeObjectSystem,RuntimeClassNames::FRAMEBUFFER_LIST,&framebufferList);
 
     //load all assets
     loadAssets(AssetType::ALL);
@@ -143,6 +144,7 @@ void AssetManager::cleanup()
     cleanupCubeMaps();
     cleanupTextures();
     cleanupBitmapFonts();
+    cleanupFramebuffers();
 
 #ifndef NDEBUG
     for(int i = 0;i<sizeof(filewatches)/sizeof(filewatch_t*);++i)
@@ -221,6 +223,14 @@ BitmapFontAsset *AssetManager::getBitmapFont(AssetId id)
         return &bitmapFonts[BitmapFontIds::DEFAULT];
 }
 
+FramebufferAsset *AssetManager::getFramebuffer(AssetId id)
+{
+    if(id<FRAMEBUFFER_SIZE)
+        return &framebuffers[id];
+    else
+        return &framebuffers[FramebufferIds::DEFAULT];
+}
+
 void AssetManager::OnConstructorsAdded() {
     unsigned char assetBitmask = 0;
     if( soundList )
@@ -267,6 +277,11 @@ void AssetManager::OnConstructorsAdded() {
     {
         if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,bitmapFontListId,&bitmapFontList))
             assetBitmask|=AssetType::BITMAP_FONT;
+    }
+    if(framebufferList)
+    {
+        if(RuntimeCompileUtils::updateObject(runtimeObjectSystem,framebufferListId,&framebufferList))
+            assetBitmask|=AssetType::FRAMEBUFFER;
     }
 
     //reload lists of asset types whose classes have changed
@@ -317,6 +332,8 @@ void AssetManager::loadAssets(std::underlying_type<AssetType>::type assetBitmask
         storeFilePaths(paths,cubeMapList->loadAll(cubeMaps,paths,CUBE_MAP_SIZE,*this));
     if((assetBitmask&AssetType::BITMAP_FONT)!=0)
         storeFilePaths(paths,bitmapFontList->loadAll(bitmapFonts,paths,BITMAP_FONT_SIZE,*this));
+    if((assetBitmask&AssetType::FRAMEBUFFER)!=0)
+        storeFilePaths(paths,framebufferList->loadAll(framebuffers,paths,FRAMEBUFFER,*this));
     //...
 }
 
@@ -331,6 +348,7 @@ void AssetManager::reloadAssets()
     cleanupCubeMaps();
     cleanupTextures();
     cleanupBitmapFonts();
+    cleanupFramebuffers();
 
     loadAssets(AssetType::ALL);
 }
@@ -504,4 +522,15 @@ void AssetManager::cleanupBitmapFonts()
 void AssetManager::cleanupBitmapFont(BitmapFontAsset &bitmapFont)
 {
     bitmapFont.cleanup();
+}
+
+void AssetManager::cleanupFramebuffers()
+{
+    for(int i = 0;i<FRAMEBUFFER_SIZE && i<FramebufferIds::FRAMEBUFFER_COUNT;++i)
+        cleanupFramebuffer(framebuffers[i]);
+}
+
+void AssetManager::cleanupFramebuffer(FramebufferAsset& framebuffer)
+{
+    framebuffer.cleanup();
 }

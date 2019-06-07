@@ -27,6 +27,8 @@
 #include "CubeMapIds.h"
 #include "BitmapFont.h"
 #include "BitmapFontIds.h"
+#include "Framebuffer.h"
+#include "FramebufferIds.h"
 
 #ifndef NDEBUG
 #define EXTRA_ASSET_SPACE 16
@@ -47,7 +49,8 @@ static constexpr size_t SHADER_PROGRAM_SIZE = ShaderProgramIds::SHADER_PROGRAM_C
 static constexpr size_t TEXTURE_SIZE = TextureIds::TEXTURE_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t CUBE_MAP_SIZE = CubeMapIds::CUBE_MAP_COUNT+EXTRA_ASSET_SPACE;
 static constexpr size_t BITMAP_FONT_SIZE = BitmapFontIds::BITMAP_FONT_COUNT+EXTRA_ASSET_SPACE;
-static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE,CUBE_MAP_SIZE,BITMAP_FONT_SIZE});
+static constexpr size_t FRAMEBUFFER_SIZE = FramebufferIds::FRAMEBUFFER_COUNT+EXTRA_ASSET_SPACE;
+static constexpr size_t BIGGEST_SIZE = std::max<size_t>({SOUNDS_SIZE,MUSIC_SIZE,MESH_SIZE,MATERIAL_SIZE,SHADER_SIZE,SHADER_PROGRAM_SIZE,TEXTURE_SIZE,CUBE_MAP_SIZE,BITMAP_FONT_SIZE, FRAMEBUFFER_SIZE});
 
 /**
  * Class that loads and manages assets, assets are hotswappable
@@ -65,7 +68,7 @@ private:
     TextureAsset textures[TEXTURE_SIZE];
     CubeMapAsset cubeMaps[CUBE_MAP_SIZE];
     BitmapFontAsset bitmapFonts[BITMAP_FONT_SIZE];
-
+    FramebufferAsset framebuffers[FRAMEBUFFER_SIZE];
 
     //asset paths (relative from asset directory) & file watching
     std::unordered_map<std::string,AssetIdentifier> pathsToIds;
@@ -92,6 +95,8 @@ private:
     ObjectId cubeMapListId;
     AssetList<BitmapFontAsset ,AssetType::BITMAP_FONT>* bitmapFontList;
     ObjectId bitmapFontListId;
+    AssetList<FramebufferAsset ,AssetType::FRAMEBUFFER>* framebufferList;
+    ObjectId framebufferListId;
 
 #ifndef NDEBUG
     //file watcher
@@ -177,6 +182,12 @@ public:
      * @return pointer to bitmap font asset with given id, or default bitmap font if there is no bitmap font with given id, never returns nullptr
      */
     BitmapFontAsset* getBitmapFont(AssetId id);
+
+    /**
+     * @param id
+     * @return pointer to framebuffer asset with given id, or default framebuffer if there is no framebuffer with given id, never returns nullptr
+     */
+    Framebuffer* getFramebuffer(AssetId id);
 private:
     /**
      * loads assets from asset lists, with given asset bitmask only certain asset types can be loaded selectively
@@ -223,6 +234,9 @@ private:
 
     void cleanupBitmapFonts();
     void cleanupBitmapFont(BitmapFontAsset& bitmapFont);
+
+    void cleanupFramebuffers();
+    void cleanupFramebuffer(FramebufferAsset& framebuffer);
 
     static void filewatchCallback(filewatch_update_t change, const char* virtual_path, void* udata);
 };

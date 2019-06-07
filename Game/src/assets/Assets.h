@@ -16,6 +16,7 @@ class Texture;
 class Shader;
 class CubeMap;
 class BitmapFont;
+class Framebuffer;
 //asset aliases
 using SoundAsset = SoLoud::Wav;
 using MusicAsset = SoLoud::WavStream;
@@ -26,6 +27,7 @@ using MaterialAsset = Material;
 using TextureAsset = Texture;
 using CubeMapAsset = CubeMap;
 using BitmapFontAsset = BitmapFont;
+using FramebufferAsset = Framebuffer;
 
 using AssetId = unsigned int;
 
@@ -43,6 +45,7 @@ enum AssetType : unsigned short
     SHADER_PROGRAM=64,
     CUBE_MAP = 128,
     BITMAP_FONT=256,
+    FRAMEBUFFER=512,
 
     ALL=65535
 };
