@@ -52,7 +52,18 @@ private:
                 default:
                     ImGuiAl::Log::getInstance().Error("Unknown viewport mode %d, cannot be handled",game.settings.gameplay.viewportMode);
             }
-            //this is where different viewport scaling/stretching strategies would be implemented
+        }
+    }
+
+    void updateFramebufferSize(Game& game, int width, int height)
+    {
+	    for(int i = 0;i<FramebufferIds::FRAMEBUFFER_COUNT;++i)
+        {
+	        FramebufferAsset& fbo = *game.getAssetManager().getFramebuffer(i);
+	        if(fbo.getParameters().resizeOnResolutionChange)
+            {
+	            fbo.resize(glm::uvec2(std::ceil(width*fbo.resizeWidthRatio),std::ceil(height*fbo.resizeHeightRatio)));
+            }
         }
     }
 
@@ -120,6 +131,7 @@ public:
     void windowResizeCallback(Game &game, int width, int height) override
     {
         updateCameraViewports(game,width,height);
+        updateFramebufferSize(game,width,height);
     }
 
     void settingsChanged(Game &game) override
