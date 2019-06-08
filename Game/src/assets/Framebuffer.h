@@ -8,7 +8,6 @@
 struct FramebufferParameters
 {
 public:
-    //TODO
     /**
      * false, RenderbufferObject is used
      * true, Texture is used
@@ -20,13 +19,14 @@ public:
      * If true, framebuffer is resized on resolution changes
      */
     bool resizeOnResolutionChange = false;
+    unsigned int colorBufferCount = 1;
 };
 
 class Framebuffer
 {
 private:
     GLuint handle;
-    GLuint colorBufferHandle;
+    GLuint* colorBufferHandles;
     GLuint depthStencilBufferHandle;
 
     FramebufferParameters parameters;
@@ -65,7 +65,7 @@ public:
     void cleanup();
 
     const GLuint& getFBOHandle() const;
-    const GLuint& getColorBufferHandle() const;
+    const GLuint& getColorBufferHandle(unsigned int index=0) const;
     const GLuint& getDepthStencilBufferHandle() const;
 
     const FramebufferParameters& getParameters() const;

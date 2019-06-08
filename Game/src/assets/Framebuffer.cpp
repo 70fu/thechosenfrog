@@ -19,7 +19,8 @@ void Framebuffer::allocateOnGPU()
     glBindFramebuffer(GL_FRAMEBUFFER, handle);
 
     //generate buffers
-    glGenTextures(1,&colorBufferHandle);
+    colorBufferHandles = new GLuint[parameters.colorBufferCount];
+    glGenTextures(parameters.colorBufferCount,&colorBufferHandles[0]);
 
     //generate renderbuffer or texture for depth and stencil
     if(parameters.useTextureForDepthAndStencil)
@@ -28,10 +29,13 @@ void Framebuffer::allocateOnGPU()
         glGenRenderbuffers(1,&depthStencilBufferHandle);
 
     //allocate buffers
+    allocated = true;//hack
     resize(currentSize);
+    allocated = false;
 
     //attach
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,colorBufferHandle,0);
+    for(int i = 0;i<parameters.colorBufferCount;++i)
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+i,GL_TEXTURE_2D,colorBufferHandles[i],0);
     if(parameters.useTextureForDepthAndStencil)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,GL_TEXTURE_2D,depthStencilBufferHandle,0);
     else
@@ -58,17 +62,21 @@ void Framebuffer::resize(const glm::uvec2 &size)
     //TODO only in debug?
     if (!allocated)
     {
-        Log::getInstance().Warn("resize called even though framebuffer has not been allocated");
+        Log::getInstance().Warn("resize called even though framebuffer has not been allocated, ignoring call");
+        return;
     }
 
     currentSize = size;
 
-    //resize/allocate color buffer
-    glBindTexture(GL_TEXTURE_2D,colorBufferHandle);
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,currentSize.x,currentSize.y,0,GL_RGBA,GL_UNSIGNED_BYTE,nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //resize/allocate color buffers
+    for(int i = 0;i<parameters.colorBufferCount;++i)
+    {
+        glBindTexture(GL_TEXTURE_2D, colorBufferHandles[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, currentSize.x, currentSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
     //reallocate depth & stencil buffer
     if(parameters.useTextureForDepthAndStencil)
@@ -98,8 +106,10 @@ void Framebuffer::cleanup()
         glDeleteTextures(1,&depthStencilBufferHandle);
     else
         glDeleteRenderbuffers(1,&depthStencilBufferHandle);
-    glDeleteTextures(1,&colorBufferHandle);
+    glDeleteTextures(parameters.colorBufferCount,&colorBufferHandles[0]);
     glDeleteFramebuffers(1,&handle);
+
+    delete[] colorBufferHandles;
 
     allocated = false;
 }
@@ -109,9 +119,9 @@ const GLuint &Framebuffer::getFBOHandle() const
     return handle;
 }
 
-const GLuint &Framebuffer::getColorBufferHandle() const
+const GLuint &Framebuffer::getColorBufferHandle(unsigned int index) const
 {
-    return colorBufferHandle;
+    return colorBufferHandles[index];
 }
 
 const GLuint &Framebuffer::getDepthStencilBufferHandle() const
