@@ -3,6 +3,7 @@
 in vec2 uv;
 
 layout(location=0) uniform sampler2D colorTexture;
+layout(location=1) uniform float brightness=1;
 
 layout(location=0) out vec4 fragColor;
 
@@ -32,5 +33,5 @@ void main()
 	//fragColor = vec4(texture(colorTexture,uv).rgb,1f);
 	float gray =  0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
 	gray = 1-gray;
-	fragColor = vec4(gray,gray,gray,1-gray);
+	fragColor = vec4(vec3(gray,gray,gray)*brightness,1-gray);
 }

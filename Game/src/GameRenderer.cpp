@@ -427,6 +427,7 @@ public:
         {
             //uniform locations
             static constexpr int COLOR_BUFFER = 0;
+            static constexpr int BRIGHTNESS_FACTOR = 1;
 
             //disable depth testing
             glDisable(GL_DEPTH_TEST);
@@ -454,6 +455,9 @@ public:
                 glBindTexture(GL_TEXTURE_2D,
                               game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT)->getColorBufferHandle());
                 glUniform1i(COLOR_BUFFER, 0);
+
+                //set brightness factor
+                glUniform1f(BRIGHTNESS_FACTOR,game.settings.display.brightnessFactor);
 
                 //bind vao and draw quad
                 glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
