@@ -10,8 +10,7 @@ class FramebufferList : public TInterface<RuntimeClassIds::FRAMEBUFFER_LIST,Asse
 protected:
     void loadAssets(FramebufferAsset *assets, size_t size, AssetManager& assetManager) override
     {
-        //loadDefault(assets[CubeMapIds::DEFAULT],assetManager);
-        //TODO create framebuffers
+        loadDefault(assets[FramebufferIds::DEFAULT],assetManager);
         //...
     }
 
@@ -22,7 +21,11 @@ protected:
 
     void loadDefault(FramebufferAsset &asset, AssetManager& assetManager) override
     {
-        //TODO
+        FramebufferParameters parameters;
+        parameters.useTextureForDepthAndStencil = false;
+        parameters.resizeOnResolutionChange = true;//resize to screen
+
+        asset.allocateOnGPU(parameters);
     }
 };
 REGISTERCLASS(FramebufferList);
