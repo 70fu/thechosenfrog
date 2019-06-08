@@ -52,6 +52,8 @@ void Shader::cleanup()
     }
 
     glDeleteShader(shaderHandle);
+
+    compiled = false;
 }
 
 GLuint Shader::getShaderHandle() const

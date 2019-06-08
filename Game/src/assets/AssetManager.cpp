@@ -366,20 +366,37 @@ void AssetManager::reloadFileAsset(const std::string& path)
     switch(id.assetType)
     {
         case AssetType::SOUND:
-            soundList->loadFromFile(path,sounds[id.id],*this);
+        {
+            SoundAsset &sound = sounds[id.id];
+            cleanupSound(sound);
+            soundList->loadFromFile(path, sound, *this);
             break;
+        }
         case AssetType::MUSIC:
-            musicList->loadFromFile(path,music[id.id],*this);
+        {
+            MusicAsset& m = music[id.id];
+            cleanupMusic(m);
+            musicList->loadFromFile(path, m, *this);
             break;
+        }
         case AssetType::MESH:
-            meshList->loadFromFile(path,meshes[id.id],*this);
+        {
+            MeshAsset& mesh = meshes[id.id];
+            cleanupMesh(mesh);
+            meshList->loadFromFile(path, mesh, *this);
             break;
+        }
         case AssetType::MATERIAL:
-            materialList->loadFromFile(path,materials[id.id],*this);
+        {
+            MaterialAsset& material = materials[id.id];
+            cleanupMaterial(material);
+            materialList->loadFromFile(path, material, *this);
             break;
+        }
         case AssetType::SHADER:
         {
             Shader *shader = &shaders[id.id];
+            cleanupShader(*shader);
             shaderList->loadFromFile(path, *shader, *this);
 
             //reload all shader programs using this shader
@@ -407,15 +424,24 @@ void AssetManager::reloadFileAsset(const std::string& path)
         }
         case AssetType::TEXTURE:
         {
-            Texture* texture = &textures[id.id];
-            textureList->loadFromFile(path, *texture, *this);
+            Texture& texture = textures[id.id];
+            cleanupTexture(texture);
+            textureList->loadFromFile(path, texture, *this);
         }
         case AssetType::CUBE_MAP:
-            cubeMapList->loadFromFile(path,cubeMaps[id.id],*this);
+        {
+            CubeMapAsset& cubeMap = cubeMaps[id.id];
+            cleanupCubeMap(cubeMap);
+            cubeMapList->loadFromFile(path, cubeMap, *this);
             break;
+        }
         case AssetType::BITMAP_FONT:
-            bitmapFontList->loadFromFile(path,bitmapFonts[id.id],*this);
+        {
+            BitmapFont& font = bitmapFonts[id.id];
+            cleanupBitmapFont(font);
+            bitmapFontList->loadFromFile(path, font, *this);
             break;
+        }
         default:
             Log::getInstance().Error("Asset type with id %d cannot be reloaded",id.assetType);
             break;

@@ -50,6 +50,13 @@ protected:
             fbo.addShader(assetManager.getShader(ShaderIds::FBO_FRAG));
         }
 
+        //configure fbo shader with post processing
+        {
+            ShaderProgramAsset& fbo = assets[ShaderProgramIds::FBO_POST];
+            fbo.addShader(assetManager.getShader(ShaderIds::FBO_VERT));
+            fbo.addShader(assetManager.getShader(ShaderIds::FBO_POST_FRAG));
+        }
+
         //link all shader programs, skip default program
         for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
         {

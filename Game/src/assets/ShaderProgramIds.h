@@ -18,6 +18,7 @@ namespace ShaderProgramIds
         FONT,
         PARABOLA,
         FBO,
+        FBO_POST,//fbo shader with post processing
 
         SHADER_PROGRAM_COUNT
     };

@@ -439,7 +439,7 @@ public:
             glClear(GL_COLOR_BUFFER_BIT);
 
             //bind shader
-            glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FBO)->getProgramHandle());
+            glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FBO_POST)->getProgramHandle());
 
             //bind color buffer of main fbo
             glActiveTexture(GL_TEXTURE0);

@@ -26,6 +26,7 @@ protected:
         loadAssetsFromFileHelper("/shaders/parabola.geom", ShaderIds::PARABOLA_GEOM, assets[ShaderIds::PARABOLA_GEOM], assetManager);
         loadAssetsFromFileHelper("/shaders/fbo.vert",ShaderIds::FBO_VERT,assets[ShaderIds::FBO_VERT],assetManager);
         loadAssetsFromFileHelper("/shaders/fbo.frag",ShaderIds::FBO_FRAG,assets[ShaderIds::FBO_FRAG],assetManager);
+        loadAssetsFromFileHelper("/shaders/fboPost.frag",ShaderIds::FBO_POST_FRAG,assets[ShaderIds::FBO_POST_FRAG],assetManager);
         //...
     }
 
