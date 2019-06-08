@@ -431,6 +431,10 @@ public:
             //disable depth testing
             glDisable(GL_DEPTH_TEST);
 
+            //enable blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             //set viewport, draw over entire screen
@@ -438,21 +442,33 @@ public:
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            //bind shader
-            glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FBO_POST)->getProgramHandle());
+            bool firstPass = true;
+            ShaderProgramIds::ShaderProgramIds shader = ShaderProgramIds::FBO;
+            do
+            {
+                //bind shader
+                glUseProgram(game.getAssetManager().getShaderProgram(shader)->getProgramHandle());
 
-            //bind color buffer of main fbo
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D,game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT)->getColorBufferHandle());
-            glUniform1i(COLOR_BUFFER,0);
+                //bind color buffer of main fbo
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D,
+                              game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT)->getColorBufferHandle());
+                glUniform1i(COLOR_BUFFER, 0);
 
-            //bind vao and draw quad
-            glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
-            glDrawArrays(GL_TRIANGLES,0,6);
-            glBindVertexArray(0);
+                //bind vao and draw quad
+                glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                glBindVertexArray(0);
 
-            //unbind shader
-            glUseProgram(0);
+                //unbind shader
+                glUseProgram(0);
+
+                firstPass=!firstPass;
+                shader = ShaderProgramIds::FBO_POST;
+            }while(!firstPass);
+
+            //disable blending
+            glDisable(GL_BLEND);
         }
         //endregion
     }
