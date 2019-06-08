@@ -5,6 +5,7 @@
 #include <mat4x4.hpp>
 #include <vec2.hpp>
 #include "Component.h"
+#include "../assets/Assets.h"
 
 class CameraComponent : public Component
 {
@@ -28,8 +29,15 @@ private:
     float nearPlane=0.1f;
     float farPlane=100;
 
+    /**
+     * The frame buffer this camera is rendering to
+     * if nullptr, then the default framebuffer is used
+     */
+    FramebufferAsset* framebuffer = nullptr;
+
     void updateProjectionMatrix();
 public:
+
     const glm::mat4& getProjectionMatrix() const;
 
     const glm::vec2 &getViewportSize() const;
@@ -46,6 +54,10 @@ public:
     void setNear(float nearPlane);
     float getFar() const;
     void setFar(float farPlane);
+
+    FramebufferAsset *getFramebuffer() const;
+
+    void setFramebuffer(FramebufferAsset *framebuffer);
 };
 
 

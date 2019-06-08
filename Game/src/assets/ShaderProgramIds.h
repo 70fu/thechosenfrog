@@ -17,6 +17,7 @@ namespace ShaderProgramIds
         UNLIT,
         FONT,
         PARABOLA,
+        FBO,
 
         SHADER_PROGRAM_COUNT
     };

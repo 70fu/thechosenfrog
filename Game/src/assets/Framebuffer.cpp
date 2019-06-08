@@ -50,10 +50,17 @@ void Framebuffer::allocateOnGPU()
 void Framebuffer::allocateOnGPU(FramebufferParameters framebufferParameters)
 {
     parameters = framebufferParameters;
+    allocateOnGPU();
 }
 
 void Framebuffer::resize(const glm::uvec2 &size)
 {
+    //TODO only in debug?
+    if (!allocated)
+    {
+        Log::getInstance().Warn("resize called even though framebuffer has not been allocated");
+    }
+
     currentSize = size;
 
     //resize/allocate color buffer

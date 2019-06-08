@@ -75,3 +75,13 @@ void CameraComponent::setViewportSize(const glm::vec2 &viewportSize)
     CameraComponent::viewportSize = viewportSize;
     updateProjectionMatrix();
 }
+
+FramebufferAsset *CameraComponent::getFramebuffer() const
+{
+    return framebuffer;
+}
+
+void CameraComponent::setFramebuffer(FramebufferAsset *framebuffer)
+{
+    CameraComponent::framebuffer = framebuffer;
+}

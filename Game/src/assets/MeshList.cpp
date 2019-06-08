@@ -184,6 +184,33 @@ protected:
         }
         //endregion
         loadAssetsFromFileHelper("/meshes/SignPost.obj",MeshIds::SIGNPOST,assets[MeshIds::SIGNPOST],assetManager);
+        //region generate screen quad
+        {
+            MeshAsset& quad = assets[MeshIds::SCREEN_QUAD];
+            quad.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT|Surface::UVS_FORMAT;
+
+            //Generate vertices uvs
+            quad.surface.positions= {
+                    {-1.0f,-1.0f,0},//bottom left
+                    {1.0f,1.0f,0},//top right
+                    {-1.0f,1.0f,0},//top left
+                    {-1.0f,-1.0f,0},//bottom left
+                    {1.0f,-1.0f,0},//bottom right
+                    {1.0f,1.0f,0}//top right
+            };
+
+            quad.surface.uvs= {
+                    {0, 0},
+                    {1, 1},
+                    {0, 1},
+                    {0, 0},
+                    {1, 0},
+                    {1, 1}
+            };
+
+            quad.allocateOnGPU(GL_STATIC_DRAW);
+        }
+        //endregion
         //...
     }
 

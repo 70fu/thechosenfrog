@@ -14,6 +14,7 @@ namespace MeshIds {
         UNIT_CUBE,
         SKYBOX,
         SIGNPOST,
+        SCREEN_QUAD,
 
         MESH_COUNT
     };

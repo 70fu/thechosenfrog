@@ -115,9 +115,6 @@ public:
     {
         if(isFirstInit)
         {
-            //activate depth testing
-            glEnable(GL_DEPTH_TEST);
-
             //enable back-face culling
             glEnable(GL_CULL_FACE);
 
@@ -162,7 +159,8 @@ public:
 
     void render(Game& game, int width, int height) override
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //activate depth testing
+        glEnable(GL_DEPTH_TEST);
 
         //perform rendering for each camera
         for(CameraComponent& camera : game.cameraComps)
@@ -171,6 +169,12 @@ public:
             if(!game.hasComponents(camera.entity,Components::TRANSFORM_BIT))
                 continue;
 
+            //bind framebuffer
+            GLuint fboHandle = camera.getFramebuffer()==nullptr?0:camera.getFramebuffer()->getFBOHandle();
+            glBindFramebuffer(GL_FRAMEBUFFER,fboHandle);
+
+            //clear framebuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             //set viewport
             glViewport(camera.getScreenViewportPos().x*width, camera.getScreenViewportPos().y*height,
                        camera.getScreenViewportSize().x*width,
@@ -416,6 +420,41 @@ public:
             //endregion
         }
 
+        /* --------------------------------------------- */
+        // switch to default fbo and render main fbo onto a quad
+        /* --------------------------------------------- */
+        //region switch to default fbo and render main fbo onto a quad
+        {
+            //uniform locations
+            static constexpr int COLOR_BUFFER = 0;
+
+            //disable depth testing
+            glDisable(GL_DEPTH_TEST);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            //set viewport, draw over entire screen
+            glViewport(0,0,width, height);
+
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            //bind shader
+            glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FBO)->getProgramHandle());
+
+            //bind color buffer of main fbo
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D,game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT)->getColorBufferHandle());
+            glUniform1i(COLOR_BUFFER,0);
+
+            //bind vao and draw quad
+            glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
+            glDrawArrays(GL_TRIANGLES,0,6);
+            glBindVertexArray(0);
+
+            //unbind shader
+            glUseProgram(0);
+        }
+        //endregion
     }
 };
 REGISTERCLASS(GameRenderer)

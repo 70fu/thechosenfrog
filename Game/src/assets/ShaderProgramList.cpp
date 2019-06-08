@@ -43,6 +43,13 @@ protected:
             font.addShader(assetManager.getShader(ShaderIds::PARABOLA_FRAG));
         }
 
+        //configure fbo shader
+        {
+            ShaderProgramAsset& fbo = assets[ShaderProgramIds::FBO];
+            fbo.addShader(assetManager.getShader(ShaderIds::FBO_VERT));
+            fbo.addShader(assetManager.getShader(ShaderIds::FBO_FRAG));
+        }
+
         //link all shader programs, skip default program
         for(size_t i = 1;i<ShaderProgramIds::SHADER_PROGRAM_COUNT && i<size;++i)
         {

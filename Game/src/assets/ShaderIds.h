@@ -25,6 +25,8 @@ namespace ShaderIds
         PARABOLA_VERT,
         PARABOLA_FRAG,
         PARABOLA_GEOM,
+        FBO_VERT,
+        FBO_FRAG,
 
         SHADER_COUNT
     };
