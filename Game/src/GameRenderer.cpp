@@ -54,6 +54,11 @@ private:
 
     void bindMaterialData(MaterialData& mat, long int& uniformMask)
     {
+        for(auto& p : mat.ints)
+        {
+            if (checkMask(p.second, uniformMask))
+                glUniform1i(p.second.getLocation(), p.second.value);
+        }
         for(auto& p : mat.floats)
         {
             if (checkMask(p.second, uniformMask))
@@ -170,8 +175,10 @@ public:
                 continue;
 
             //bind framebuffer
+            static constexpr GLuint COLOR_ATTACHMENTS[] = {GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2,GL_COLOR_ATTACHMENT3,GL_COLOR_ATTACHMENT4,GL_COLOR_ATTACHMENT5,GL_COLOR_ATTACHMENT6,GL_COLOR_ATTACHMENT7};
             GLuint fboHandle = camera.getFramebuffer()==nullptr?0:camera.getFramebuffer()->getFBOHandle();
             glBindFramebuffer(GL_FRAMEBUFFER,fboHandle);
+            glDrawBuffers(camera.getFramebuffer()->getParameters().colorBufferCount,&COLOR_ATTACHMENTS[0]);
 
             //clear framebuffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -226,6 +233,9 @@ public:
                     glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getGlobalTransform()));
                     glm::mat4 inverseTransform = glm::inverse(transform.getGlobalTransform());
                     glUniformMatrix4fv(CommonShaderUniforms::NORMAL_MAT, 1, GL_FALSE, glm::value_ptr(glm::transpose(inverseTransform)));
+                    //bind normal view model matrix
+                    glm::mat4 inverseViewModel = glm::inverse(view*transform.getGlobalTransform());
+                    glUniformMatrix4fv(CommonShaderUniforms::NORMAL_VIEW_MODEL_MAT,1,GL_FALSE,glm::value_ptr(glm::transpose(inverseViewModel)));
 
                     //draw
                     Surface& surface = mesh.mesh->surface;
@@ -426,8 +436,11 @@ public:
         //region switch to default fbo and render main fbo onto a quad
         {
             //uniform locations
-            static constexpr int COLOR_BUFFER = 0;
-            static constexpr int BRIGHTNESS_FACTOR = 1;
+            static constexpr int BRIGHTNESS_FACTOR = 0;
+            static constexpr int COLOR_BUFFER = 1;
+
+            static constexpr int NORMAL_TEXTURE = 1;
+            static constexpr int DEPTH_TEXTURE = 5;
 
             //disable depth testing
             glDisable(GL_DEPTH_TEST);
@@ -443,33 +456,52 @@ public:
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            bool firstPass = true;
-            ShaderProgramIds::ShaderProgramIds shader = ShaderProgramIds::FBO;
-            do
-            {
-                //bind shader
-                glUseProgram(game.getAssetManager().getShaderProgram(shader)->getProgramHandle());
+            FramebufferAsset& fbo = *game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT);
 
-                //bind color buffer of main fbo
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D,
-                              game.getAssetManager().getFramebuffer(FramebufferIds::DEFAULT)->getColorBufferHandle());
-                glUniform1i(COLOR_BUFFER, 0);
+            //draw normal colored scene onto quad
+            //bind shader
+            glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FBO)->getProgramHandle());
 
-                //set brightness factor
-                glUniform1f(BRIGHTNESS_FACTOR,game.settings.display.brightnessFactor);
+            //bind color buffer of main fbo
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D,fbo.getColorBufferHandle(0));
+            glUniform1i(COLOR_BUFFER, 0);
 
-                //bind vao and draw quad
-                glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
-                glDrawArrays(GL_TRIANGLES, 0, 6);
-                glBindVertexArray(0);
+            //set brightness factor
+            glUniform1f(BRIGHTNESS_FACTOR,game.settings.display.brightnessFactor);
 
-                //unbind shader
-                glUseProgram(0);
+            //bind vao and draw quad
+            glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
 
-                firstPass=!firstPass;
-                shader = ShaderProgramIds::FBO_POST;
-            }while(!firstPass);
+            //unbind shader
+            glUseProgram(0);
+
+            //draw outlines onto quad
+            MaterialAsset& material = *game.getAssetManager().getMaterial(MaterialIds::FBO_POST);
+            //bind shader
+            glUseProgram(material.shader->getProgramHandle());
+
+            //bind uniforms
+            long uniformMask = 0;
+            bindMaterialData(material.data,uniformMask);
+            //bind normal texture of main fbo
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D,fbo.getColorBufferHandle(1));
+            glUniform1i(NORMAL_TEXTURE, 0);
+            //bind depth texture of main fbo
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D,fbo.getDepthStencilBufferHandle());
+            glUniform1i(DEPTH_TEXTURE, 1);
+
+            //bind vao and draw quad
+            glBindVertexArray(game.getAssetManager().getMesh(MeshIds::SCREEN_QUAD)->getVAOHandle());
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
+
+            //unbind shader
+            glUseProgram(0);
 
             //disable blending
             glDisable(GL_BLEND);

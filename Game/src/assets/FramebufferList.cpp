@@ -24,7 +24,7 @@ protected:
         FramebufferParameters parameters;
         parameters.useTextureForDepthAndStencil = false;
         parameters.resizeOnResolutionChange = true;//resize to screen
-        parameters.colorBufferCount = 1;
+        parameters.colorBufferCount = 2;
 
         asset.allocateOnGPU(parameters);
     }

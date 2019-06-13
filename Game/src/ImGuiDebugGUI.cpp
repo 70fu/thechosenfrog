@@ -167,6 +167,12 @@ private:
     {
         if(TreeNode("Properties"))
         {
+            for (auto &p : mat.data.ints)
+            {
+                InputInt(p.first.c_str(), &p.second.value);
+                SameLine();
+                Text("Uniform Location: %d", p.second.getLocation());
+            }
             for (auto &p : mat.data.floats)
             {
                 InputFloat(p.first.c_str(), &p.second.value);

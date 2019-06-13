@@ -14,6 +14,7 @@ namespace MaterialIds
     {
         DEFAULT,
         UNLIT,
+        FBO_POST,
 
         MATERIAL_COUNT
     };

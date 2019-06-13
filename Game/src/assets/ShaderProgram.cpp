@@ -74,14 +74,11 @@ bool ShaderProgram::relink()
 
 void ShaderProgram::cleanup()
 {
-    if(!linked)
+    if(linked)
     {
-        Log::getInstance().Warn("Cannot clean up shader program, that has not been linked yet, call ignored");
-        return;
+        //delete program on GPU
+        glDeleteProgram(shaderProgramHandle);
     }
-
-    //delete program on GPU
-    glDeleteProgram(shaderProgramHandle);
 
     //clear sources
     shaders.clear();

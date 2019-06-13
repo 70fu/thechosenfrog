@@ -63,6 +63,7 @@ protected:
             if(!assets[i].link())
             {
                 ImGuiAl::Log::getInstance().Error("Using default shader program due to linking error in shader program %d",i);
+                assets[i].cleanup();
                 loadDefault(assets[i],assetManager);
             }
         }

@@ -3,6 +3,8 @@
 
 void MaterialData::clearLocations()
 {
+    for(auto& u : ints)
+        u.second.location = -1;
     for(auto& u : floats)
         u.second.location = -1;
     for(auto& u : vec2s)
@@ -25,6 +27,8 @@ void MaterialData::clearLocations()
 
 void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
 {
+    for(auto& u : ints)
+        u.second.location = shaderAsset.getUniformLocation(u.first);
     for(auto& u : floats)
         u.second.location = shaderAsset.getUniformLocation(u.first);
     for(auto& u : vec2s)
@@ -47,6 +51,7 @@ void MaterialData::retrieveLocations(ShaderProgramAsset &shaderAsset)
 
 void MaterialData::clearProps()
 {
+    ints.clear();
     floats.clear();
     vec2s.clear();
     vec3s.clear();
@@ -61,6 +66,11 @@ void MaterialData::clearProps()
 void Material::clearMaterialProps()
 {
     data.clearProps();
+}
+
+void MaterialData::setInt(const std::string &name, int value)
+{
+    ints[name].value=value;
 }
 
 void MaterialData::setFloat(const std::string &name, float value)

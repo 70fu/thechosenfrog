@@ -36,6 +36,7 @@ public:
 public:
     //TODO data hiding of maps
     //uniform values
+    std::unordered_map<std::string,UniformValue<int>> ints;
     std::unordered_map<std::string,UniformValue<float>> floats;
     std::unordered_map<std::string,UniformValue<glm::vec2>> vec2s;
     std::unordered_map<std::string,UniformValue<glm::vec3>> vec3s;
@@ -61,6 +62,7 @@ public:
     void clearProps();
 
     //set methods, override a value for a material property or add the property if it is not present
+    void setInt(const std::string& name, int value);
     void setFloat(const std::string& name, float value);
     void setVec2(const std::string& name, const glm::vec2& vec2);
     void setVec3(const std::string& name, const glm::vec3& vec3);

@@ -23,6 +23,24 @@ protected:
             unlit.data.retrieveLocations(*unlit.shader);
         }
         //endregion
+        //region fbo post processing material
+        {
+            MaterialAsset& fboPost = assets[MaterialIds::FBO_POST];
+            fboPost.shader = assetManager.getShaderProgram(ShaderProgramIds::FBO_POST);
+            TextureAsset* whiteSquare = assetManager.getTexture(TextureIds::WHITE_SQUARE);
+            //fboPost.data.setTexture("normalTexture",whiteSquare);
+            fboPost.data.setInt("normalSampleSize",1);
+            fboPost.data.setFloat("normalThreshold",0.5f);
+            fboPost.data.setVec4("normalOutlineColor",{0,0,0,1});
+            //fboPost.data.setTexture("depthTexture",whiteSquare);
+            fboPost.data.setInt("depthSampleSize",3);
+            fboPost.data.setFloat("depthThreshold",1);
+            fboPost.data.setVec4("depthOutlineColor",{0,0,0,1});
+            //fboPost.data.setFloat("brightness",1);
+
+            fboPost.data.retrieveLocations(*fboPost.shader);
+        }
+        //endregion
     }
 
     bool loadAssetFromFile(const std::string &path, MaterialAsset &asset) override

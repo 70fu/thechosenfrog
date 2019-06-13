@@ -9,6 +9,7 @@ layout(location=5) uniform int inWorldSpace;//0 if in screenspace,1 for world sp
 
 in vec2 uvs[];
 out vec2 uv;
+out vec3 viewNormal;
 
 //emit a quad consisting of two triangles from a line (top left to bottom right)
 void main() {
@@ -17,6 +18,8 @@ void main() {
     topLeft.y*=-1;
     vec4 bottomRight = gl_in[1].gl_Position;
     bottomRight.y*=-1;
+
+    viewNormal = vec3(viewMatrices[inWorldSpace] * model * vec4(0,0,1,0));
 
     //top left
     gl_Position = pvm * topLeft;
