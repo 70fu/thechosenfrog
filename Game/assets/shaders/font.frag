@@ -13,5 +13,6 @@ void main()
 {
 	float alpha = texture(bitmap,uv).r;
 	fragColor = vec4(textColor,texture(bitmap,uv).r);
-	normalOut = vec4(normalize(abs(viewNormal)),1);
+	//normalOut = vec4(normalize(abs(viewNormal)),1);
+	normalOut = vec4(0,0,0,0);
 }
