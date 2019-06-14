@@ -339,6 +339,9 @@ public:
                         //fill buffer with quads
                         charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,text.wrapWidth);
 
+                        //dont write to depth buffer if text is in screen space
+                        glDepthMask(!text.inScreenspace);
+
                         //update the vbo
                         int writeSize = std::min(charBufferSize,maxTextQuads);
                         glBindBuffer(GL_ARRAY_BUFFER,textVbo);
@@ -354,6 +357,9 @@ public:
 
                 //disable blending
                 glDisable(GL_BLEND);
+
+                //reenable writes to depth buffer
+                glDepthMask(GL_TRUE);
             }
             //endregion
 
