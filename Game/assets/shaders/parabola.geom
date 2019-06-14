@@ -18,12 +18,15 @@ out float alpha;
 const float minAlpha=0.1;
 const float maxAlpha=0.75;
 
+out vec3 viewNormal;
+
 layout (points) in;
 layout (triangle_strip, max_vertices = 70) out;//amount of vertices=(patchSegments+1)*4*2-2
 
 layout(location=0) uniform mat4 model;
 layout(location=2) uniform mat4 pv;
 layout(location=4) uniform int frame;
+layout(location=5) uniform mat4 normalViewModel;
 layout(location=16) uniform float maxX;//the parabola is calculated until this x value
 layout(location=17) uniform float distance;//at maxX, this distance has been covered
 layout(location=18) uniform vec2 parabola;//x = a, y = b
@@ -71,6 +74,7 @@ void main() {
     //calculate segment points and normals (pointing outside)
     vec4 segmentPoints[patchSegments+1];
     vec4 segmentNormals[patchSegments+1];//scaled by halfThickness
+    vec3 viewSegmentNormals[patchSegments+1];
     vec4 offset = vec4(0.25,-0.75,0.25,0);//0.25 is the radius of the player, 0.75 is the footheight //TODO remove these hard coded values
     for(int i = 0;i<=patchSegments;++i)
     {
@@ -78,7 +82,12 @@ void main() {
         segmentPoints[i]=vec4(0,p(segmentX),-(x+segmentLength*i)*distance,1)+offset;
         vec2 normal = pNormal(segmentX)*patchHalfThickness;
         segmentNormals[i]=vec4(0,normal.y,-normal.x,0);
+        viewSegmentNormals[i]=vec3(normalViewModel*segmentNormals[i]);
     }
+    vec3 leftViewNormal = vec3(normalViewModel*vec4(-1,0,0,0));
+    vec3 rightViewNormal = vec3(normalViewModel*vec4(1,0,0,0));
+    vec3 frontViewNormal = vec3(normalViewModel*vec4(0,segmentNormals[0].z,-segmentNormals[0].y,0));
+    vec3 backViewNormal = vec3(normalViewModel*vec4(0,-segmentNormals[0].z,segmentNormals[0].y,0));
 
     //create triangle strip
     mat4 pvm = pv * model;
@@ -86,6 +95,8 @@ void main() {
     //upper side
     for(int i = 0;i<=patchSegments;++i)
     {
+        viewNormal=viewSegmentNormals[i];
+
         gl_Position = pvm * (segmentPoints[i]-halfWidth+segmentNormals[i]);
         EmitVertex();
         gl_Position = pvm * (segmentPoints[i]+halfWidth+segmentNormals[i]);
@@ -93,10 +104,12 @@ void main() {
     }
 
     //transition to right side
+    viewNormal=backViewNormal;
     gl_Position = pvm * (segmentPoints[patchSegments]+halfWidth-segmentNormals[patchSegments]);
     EmitVertex();
 
     //right side
+    viewNormal = rightViewNormal;
     for(int i = patchSegments-1;i>=0;--i)
     {
         gl_Position = pvm * (segmentPoints[i]+halfWidth+segmentNormals[i]);
@@ -106,12 +119,14 @@ void main() {
     }
 
     //complete front side
+    viewNormal=frontViewNormal;
     gl_Position = pvm * (segmentPoints[0]-halfWidth+segmentNormals[0]);
     EmitVertex();
     gl_Position = pvm * (segmentPoints[0]-halfWidth-segmentNormals[0]);
     EmitVertex();
 
     //left side
+    viewNormal=leftViewNormal;
     for(int i = 1;i<=patchSegments;++i)
     {
         gl_Position = pvm * (segmentPoints[i]-halfWidth+segmentNormals[i]);
@@ -121,12 +136,15 @@ void main() {
     }
 
     //transition to bottom side, complete back side
+    viewNormal=backViewNormal;
     gl_Position = pvm * (segmentPoints[patchSegments]+halfWidth-segmentNormals[patchSegments]);
     EmitVertex();
 
     //bottom side
     for(int i = patchSegments-1;i>=0;--i)
     {
+        viewNormal=-viewSegmentNormals[i];
+
         gl_Position = pvm * (segmentPoints[i]-halfWidth-segmentNormals[i]);
         EmitVertex();
         gl_Position = pvm * (segmentPoints[i]+halfWidth-segmentNormals[i]);
