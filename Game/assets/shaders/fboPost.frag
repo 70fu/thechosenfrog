@@ -84,9 +84,9 @@ void main()
 		dEdge = sqrt(pow(dDiffs[0], 2) + pow(dDiffs[1], 2));
 
 		vec3 normal = texture(normalTexture,uv).rgb;
-		float normalDepthThresholdMultiplier = 2*clamp(((1-normal.z) - 0.5) / (1 - 0.5),0,1)+1;
-		float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier;
-	//TODO far away objects require bigger threshold
+		float depth = linearizeDepth(texture(depthTexture,uv).r);
+		float normalDepthThresholdMultiplier = 1*clamp(((1-normal.z) - 0.5) / (1 - 0.5),0,1)+1;
+		float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier*(10*depth/far);
 		dEdge = dEdge>=modulatedThreshold?1:0;
 	}
 
@@ -96,7 +96,7 @@ void main()
 
 	//debug outputs
 	//fragColor=vec4(nEdge,nEdge,nEdge,1);
-	//fragColor=vec4(vec3((dEdge+nEdge)*brightness),1);
+	//fragColor=vec4(vec3((dEdge)*brightness),1);
 	//fragColor=vec4(texture(normalTexture,uv).zzz,1);
 	//fragColor=vec4(vec3(dotViewNormal),1);
 	//fragColor=vec4(vec3(position.x,-position.y,position.z),1);
