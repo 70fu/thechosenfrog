@@ -83,6 +83,8 @@ void Framebuffer::resize(const glm::uvec2 &size)
     {
         glBindTexture(GL_TEXTURE_2D,depthStencilBufferHandle);
         glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH24_STENCIL8,currentSize.x,currentSize.y,0,GL_DEPTH_STENCIL,GL_UNSIGNED_INT_24_8,nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     else

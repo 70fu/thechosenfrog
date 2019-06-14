@@ -29,11 +29,11 @@ protected:
             fboPost.shader = assetManager.getShaderProgram(ShaderProgramIds::FBO_POST);
             TextureAsset* whiteSquare = assetManager.getTexture(TextureIds::WHITE_SQUARE);
             //fboPost.data.setTexture("normalTexture",whiteSquare);
-            fboPost.data.setInt("normalSampleSize",1);
+            fboPost.data.setInt("normalSampleSize",2);
             fboPost.data.setFloat("normalThreshold",0.5f);
             fboPost.data.setVec4("normalOutlineColor",{0,0,0,1});
             //fboPost.data.setTexture("depthTexture",whiteSquare);
-            fboPost.data.setInt("depthSampleSize",3);
+            fboPost.data.setInt("depthSampleSize",2);
             fboPost.data.setFloat("depthThreshold",1);
             fboPost.data.setVec4("depthOutlineColor",{0,0,0,1});
             //fboPost.data.setFloat("brightness",1);

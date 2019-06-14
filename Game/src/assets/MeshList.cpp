@@ -134,7 +134,7 @@ protected:
         //region generate skybox
         {
             MeshAsset& skybox = assets[MeshIds::SKYBOX];
-            skybox.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT;
+            skybox.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT | Surface::NORMALS_FORMAT;
             skybox.surface.positions = {
                     // positions
                     {-1.0f,  1.0f, -1.0f},
@@ -178,6 +178,49 @@ protected:
                     {1.0f, -1.0f, -1.0f},
                     {-1.0f, -1.0f,  1.0f},
                     {1.0f, -1.0f,  1.0f}
+            };
+            skybox.surface.normals = {
+                    {0,0,1},
+                    {0,0,1},
+                    {0,0,1},
+                    {0,0,1},
+                    {0,0,1},
+                    {0,0,1},
+
+                    {1,0,0},
+                    {1,0,0},
+                    {1,0,0},
+                    {1,0,0},
+                    {1,0,0},
+                    {1,0,0},
+
+                    {-1,0,0},
+                    {-1,0,0},
+                    {-1,0,0},
+                    {-1,0,0},
+                    {-1,0,0},
+                    {-1,0,0},
+
+                    {0,0,-1},
+                    {0,0,-1},
+                    {0,0,-1},
+                    {0,0,-1},
+                    {0,0,-1},
+                    {0,0,-1},
+
+                    {0,-1,0},
+                    {0,-1,0},
+                    {0,-1,0},
+                    {0,-1,0},
+                    {0,-1,0},
+                    {0,-1,0},
+
+                    {0,1,0},
+                    {0,1,0},
+                    {0,1,0},
+                    {0,1,0},
+                    {0,1,0},
+                    {0,1,0},
             };
 
             skybox.allocateOnGPU(GL_STATIC_DRAW);

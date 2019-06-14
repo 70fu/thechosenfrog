@@ -22,7 +22,7 @@ protected:
     void loadDefault(FramebufferAsset &asset, AssetManager& assetManager) override
     {
         FramebufferParameters parameters;
-        parameters.useTextureForDepthAndStencil = false;
+        parameters.useTextureForDepthAndStencil = true;
         parameters.resizeOnResolutionChange = true;//resize to screen
         parameters.colorBufferCount = 2;
 

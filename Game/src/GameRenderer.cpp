@@ -164,8 +164,9 @@ public:
 
     void render(Game& game, int width, int height) override
     {
-        //activate depth testing
+        //activate depth testing and writing into depth buffer
         glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
 
         //perform rendering for each camera
         for(CameraComponent& camera : game.cameraComps)
@@ -442,8 +443,10 @@ public:
             static constexpr int NORMAL_TEXTURE = 1;
             static constexpr int DEPTH_TEXTURE = 5;
 
-            //disable depth testing
+            //disable depth testing and dont write into depth buffer
             glDisable(GL_DEPTH_TEST);
+            glDepthMask(GL_TRUE);
+
 
             //enable blending
             glEnable(GL_BLEND);
