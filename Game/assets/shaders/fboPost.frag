@@ -71,25 +71,23 @@ void main()
 	//inspired by https://roystan.net/articles/outline-shader.html
 	//and https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
 
-	//calculate depth edge value
-	float[2] dDiffs = dDiffValues(depthTexture,depthSampleSize);
-	float dEdge = sqrt(pow(dDiffs[0], 2) + pow(dDiffs[1], 2));
-
-	vec3 normal = texture(normalTexture,uv).rgb;
-	//vec3 rescaledPos = (position+1)*0.5;
-	vec3 rescaledPos = abs(position);
-	float dotViewNormal = 1-dot(rescaledPos,normal);
-	float normalDepthThresholdMultiplier = 7*clamp((dotViewNormal - 0.5) / (1 - 0.5),0,1)+1;
-	float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier;
-	dEdge = dEdge>=modulatedThreshold?1:0;
+	vec3[2] diffs = diffValues(normalTexture,normalSampleSize);
+	float nEdge = sqrt(dot(diffs[0], diffs[0])+dot(diffs[1], diffs[1]));
+	nEdge = nEdge>=normalThreshold?1:0;
 
 	//calculate normal edge value if there is no depth edge
-	float nEdge = 0;
-	if(dEdge<1)
+	float dEdge = 0;
+	if(nEdge<1)
 	{
-		vec3[2] diffs = diffValues(normalTexture,normalSampleSize);
-		nEdge = sqrt(dot(diffs[0], diffs[0])+dot(diffs[1], diffs[1]));
-		nEdge = nEdge>=normalThreshold?1:0;
+		//calculate depth edge value
+		float[2] dDiffs = dDiffValues(depthTexture,depthSampleSize);
+		dEdge = sqrt(pow(dDiffs[0], 2) + pow(dDiffs[1], 2));
+
+		vec3 normal = texture(normalTexture,uv).rgb;
+		float normalDepthThresholdMultiplier = 2*clamp(((1-normal.z) - 0.5) / (1 - 0.5),0,1)+1;
+		float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier;
+	//TODO far away objects require bigger threshold
+		dEdge = dEdge>=modulatedThreshold?1:0;
 	}
 
 	vec4 edgeColor = dEdge*depthOutlineColor + nEdge*normalOutlineColor;
@@ -99,7 +97,8 @@ void main()
 	//debug outputs
 	//fragColor=vec4(nEdge,nEdge,nEdge,1);
 	//fragColor=vec4(vec3((dEdge+nEdge)*brightness),1);
-	//fragColor=vec4(texture(normalTexture,uv).rgb,1);
+	//fragColor=vec4(texture(normalTexture,uv).zzz,1);
+	//fragColor=vec4(vec3(dotViewNormal),1);
 	//fragColor=vec4(vec3(position.x,-position.y,position.z),1);
 }
 
