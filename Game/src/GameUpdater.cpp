@@ -54,7 +54,10 @@ private:
                 case PlayerComponent::PlayerInput::KEYBOARD_MOUSE:
                 {
                     //increase jump strength
-                    controller.jumpStrength+=glfwGetKey(game.getWindow(),player.input.keyboard.jumpKey)*PlayerComponent::JUMP_STRENGTH_INCREASE*FIXED_DELTA;
+                    if(!player.jumpCancelled)
+                        controller.jumpStrength+=glfwGetKey(game.getWindow(),player.input.keyboard.jumpKey)*PlayerComponent::JUMP_STRENGTH_INCREASE*FIXED_DELTA;
+                    else
+                        controller.jumpStrength = 0;
 
                     //set direction vector
                     controller.direction.x=glfwGetKey(game.getWindow(),player.input.keyboard.rightKey)-glfwGetKey(game.getWindow(),player.input.keyboard.leftKey);

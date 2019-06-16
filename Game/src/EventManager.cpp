@@ -299,13 +299,25 @@ private:
                         action == GLFW_RELEASE &&
                         game.hasComponents(player.entity, Components::CHAR_CONTROLLER_BIT))
                 {
-                    game.charControllerComps[player.entity].wantJump = true;
+                    if(!player.jumpCancelled)
+                        game.charControllerComps[player.entity].wantJump = true;
+                    else if(glfwGetKey(game.getWindow(),player.input.keyboard.cancelJumpKey)+glfwGetMouseButton(game.getWindow(),player.input.keyboard.cancelJumpMouseButton)==0)
+                        player.jumpCancelled = false;
                 }
 
                 //tongue key
                 if(player.input.keyboard.tongueKey==key && action==GLFW_PRESS)
                 {
                     //TODO activate tongue
+                }
+
+                //cancel jump key
+                if(player.input.keyboard.cancelJumpKey==key)
+                {
+                    if(action==GLFW_PRESS)
+                        player.jumpCancelled = true;
+                    else if(action==GLFW_RELEASE && glfwGetKey(game.getWindow(),player.input.keyboard.jumpKey)==0 && glfwGetMouseButton(game.getWindow(),player.input.keyboard.cancelJumpMouseButton)==0)
+                        player.jumpCancelled = false;
                 }
             }
 
@@ -322,6 +334,15 @@ private:
                 if(player.input.keyboard.tongueMouseButton==button && action==GLFW_PRESS)
                 {
                     //TODO activate tongue
+                }
+
+                //cancel jump mouse button
+                if(player.input.keyboard.cancelJumpMouseButton==button)
+                {
+                    if(action==GLFW_PRESS)
+                        player.jumpCancelled = true;
+                    else if(action==GLFW_RELEASE && glfwGetKey(game.getWindow(),player.input.keyboard.jumpKey)==0 && glfwGetKey(game.getWindow(),player.input.keyboard.cancelJumpKey)==0)
+                        player.jumpCancelled = false;
                 }
             }
 

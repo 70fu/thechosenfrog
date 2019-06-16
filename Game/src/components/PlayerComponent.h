@@ -30,6 +30,9 @@ public:
 
         int tongueKey=-1;//not set
         int tongueMouseButton=0;
+
+        int cancelJumpKey=-1;//not set
+        int cancelJumpMouseButton = 1;
     };
 
     struct JoystickInputs
@@ -48,6 +51,9 @@ public:
 
     bool hasLost = false;
     float looseHeight = -10000000;
+
+    //set to true when the jump cancel key/button is pressed, set to false when jump key is released, no jump can be performed when this is true
+    bool jumpCancelled = false;
 };
 
 
