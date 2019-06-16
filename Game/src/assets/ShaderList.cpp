@@ -27,6 +27,8 @@ protected:
         loadAssetsFromFileHelper("/shaders/fbo.vert",ShaderIds::FBO_VERT,assets[ShaderIds::FBO_VERT],assetManager);
         loadAssetsFromFileHelper("/shaders/fbo.frag",ShaderIds::FBO_FRAG,assets[ShaderIds::FBO_FRAG],assetManager);
         loadAssetsFromFileHelper("/shaders/fboPost.frag",ShaderIds::FBO_POST_FRAG,assets[ShaderIds::FBO_POST_FRAG],assetManager);
+        loadAssetsFromFileHelper("/shaders/cloud.vert",ShaderIds::CLOUD_VERT,assets[ShaderIds::CLOUD_VERT],assetManager);
+        loadAssetsFromFileHelper("/shaders/cloud.frag",ShaderIds::CLOUD_FRAG,assets[ShaderIds::CLOUD_FRAG],assetManager);
         //...
     }
 

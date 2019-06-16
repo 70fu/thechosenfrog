@@ -22,6 +22,7 @@ namespace Components
 		CHAR_CONTROLLER,
 		PLAYER,
 		TEXT,
+		CLOUD,
 
         COMPONENT_COUNT
     };
@@ -41,6 +42,7 @@ namespace Components
 		CHAR_CONTROLLER_BIT=1<<CHAR_CONTROLLER,
 		PLAYER_BIT=1<<PLAYER,
 		TEXT_BIT=1<<TEXT,
+		CLOUD_BIT=1<<CLOUD
     };
 
     using ComponentMask = std::underlying_type<Components::MaskBits>::type;
@@ -59,6 +61,7 @@ namespace Components
 				1,              //CHAR_CONTROLLER
                 1,              //PLAYER
                 16,              //TEXT
+                MAX_ENTITIES    //CLOUD
             };
 
     constexpr MaskBits typeToMask(Types componentType){return static_cast<MaskBits>(1<<componentType);}

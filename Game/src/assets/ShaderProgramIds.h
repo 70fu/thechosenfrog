@@ -19,6 +19,7 @@ namespace ShaderProgramIds
         PARABOLA,
         FBO,
         FBO_POST,//fbo shader with post processing
+        CLOUD,
 
         SHADER_PROGRAM_COUNT
     };

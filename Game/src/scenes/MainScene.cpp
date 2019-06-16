@@ -178,6 +178,30 @@ public:
             }
         }
 
+        {
+            for(int x = 0;x<14;++x)
+            {
+                for(int y = 0;y<14;++y)
+                {
+                    EntityId id = game.createEntity();
+                    TransformComponent &transform = game.transformComps.addComp(id);
+                    transform.setTranslation({10+x*8, -5+x*1, 10-y*8});
+                    transform.setScaling({1.25f, 0.8f, 1.25f});
+
+                    CloudComponent &cloud = game.cloudComps.addComp(id);
+                    CloudRenderData &renderData = *cloud.renderData;
+                    unsigned int i = 0;
+                    for (auto it = std::begin(renderData.sphereData); it != std::end(renderData.sphereData); ++it)
+                    {
+                        it->offset = {0.6f * (i / 8), 0, 0.6f * (i % 8)};
+                        it->color = {(14-x)/14.0f+0.1f, (14-y)/14.0f+0.1, 0.1f*(((x+y)*7)%10)+0.1, 1};
+
+                        ++i;
+                    }
+                }
+            }
+        }
+
         makeSign(game,{{-1.5,-1,4},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"});
         makeSign(game,{{1.5,-1,4},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"});
         makeSign(game,{{1,-1,-3},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"});

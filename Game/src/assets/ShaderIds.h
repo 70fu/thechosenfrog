@@ -28,6 +28,8 @@ namespace ShaderIds
         FBO_VERT,
         FBO_FRAG,
         FBO_POST_FRAG,
+        CLOUD_VERT,
+        CLOUD_FRAG,
 
         SHADER_COUNT
     };

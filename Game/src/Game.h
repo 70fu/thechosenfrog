@@ -26,6 +26,7 @@
 #include "components/PlayerComponent.h"
 #include "components/TextComponent.h"
 #include "AppSettings.h"
+#include "components/CloudComponent.h"
 
 class GLFWwindow;
 
@@ -43,8 +44,9 @@ public:
 		 * Removes component that this store manages from given entity
 		 * component bit of componentMask of given entity is set to 0 and last component of store is moved to position of the component of this entity
 		 * @param entityId of entity to remove component from
+		 * @return true if entity had component
 		 */
-		virtual void removeComp(EntityId entityId)=0;
+		virtual bool removeComp(EntityId entityId)=0;
 		/**
 		 * Just used for an assert check in the game constructor
 		 * @return the type of components this component store manages
@@ -111,7 +113,7 @@ public:
 
             return ret;
         }
-        void removeComp(EntityId entityId) override
+        bool removeComp(EntityId entityId) override
         {
             Entity& entity = game.entities[entityId];
             ComponentId pos = entity.components[TYPE_ID];
@@ -120,7 +122,7 @@ public:
             if((entity.componentMask&Components::typeToMask(TYPE_ID))==0)
             {
                 ImGuiAl::Log::getInstance().Warn("Cannot remove component from entity with id %d, entity has no component of type %d",entity,TYPE_ID);
-                return ;
+                return false;
             }
 
 			//notify event manager
@@ -139,6 +141,8 @@ public:
                 components[pos] = filler;//TODO think about moving component instead of copying
                 game.entities[filler.entity].components[TYPE_ID]=pos;
             }
+
+            return true;
         }
 
         Components::Types getType() const override {return TYPE_ID;}
@@ -147,8 +151,10 @@ public:
         //iterators are invalidated on removal or add of components
         T* begin(){return &components[0];}
         T* end(){return &components[0]+numActive;}
-        constexpr T* begin() const{return &components[0];}
+        /*constexpr T* begin() const{return &components[0];}
         constexpr T* end() const{return &components[0]+numActive;}
+        constexpr T* cbegin() const{return &components[0];}
+        constexpr T* cend() const{return &components[0]+numActive;}*/
 
         /**
          * Precondition: given entity has component of type TYPE_ID
@@ -166,6 +172,35 @@ public:
             //TODO think about checking whether given entity contains component and return invalidComponent if entity does not have a component of TYPE_ID
             return components[game.entities[entity].components[TYPE_ID]];
         }
+    };
+
+    /**
+     * Decorator class for ComponentStore<CloudComponent> that additionally manages CloudRenderData for each cloud in an contiguous array
+     */
+    class CloudComponentStore : public ComponentStoreBase {
+    private:
+        ComponentStore<CloudComponent,Components::CLOUD> store;
+        Game& game;
+    public:
+        CloudRenderData renderData[Components::MAX_SIZES[Components::CLOUD]];
+        explicit CloudComponentStore(Game& game):store(game),game(game) {}
+
+        ComponentId getNumActive() const;
+
+        CloudComponent& addComp(EntityId entityId);
+        bool removeComp(EntityId entityId) override;
+
+        Components::Types getType() const override;
+
+        CloudComponent* begin(){return store.begin();}
+        CloudComponent* end(){return store.end();}
+        /*constexpr CloudComponent* begin() const{return store.cbegin();}
+        constexpr CloudComponent* end() const{return store.cend();}
+        constexpr CloudComponent* cbegin() const{return store.cbegin();}
+        constexpr CloudComponent* cend() const{return store.cend();}*/
+
+        CloudComponent& operator[](EntityId entity);
+        const CloudComponent& operator[](EntityId entity) const;
     };
 private:
 	//index=id, there may be holes of inactive/deleted entities
@@ -242,6 +277,7 @@ public:
     ComponentStore<CharControllerComponent,Components::CHAR_CONTROLLER> charControllerComps;
     ComponentStore<PlayerComponent,Components::PLAYER> playerComps;
     ComponentStore<TextComponent,Components::TEXT> textComps;
+    CloudComponentStore cloudComps;
 
 
     //Global Skybox, must never be nullptr
@@ -269,7 +305,8 @@ private:
                     &physicsComps,
                     &charControllerComps,
                     &playerComps,
-                    &textComps
+                    &textComps,
+                    &cloudComps
             };
 
 public:

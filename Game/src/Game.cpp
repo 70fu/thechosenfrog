@@ -8,7 +8,60 @@
 #include <GLFW/glfw3.h>
 #include <PxScene.h>
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this),textComps(*this)
+ComponentId Game::CloudComponentStore::getNumActive() const
+{
+    return store.getNumActive();
+}
+
+CloudComponent &Game::CloudComponentStore::addComp(EntityId entityId)
+{
+    CloudRenderData* data = nullptr;
+    if(getNumActive()<Components::MAX_SIZES[Components::CLOUD])
+        data = &renderData[getNumActive()];
+
+    CloudComponent& component = store.addComp(entityId);
+
+    //if the renderData is not nullptr then the component has already been added to the entity
+    if(component.renderData==nullptr)
+        component.renderData = data;
+    return component;
+}
+
+bool Game::CloudComponentStore::removeComp(EntityId entityId)
+{
+    Entity& entity = game.entities[entityId];
+    ComponentId pos = entity.components[Components::CLOUD];
+
+    bool success = store.removeComp(entityId);
+
+    //fill hole
+    if(success)
+    {
+        renderData[pos] = std::move(renderData[getNumActive()]);
+        (begin()+pos)->renderData = &renderData[pos];
+    }
+
+    return success;
+}
+
+Components::Types Game::CloudComponentStore::getType() const
+{
+    return store.getType();
+}
+
+
+
+CloudComponent &Game::CloudComponentStore::operator[](EntityId entity)
+{
+    return store[entity];
+}
+
+const CloudComponent &Game::CloudComponentStore::operator[](EntityId entity) const
+{
+    return store[entity];
+}
+
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this),textComps(*this),cloudComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -86,6 +139,9 @@ void Game::init(GLFWwindow* window)
 
     //init debug gui
     debugGui->init(this);
+
+    //init renderer
+    gameRenderer->init(*this);
 
     //apply settings
     applySettings();
@@ -165,6 +221,7 @@ void Game::render()
 void Game::cleanup()
 {
     debugGui->cleanup(this);
+    gameRenderer->cleanup(*this);
 
     assetManager.cleanup();
     soloud.deinit();

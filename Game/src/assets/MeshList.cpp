@@ -4,6 +4,7 @@
 #include "Assets.h"
 #include "Mesh.h"
 #include "MeshIds.h"
+#include "../Constants.h"
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -254,6 +255,9 @@ protected:
             quad.allocateOnGPU(GL_STATIC_DRAW);
         }
         //endregion
+        //make cloud sphere
+        genSphere(assets[MeshIds::CLOUD_SPHERE],16,16,0.5);
+        assets[MeshIds::CLOUD_SPHERE].allocateOnGPU(GL_STATIC_DRAW);
         //...
     }
 
@@ -376,6 +380,91 @@ protected:
     {
         loadAssetFromFile(getFullAssetPath("/meshes/cross.obj"),asset);
         asset.allocateOnGPU(GL_STATIC_DRAW);
+    }
+
+private:
+    /**
+     * Fills asset with vertices, normals, indices and uvs but does not allocate the mesh
+     * @param asset
+     * @param longSegments
+     * @param latSegments
+     * @param radius
+     */
+    static void genSphere(MeshAsset &asset, unsigned int longSegments, unsigned int latSegments, double radius)
+    {
+        //indices per iteration
+        static constexpr int IPIT = 6;
+
+        asset.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT|Surface::NORMALS_FORMAT|Surface::INDICES_FORMAT|Surface::UVS_FORMAT;
+
+        unsigned int vertexCount = longSegments * (latSegments - 1) + 2;
+        asset.surface.positions=std::vector<glm::vec3>(vertexCount);
+        asset.surface.normals=std::vector<glm::vec3>(vertexCount);
+        asset.surface.indices=std::vector<unsigned int>(2 * longSegments*(latSegments - 1) * 3);
+        asset.surface.uvs=std::vector<glm::vec2>(vertexCount);
+        unsigned int topVertI = 0;
+        unsigned int bottomVertI = longSegments * (latSegments - 1) + 2 - 1;
+
+        asset.surface.positions[topVertI] = { 0,radius,0 };
+        asset.surface.positions[bottomVertI] = { 0,-radius,0 };
+        asset.surface.normals[topVertI] = { 0,1,0 };
+        asset.surface.normals[bottomVertI] = { 0,-1,0 };
+        asset.surface.uvs[topVertI] = {0,0};
+        asset.surface.uvs[bottomVertI] = {0,1};
+        for (unsigned int lat = 1; lat<latSegments;lat++)
+        {
+            double theta = PI * lat / latSegments;
+            double y = std::cos(theta);
+            for (unsigned int lon = 0; lon < longSegments; lon++)
+            {
+                double phi = 2 * PI * lon / longSegments;
+                double x = std::sin(theta)*std::cos(phi);
+                double z = std::sin(theta)*-std::sin(phi);
+
+                //vertices & normals
+                unsigned int i = (lat - 1)*longSegments + lon + 1;
+                glm::vec3 vertex = { x,y,z };
+                asset.surface.positions[i] = vertex*(float)radius;
+                asset.surface.normals[i] = vertex;
+
+                //uvs
+                asset.surface.uvs[i] = { phi / (2 * PI), theta / PI};
+
+                //indices
+                if (lat == 1)
+                    continue;
+
+                unsigned int ii = (i-1-longSegments) * IPIT+longSegments*3;
+                int right = i;
+                int topRight = right - longSegments;
+                int left = (lat - 1)*longSegments + (lon-1)%longSegments + 1;
+                int topLeft = left - longSegments;
+
+                asset.surface.indices[ii + 0] = right;
+                asset.surface.indices[ii + 1] = topRight;
+                asset.surface.indices[ii + 2] = left;
+
+                asset.surface.indices[ii + 3] = left;
+                asset.surface.indices[ii + 4] = topRight;
+                asset.surface.indices[ii + 5] = topLeft;
+            }
+        }
+
+        //make indices for last latitudal segment
+        for (unsigned int lon = 0; lon < longSegments; lon++)
+        {
+            //top
+            unsigned int ii = lon*3;
+            asset.surface.indices[ii + 0] = lon+1;
+            asset.surface.indices[ii + 1] = topVertI;
+            asset.surface.indices[ii + 2] = (lon - 1) % longSegments + 1;
+
+            //bottom
+            ii = (2 * longSegments*(latSegments - 1) * 3) - longSegments * 3+lon*3;
+            asset.surface.indices[ii + 0] = (latSegments - 2)*longSegments+lon+1;
+            asset.surface.indices[ii + 1] = (latSegments - 2)*longSegments+(lon - 1) % longSegments + 1;
+            asset.surface.indices[ii + 2] = bottomVertI;
+        }
     }
 };
 REGISTERCLASS(MeshList);

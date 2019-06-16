@@ -36,6 +36,17 @@ private:
     GLuint parabolaVao;
     GLuint parabolaVbo;
 
+    /* --------------------------------------------- */
+    // Cloud Rendering
+    /* --------------------------------------------- */
+    //contains position and scale for each cloud interleaved (pspspspsps...)
+    glm::vec3 cloudPosAndScales[2 * Components::MAX_SIZES[Components::CLOUD]];
+    glm::mat4 cloudNormalViewModelMats[Components::MAX_SIZES[Components::CLOUD]];
+    GLuint cloudRenderDataVbo;
+    GLuint cloudPosAndScalesVbo;
+    GLuint cloudNormalViewModelMatsVbo;
+
+
     //helper variable for texture units which should be cleared after a material bind
     GLuint nextFreeTextureUnit = 0;
 
@@ -116,40 +127,6 @@ private:
     }
 
 public:
-    void Init(bool isFirstInit) override
-    {
-        if(isFirstInit)
-        {
-            //enable back-face culling
-            glEnable(GL_CULL_FACE);
-
-            //initialize text buffer
-            maxTextQuads = MAX_CHAR_PER_TEXT;
-            glGenVertexArrays(1,&textVao);
-            glGenBuffers(1,&textVbo);
-            glBindVertexArray(textVao);
-            glBindBuffer(GL_ARRAY_BUFFER,textVbo);
-            glBufferData(GL_ARRAY_BUFFER,sizeof(float)*4*maxTextQuads*2,nullptr,GL_DYNAMIC_DRAW);
-            glVertexAttribPointer(Surface::POSITIONS,2,GL_FLOAT,GL_FALSE,4*sizeof(float),0);
-            glEnableVertexAttribArray(Surface::POSITIONS);
-            glVertexAttribPointer(Surface::UVS,2,GL_FLOAT,GL_FALSE,4*sizeof(float),(void*)(2*sizeof(float)));
-            glEnableVertexAttribArray(Surface::UVS);
-            glBindBuffer(GL_ARRAY_BUFFER,0);
-            glBindVertexArray(0);
-
-            //init parabola vao and vbo
-            static constexpr int PARABOLA_VERTEX_ATTRIB_INDEX = 0;
-            glGenVertexArrays(1,&parabolaVao);
-            glGenBuffers(1,&parabolaVbo);
-            glBindVertexArray(parabolaVao);
-            glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
-            glBufferData(GL_ARRAY_BUFFER,sizeof(float)*MAX_PARABOLA_POINTS,nullptr,GL_DYNAMIC_DRAW);
-            glVertexAttribPointer(PARABOLA_VERTEX_ATTRIB_INDEX,1,GL_FLOAT,GL_FALSE,1*sizeof(float),0);
-            glEnableVertexAttribArray(PARABOLA_VERTEX_ATTRIB_INDEX);
-            glBindBuffer(GL_ARRAY_BUFFER,0);
-            glBindVertexArray(0);
-        }
-    }
 
     void Serialize(ISimpleSerializer *pSerializer) override
     {
@@ -160,6 +137,91 @@ public:
         SERIALIZE(textVbo)
         SERIALIZE(parabolaVao)
         SERIALIZE(parabolaVbo)
+        SERIALIZE(cloudPosAndScalesVbo)
+        SERIALIZE(cloudRenderDataVbo)
+    }
+
+    void init(Game& game) override
+    {
+        //enable back-face culling
+        glEnable(GL_CULL_FACE);
+
+        //initialize text buffer
+        maxTextQuads = MAX_CHAR_PER_TEXT;
+        glGenVertexArrays(1,&textVao);
+        glGenBuffers(1,&textVbo);
+        glBindVertexArray(textVao);
+        glBindBuffer(GL_ARRAY_BUFFER,textVbo);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(float)*4*maxTextQuads*2,nullptr,GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(Surface::POSITIONS,2,GL_FLOAT,GL_FALSE,4*sizeof(float),0);
+        glEnableVertexAttribArray(Surface::POSITIONS);
+        glVertexAttribPointer(Surface::UVS,2,GL_FLOAT,GL_FALSE,4*sizeof(float),(void*)(2*sizeof(float)));
+        glEnableVertexAttribArray(Surface::UVS);
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+        glBindVertexArray(0);
+
+        //init parabola vao and vbo
+        static constexpr int PARABOLA_VERTEX_ATTRIB_INDEX = 0;
+        glGenVertexArrays(1,&parabolaVao);
+        glGenBuffers(1,&parabolaVbo);
+        glBindVertexArray(parabolaVao);
+        glBindBuffer(GL_ARRAY_BUFFER,parabolaVbo);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(float)*MAX_PARABOLA_POINTS,nullptr,GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(PARABOLA_VERTEX_ATTRIB_INDEX,1,GL_FLOAT,GL_FALSE,1*sizeof(float),0);
+        glEnableVertexAttribArray(PARABOLA_VERTEX_ATTRIB_INDEX);
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+        glBindVertexArray(0);
+
+        //attach vbos to cloud sphere vao
+        static constexpr int POSITION_ATTRIB_INDEX = 6;
+        static constexpr int SCALE_ATTRIB_INDEX = 7;
+        static constexpr int OFFSET_ATTRIB_INDEX = 8;
+        static constexpr int COLOR_ATTRIB_INDEX = 9;
+        static constexpr int NORMAL_VIEW_MODEL_MAT = 10;//needs locations 10,11,12,13
+        glGenBuffers(1,&cloudRenderDataVbo);
+        glGenBuffers(1,&cloudPosAndScalesVbo);
+        glGenBuffers(1,&cloudNormalViewModelMatsVbo);
+        glBindVertexArray(game.getAssetManager().getMesh(MeshIds::CLOUD_SPHERE)->getVAOHandle());
+        glBindBuffer(GL_ARRAY_BUFFER,cloudPosAndScalesVbo);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3)*2*Components::MAX_SIZES[Components::CLOUD],nullptr,GL_DYNAMIC_DRAW);
+        //position attribute
+        glVertexAttribPointer(POSITION_ATTRIB_INDEX,3,GL_FLOAT,GL_FALSE,2*sizeof(glm::vec3),0);
+        glEnableVertexAttribArray(POSITION_ATTRIB_INDEX);
+        glVertexAttribDivisor(POSITION_ATTRIB_INDEX,CloudRenderData::SPHERE_COUNT);
+        //scale attribute
+        glVertexAttribPointer(SCALE_ATTRIB_INDEX,3,GL_FLOAT,GL_FALSE,2*sizeof(glm::vec3),(void*)sizeof(glm::vec3));
+        glEnableVertexAttribArray(SCALE_ATTRIB_INDEX);
+        glVertexAttribDivisor(SCALE_ATTRIB_INDEX,CloudRenderData::SPHERE_COUNT);
+        //bind render data vbo
+        glBindBuffer(GL_ARRAY_BUFFER,cloudRenderDataVbo);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(CloudRenderData)*Components::MAX_SIZES[Components::CLOUD],nullptr,GL_DYNAMIC_DRAW);
+        //offset attribute
+        glVertexAttribPointer(OFFSET_ATTRIB_INDEX,3,GL_FLOAT,GL_FALSE,sizeof(CloudRenderData::SphereData),(void*)0);
+        glEnableVertexAttribArray(OFFSET_ATTRIB_INDEX);
+        glVertexAttribDivisor(OFFSET_ATTRIB_INDEX,1);
+        //color attribute
+        glVertexAttribPointer(COLOR_ATTRIB_INDEX,3,GL_FLOAT,GL_FALSE,sizeof(CloudRenderData::SphereData),(void*)sizeof(glm::vec3));
+        glEnableVertexAttribArray(COLOR_ATTRIB_INDEX);
+        glVertexAttribDivisor(COLOR_ATTRIB_INDEX,1);
+        //bind normal view model mat vbo
+        glBindBuffer(GL_ARRAY_BUFFER,cloudNormalViewModelMatsVbo);
+        glBufferData(GL_ARRAY_BUFFER, Components::MAX_SIZES[Components::CLOUD] * sizeof(glm::mat4), &cloudNormalViewModelMats[0], GL_DYNAMIC_DRAW);
+        //matrix attribute
+        glVertexAttribPointer(NORMAL_VIEW_MODEL_MAT, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)0);
+        glVertexAttribPointer(NORMAL_VIEW_MODEL_MAT+1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(sizeof(glm::vec4)));
+        glVertexAttribPointer(NORMAL_VIEW_MODEL_MAT+2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(2 * sizeof(glm::vec4)));
+        glVertexAttribPointer(NORMAL_VIEW_MODEL_MAT+3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(3 * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(NORMAL_VIEW_MODEL_MAT);
+        glEnableVertexAttribArray(NORMAL_VIEW_MODEL_MAT+1);
+        glEnableVertexAttribArray(NORMAL_VIEW_MODEL_MAT+2);
+        glEnableVertexAttribArray(NORMAL_VIEW_MODEL_MAT+3);
+        glVertexAttribDivisor(NORMAL_VIEW_MODEL_MAT,CloudRenderData::SPHERE_COUNT);
+        glVertexAttribDivisor(NORMAL_VIEW_MODEL_MAT+1,CloudRenderData::SPHERE_COUNT);
+        glVertexAttribDivisor(NORMAL_VIEW_MODEL_MAT+2,CloudRenderData::SPHERE_COUNT);
+        glVertexAttribDivisor(NORMAL_VIEW_MODEL_MAT+3,CloudRenderData::SPHERE_COUNT);
+        //unbind
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+        glBindVertexArray(0);
     }
 
     void render(Game& game, int width, int height) override
@@ -254,6 +316,76 @@ public:
             //unbind shader
             glUseProgram(0);
 
+            //endregion
+
+            /* --------------------------------------------- */
+            // Render Clouds
+            /* --------------------------------------------- */
+            //region Render Clouds
+            {
+                //get position and scale for every cloud
+                glm::vec3* posIt = &cloudPosAndScales[0];
+                glm::vec3* scaleIt = &cloudPosAndScales[1];
+                glm::mat4* normalViewModelIt = &cloudNormalViewModelMats[0];
+                for(CloudComponent& cloud: game.cloudComps)
+                {
+                    EntityId entity = cloud.entity;
+
+                    //check for transform component
+                    //TODO only in debug
+                    if(!game.hasComponents(entity,Components::TRANSFORM_BIT))
+                    {
+                        posIt+=2;
+                        scaleIt+=2;
+                        ++normalViewModelIt;
+                        continue;
+                    }
+
+                    //assume a cloud has a transform
+                    TransformComponent& transform = game.transformComps[entity];
+
+                    //write pos and scale
+                    *posIt = transform.getGlobalTranslation();
+                    *scaleIt = transform.getScaling();
+
+                    //calculate normal view matrix
+                    *normalViewModelIt = glm::transpose(glm::inverse(view*glm::scale(glm::mat4(1.0f), transform.getScaling())));
+
+                    posIt+=2;
+                    scaleIt+=2;
+                    ++normalViewModelIt;
+                }
+
+                ComponentId numClouds = game.cloudComps.getNumActive();
+                MeshAsset& sphereMesh = *game.getAssetManager().getMesh(MeshIds::CLOUD_SPHERE);
+
+                //bind shader
+                glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::CLOUD)->getProgramHandle());
+
+                //bind vao and upload cloud data
+                glBindVertexArray(sphereMesh.getVAOHandle());
+                //upload position and scales
+                glBindBuffer(GL_ARRAY_BUFFER,cloudPosAndScalesVbo);
+                glBufferSubData(GL_ARRAY_BUFFER,0,numClouds*2*sizeof(glm::vec3),&cloudPosAndScales[0]);
+                glBindBuffer(GL_ARRAY_BUFFER,cloudRenderDataVbo);
+                glBufferSubData(GL_ARRAY_BUFFER,0,numClouds*sizeof(CloudRenderData),&game.cloudComps.renderData[0]);
+                glBindBuffer(GL_ARRAY_BUFFER,cloudNormalViewModelMatsVbo);
+                glBufferSubData(GL_ARRAY_BUFFER,0,numClouds*sizeof(glm::mat4),&cloudNormalViewModelMats[0]);
+                glBindBuffer(GL_ARRAY_BUFFER,0);
+
+                //bind uniforms
+                //bind projection view matrix uniform
+                glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX, 1, GL_FALSE, glm::value_ptr(pv));
+
+                //draw instanced
+                glDrawElementsInstanced(GL_TRIANGLES,sphereMesh.surface.indices.size(),GL_UNSIGNED_INT,0,numClouds*CloudRenderData::SPHERE_COUNT);
+
+                //unbind vao
+                glBindVertexArray(0);
+
+                //unbind shader
+                glUseProgram(0);
+            }
             //endregion
 
             /* --------------------------------------------- */
@@ -353,6 +485,10 @@ public:
                     }
                 }
 
+                //unbind vao
+                glBindVertexArray(0);
+
+                //unbind shader
                 glUseProgram(0);
 
                 //disable blending
@@ -518,6 +654,11 @@ public:
             glDisable(GL_BLEND);
         }
         //endregion
+    }
+
+    void cleanup(Game &game) override
+    {
+        //TODO
     }
 };
 REGISTERCLASS(GameRenderer)
