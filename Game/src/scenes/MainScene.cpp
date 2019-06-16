@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "../RuntimeClasses.h"
 #include "../util/GLMPXConversion.h"
+#include "../CloudPlatforms.h"
 #include <ObjectInterfacePerModule.h>
 #include <characterkinematic/PxControllerManager.h>
 #include <PxPhysicsAPI.h>
@@ -13,6 +14,8 @@
 class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
 {
 private:
+    CloudPlatforms cloudPlatforms;
+
     struct SignParameters
     {
         glm::vec3 translation={0,0,0};
@@ -85,6 +88,14 @@ private:
         return transform;
     }
 public:
+
+    void Init(bool isFirstInit) override
+    {
+        IObject::Init(isFirstInit);
+
+        cloudPlatforms = CloudPlatforms();
+    }
+
     void init(Game& game) override
     {
         //set skybox
@@ -159,13 +170,13 @@ public:
             static constexpr unsigned int PLATFORM_COUNT = 5;
             for (int i = 0; i < PLATFORM_COUNT; ++i)
             {
-                float size = 8-i;
+                float size = 5-i;
 
-                PlatformParameters params;
+                CloudPlatformParameter params;
                 params.translation={((i%2)*2-1)*8*(i&1), 7 * (i + 1), -(i + 1) * 15};
                 params.size={size,size};
 
-                TransformComponent &transform = makePlatform(game,params);
+                TransformComponent &transform = cloudPlatforms.makeSquaredCloudPlatform(game,params);
 
                 //place winning sign on last platform
                 if(i==PLATFORM_COUNT-1)
@@ -178,7 +189,7 @@ public:
             }
         }
 
-        {
+        /*{
             for(int x = 0;x<14;++x)
             {
                 for(int y = 0;y<14;++y)
@@ -200,7 +211,7 @@ public:
                     }
                 }
             }
-        }
+        }*/
 
         makeSign(game,{{-1.5,-1,4},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"});
         makeSign(game,{{1.5,-1,4},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"});
