@@ -13,6 +13,9 @@ const float patchHalfWidth = 0.05;
 const int animDuration = 40;//2/3 s
 const float animDistance = 2*patchLength;//TODO replace hard coded 2 (2 because the gap between patches is exactly one patch big)
 
+//size change of patch
+const float maxSizeFactor = 2;//last patch is x times bigger than first
+
 //alpha transition, further away patches are less transparent
 out float alpha;
 const float minAlpha=0.1;
@@ -36,6 +39,11 @@ float easeOutQuart(float t)
 {
     t=t-1;
     return 1-t*t*t*t;
+}
+
+float easeInQuart(float t)
+{
+    return t*t*t*t;
 }
 
 //pX is not normalized, thus should be between 0 and maxX
@@ -71,6 +79,8 @@ void main() {
     //set alpha for patch, quadratic interpolation //TODO other interpolation might be more suitable?
     alpha = (maxAlpha-minAlpha)*easeOutQuart(x)+minAlpha;
 
+    float sizeFactor = (maxSizeFactor-1)*easeInQuart(x)+1;
+
     //calculate segment points and normals (pointing outside)
     vec4 segmentPoints[patchSegments+1];
     vec4 segmentNormals[patchSegments+1];//scaled by halfThickness
@@ -80,7 +90,7 @@ void main() {
     {
         float segmentX = pX+segmentLength*i*maxX;
         segmentPoints[i]=vec4(0,p(segmentX),-(x+segmentLength*i)*distance,1)+offset;
-        vec2 normal = pNormal(segmentX)*patchHalfThickness;
+        vec2 normal = pNormal(segmentX)*patchHalfThickness*sizeFactor;
         segmentNormals[i]=vec4(0,normal.y,-normal.x,0);
         viewSegmentNormals[i]=vec3(normalViewModel*segmentNormals[i]);
     }
@@ -91,7 +101,7 @@ void main() {
 
     //create triangle strip
     mat4 pvm = pv * model;
-    vec4 halfWidth = vec4(patchHalfWidth,0,0,0);
+    vec4 halfWidth = vec4(patchHalfWidth*sizeFactor,0,0,0);
     //upper side
     for(int i = 0;i<=patchSegments;++i)
     {
