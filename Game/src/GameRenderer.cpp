@@ -376,6 +376,7 @@ public:
                 //bind uniforms
                 //bind projection view matrix uniform
                 glUniformMatrix4fv(CommonShaderUniforms::PROJECTION_VIEW_MATRIX, 1, GL_FALSE, glm::value_ptr(pv));
+                glUniform1i(CommonShaderUniforms::FRAME,game.getFrame());
 
                 //draw instanced
                 glDrawElementsInstanced(GL_TRIANGLES,sphereMesh.surface.indices.size(),GL_UNSIGNED_INT,0,numClouds*CloudRenderData::SPHERE_COUNT);

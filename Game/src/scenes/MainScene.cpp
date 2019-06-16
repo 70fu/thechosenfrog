@@ -193,7 +193,7 @@ public:
                     unsigned int i = 0;
                     for (auto it = std::begin(renderData.sphereData); it != std::end(renderData.sphereData); ++it)
                     {
-                        it->offset = {0.6f * (i / 8), 0, 0.6f * (i % 8)};
+                        it->offset = {0.6f * (i / 4), 0, 0.6f * (i % 4)};
                         it->color = {(14-x)/14.0f+0.1f, (14-y)/14.0f+0.1, 0.1f*(((x+y)*7)%10)+0.1, 1};
 
                         ++i;
