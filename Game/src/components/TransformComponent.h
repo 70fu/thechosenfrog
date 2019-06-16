@@ -23,11 +23,11 @@ private:
 
 	unsigned char dirty = 0;
 
-	TransformComponent* parent;
-	TransformComponent* firstChild;
+	TransformComponent* parent = nullptr;
+	TransformComponent* firstChild = nullptr;
 	//linked list
-	TransformComponent* nextSibling;
-	TransformComponent* prevSibling;
+	TransformComponent* nextSibling = nullptr;
+	TransformComponent* prevSibling = nullptr;
 
 	//helper methods
 	void updateTransformationMatrix();
@@ -39,13 +39,24 @@ private:
 	 * calculates the translation, scale and rotation from the current local transformation matrix and updates the cached vectors
 	 */
 	void decomposeLocalTrans();
+
+	void cleanup();
 public:
 	
 	// constructor
 	TransformComponent();
-	TransformComponent(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scaling); 
+	TransformComponent(glm::vec3 translation, glm::vec3 rotation, glm::vec3 scaling);
 
-	
+	//define move constructors, that update pointers pointing to this object
+	//TransformComponent(TransformComponent&& other) noexcept;
+	//TransformComponent& operator=(TransformComponent&& other) noexcept;
+
+	//delete copy constructor and assignment
+	//TransformComponent(const TransformComponent&) = delete;
+	//TransformComponent& operator=(const TransformComponent&) = delete;
+
+    TransformComponent& operator=(const TransformComponent&);
+
 	// getter Transformationsmatrix
 	glm::mat4x4 const & getTransformationMatrix();
 	glm::mat4x4 const & getGlobalTransform();
@@ -71,6 +82,11 @@ public:
 	 * @return parent of this transform, may be null
 	 */
 	TransformComponent* getParent() const;
+
+	/**
+	 * @return root of this transform, or this transform if it has no parent
+	 */
+	TransformComponent& getRoot();
 	/**
 	 * Sets parent of this transform
 	 * @param parent

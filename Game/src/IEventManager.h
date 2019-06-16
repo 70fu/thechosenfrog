@@ -10,8 +10,8 @@
 #include "components/Entity.h"
 
 class Game;
-
-class IEventManager : public IObject,public physx::PxSimulationEventCallback,public physx::PxUserControllerHitReport {
+class CharControllerComponent;
+class IEventManager : public IObject {
 public:
 	virtual void keyCallback(Game& game, int key, int scancode, int action, int mods) = 0;
 	virtual void mousePosCallback(Game& game, double x, double y) = 0;
@@ -58,6 +58,23 @@ public:
      * @param game
      */
     virtual void settingsChanged(Game& game)=0;
+
+    /**
+     * Called when the grounded flag is toggled on given character controller
+     * @param game
+     * @param charController
+     */
+    virtual void groundedChanged(Game &game, CharControllerComponent &charController)=0;
+
+    virtual void onConstraintBreak(Game& game, physx::PxConstraintInfo *constraints, physx::PxU32 count)=0;
+    virtual void onWake(Game& game,physx::PxActor **actors, physx::PxU32 count)=0;
+    virtual void onSleep(Game& game,physx::PxActor **actors, physx::PxU32 count)=0;
+    virtual void onContact(Game& game,const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs,physx::PxU32 nbPairs)=0;
+    virtual void onTrigger(Game& game,physx::PxTriggerPair *pairs, physx::PxU32 count)=0;
+    virtual void onAdvance(Game& game,const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,const physx::PxU32 count)=0;
+    virtual void onShapeHit(Game& game,const physx::PxControllerShapeHit &hit)=0;
+    virtual void onControllerHit(Game& game,const physx::PxControllersHit &hit)=0;
+    virtual void onObstacleHit(Game& game,const physx::PxControllerObstacleHit &hit)=0;
 };
 
 #endif //CGUE19_THECHOSENFROG_EVENTMANAGER_H

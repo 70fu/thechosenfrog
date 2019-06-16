@@ -47,6 +47,7 @@ public:
     Input input={};
 
     bool hasLost = false;
+    float looseHeight = -10000000;
 };
 
 

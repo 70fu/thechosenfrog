@@ -11,7 +11,7 @@ class TextComponent : public Component
 {
 public:
     std::string text;
-    BitmapFontAsset* font;
+    BitmapFontAsset* font=nullptr;
     Color color={255,255,255,255};
     //negative values disables wrapping
     float wrapWidth = -1;

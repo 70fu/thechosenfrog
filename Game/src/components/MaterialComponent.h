@@ -12,7 +12,7 @@ public:
      * override properties from material asset
      */
     MaterialData instanceProp;
-    MaterialAsset* material;
+    MaterialAsset* material=nullptr;
 
     /**
      * Should be called after values are initialized and after properties have been added

@@ -295,8 +295,11 @@ private:
                     }
                 }
 
-                //set grounded flag
+                //set grounded flag and emit event if flag changed
+                bool emitGroundedChangedEvent = touchFloor!=c.grounded;
                 c.grounded = touchFloor;
+                if(emitGroundedChangedEvent)
+                    game.getEventManager()->groundedChanged(game, c);
 
                 //set position of transform component
                 transform.setTranslation(pxToGlm(c.getController()->getPosition()));
@@ -321,13 +324,12 @@ private:
     {
         for(PlayerComponent& player : game.playerComps)
         {
-
             if(!player.hasLost && game.hasComponents(player.entity,Components::TRANSFORM_BIT))
             {
                 TransformComponent& transform = game.transformComps[player.entity];
 
                 //check height
-                if(transform.getTranslation().y<-2)
+                if(transform.getGlobalTranslation().y<player.looseHeight)
                 {
                     player.hasLost = true;
 

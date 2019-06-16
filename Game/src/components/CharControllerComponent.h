@@ -14,7 +14,7 @@ namespace physx
 class CharControllerComponent : public Component
 {
 private:
-    physx::PxController* controller;
+    physx::PxController* controller=nullptr;
 public:
     //TODO put configuration in struct
 

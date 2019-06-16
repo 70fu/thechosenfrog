@@ -14,8 +14,8 @@ private:
 	void removeTransformChildrenHelper(Game& game, TransformComponent& transform)
 	{
 		//remove children first before moving to sibling
-		if(transform.getFirstChild()!=nullptr)
-			removeTransformChildrenHelper(game,*transform.getFirstChild());
+		//if(transform.getFirstChild()!=nullptr)
+		//	removeTransformChildrenHelper(game,*transform.getFirstChild());
 
 		//remove next sibling
 		if(transform.getNextSibling()!=nullptr)
@@ -142,51 +142,82 @@ public:
         updateCameraViewports(game,width,height);
     }
 
-    void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) override
+    void groundedChanged(Game &game, CharControllerComponent &charController) override
+    {
+        //if this is a player and grounded is now true, then remove platforms which are below a threshold
+        if(charController.grounded && game.hasComponents(charController.entity,Components::PLAYER_BIT))
+        {
+            for(CloudComponent& cloud: game.cloudComps)
+            {
+                EntityId entity = cloud.entity;
+
+                //check for transform component
+                //TODO only in debug
+                if(!game.hasComponents(entity,Components::TRANSFORM_BIT))
+                {
+                    continue;
+                }
+
+                //assume a cloud has a transform
+                TransformComponent& transform = game.transformComps[entity];
+
+                if(charController.landedOn.y-transform.getGlobalTranslation().y>=CLOUD_DISAPPEAR_DIST)
+                {
+                    //TODO trigger cool disappear animation
+                    game.deleteEntity(transform.getRoot().entity);
+                }
+            }
+
+            //set loose height
+            game.playerComps[charController.entity].looseHeight = charController.landedOn.y-CLOUD_DISAPPEAR_DIST-1;
+        }
+    }
+
+    void onConstraintBreak(Game &game, physx::PxConstraintInfo *constraints, physx::PxU32 count) override
     {
 
     }
 
-    void onWake(physx::PxActor **actors, physx::PxU32 count) override
+    void onWake(Game &game, physx::PxActor **actors, physx::PxU32 count) override
     {
 
     }
 
-    void onSleep(physx::PxActor **actors, physx::PxU32 count) override
+    void onSleep(Game &game, physx::PxActor **actors, physx::PxU32 count) override
     {
 
     }
 
-    void onContact(const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs,
+    void onContact(Game &game, const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs,
                    physx::PxU32 nbPairs) override
     {
 
     }
 
-    void onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count) override
+    void onTrigger(Game &game, physx::PxTriggerPair *pairs, physx::PxU32 count) override
     {
 
     }
 
-    void onAdvance(const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,
+    void onAdvance(Game &game, const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,
                    const physx::PxU32 count) override
     {
 
     }
 
-    void onShapeHit(const physx::PxControllerShapeHit &hit) override
+    void onShapeHit(Game &game, const physx::PxControllerShapeHit &hit) override
     {
         //TODO if platform, set platform of character controller component
         //set grounded on
         //game.charControllerComps[*((EntityId*)hit.controller->getUserData())].groundedOn = hit.actor;
     }
 
-    void onControllerHit(const physx::PxControllersHit &hit) override
+    void onControllerHit(Game &game, const physx::PxControllersHit &hit) override
     {
 
     }
 
-    void onObstacleHit(const physx::PxControllerObstacleHit &hit) override
+    void onObstacleHit(Game &game, const physx::PxControllerObstacleHit &hit) override
     {
 
     }

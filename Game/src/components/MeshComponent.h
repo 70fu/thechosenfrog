@@ -8,7 +8,7 @@
 class MeshComponent : public Component
 {
 public:
-    MeshAsset* mesh;
+    MeshAsset* mesh=nullptr;
 };
 
 

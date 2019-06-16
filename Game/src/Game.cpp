@@ -135,7 +135,7 @@ void Game::init(GLFWwindow* window)
     //...
 
     //set physics simulation callback
-    physics.getScene()->setSimulationEventCallback(eventManager);
+    physics.getScene()->setSimulationEventCallback(this);
 
     //init debug gui
     debugGui->init(this);
@@ -173,7 +173,7 @@ bool Game::update(){
     if(reloadSceneOnNextFrame)
     {
         //delete all entities
-        for(EntityId i = MAX_ENTITIES-1;i>=0;--i)
+        for(EntityId i = endActives-1;i>=0;--i)
             deleteEntity(i);
         deleteMarkedEntities();
 
@@ -340,11 +340,7 @@ void Game::deleteMarkedEntities()
 void Game::OnConstructorsAdded()
 {
     //reload runtime swappable members e.g. EventManager
-	if(RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager))
-    {
-        //set physics simulation callback
-        physics.getScene()->setSimulationEventCallback(eventManager);
-    }
+	RuntimeCompileUtils::updateObject(runtimeObjectSystem, eventManagerID, &eventManager);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, debugGuiID, &debugGui);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameRendererId, &gameRenderer);
     RuntimeCompileUtils::updateObject(runtimeObjectSystem, gameUpdaterId, &gameUpdater);
@@ -426,4 +422,51 @@ void Game::applySettings()
     glfwSetWindowMonitor(window,settings.display.fullScreen?glfwGetPrimaryMonitor():nullptr,0,0,settings.display.windowWidth,settings.display.windowHeight,settings.display.refreshRate);
 
     eventManager->settingsChanged(*this);
+}
+
+void Game::onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count)
+{
+    eventManager->onConstraintBreak(*this,constraints,count);
+}
+
+void Game::onWake(physx::PxActor **actors, physx::PxU32 count)
+{
+    eventManager->onWake(*this,actors,count);
+}
+
+void Game::onSleep(physx::PxActor **actors, physx::PxU32 count)
+{
+    eventManager->onSleep(*this,actors,count);
+}
+
+void
+Game::onContact(const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs, physx::PxU32 nbPairs)
+{
+    eventManager->onContact(*this,pairHeader,pairs,nbPairs);
+}
+
+void Game::onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count)
+{
+    eventManager->onTrigger(*this,pairs,count);
+}
+
+void Game::onAdvance(const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,
+                     const physx::PxU32 count)
+{
+    eventManager->onAdvance(*this,bodyBuffer,poseBuffer,count);
+}
+
+void Game::onShapeHit(const physx::PxControllerShapeHit &hit)
+{
+    eventManager->onShapeHit(*this,hit);
+}
+
+void Game::onControllerHit(const physx::PxControllersHit &hit)
+{
+    eventManager->onControllerHit(*this,hit);
+}
+
+void Game::onObstacleHit(const physx::PxControllerObstacleHit &hit)
+{
+    eventManager->onObstacleHit(*this,hit);
 }

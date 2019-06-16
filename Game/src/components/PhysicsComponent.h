@@ -21,7 +21,7 @@ private:
     //static array used for Collision mask and layer methods to acquire shapes from actor
     static physx::PxShape* shapeTmp[];
 
-    physx::PxRigidActor* actor;
+    physx::PxRigidActor* actor=nullptr;
 public:
     enum Layers : unsigned char
     {

@@ -19,6 +19,104 @@ TransformComponent::TransformComponent() {
 	updateTransformationMatrix();
 }
 
+//TODO this almost behaves like a move operator, because I would actually need a move when removing components, but everything breaks for some reason when components are moved instead of copied
+TransformComponent &TransformComponent::operator=(const TransformComponent & other)
+{
+    if(this!=&other)
+    {
+        //call base assignment
+        Component::operator=(other);
+
+        //take over the data of other
+        translation=other.translation;
+        rotation=other.rotation;
+        scaling=other.scaling;
+        transformationMatrix=other.transformationMatrix;
+        globalTrans=other.globalTrans;
+        dirty=other.dirty;
+        parent=other.parent;
+        firstChild=other.firstChild;
+        nextSibling=other.nextSibling;
+        prevSibling=other.prevSibling;
+
+        //update pointers of siblings, children and parent
+        if(prevSibling!=nullptr)
+            prevSibling->nextSibling = this;
+        if(nextSibling!=nullptr)
+            nextSibling->prevSibling=this;
+        if(parent!=nullptr && parent->firstChild==&other)
+            parent->firstChild=this;
+        for(TransformComponent* child = firstChild;child!= nullptr;child=child->nextSibling)
+            child->parent=this;
+    }
+
+    return *this;
+}
+
+/*TransformComponent::TransformComponent(TransformComponent &&other) noexcept : Component(std::move(other)),translation(other.translation),rotation(other.rotation),scaling(other.scaling),transformationMatrix(other.transformationMatrix),globalTrans(other.globalTrans),dirty(other.dirty),parent(other.parent),firstChild(other.firstChild),nextSibling(other.nextSibling),prevSibling(other.prevSibling)
+{
+    //set pointers of other to nullptr
+    other.parent=other.firstChild=other.nextSibling=other.prevSibling=nullptr;
+
+    //update pointers of siblings and parent
+    if(prevSibling!=nullptr)
+        prevSibling->nextSibling = this;
+    if(nextSibling!=nullptr)
+        nextSibling->prevSibling=this;
+    if(parent!=nullptr && parent->firstChild==&other)
+        parent->firstChild=this;
+    for(TransformComponent* child = firstChild;child!= nullptr;child=child->nextSibling)
+        child->parent=this;
+
+    //clear other
+    other.cleanup();
+}
+
+TransformComponent &TransformComponent::operator=(TransformComponent &&other) noexcept
+{
+    if(this!=&other)
+    {
+        //call base assignment
+        Component::operator=(std::move(other));
+
+        //detach children
+        while(firstChild!=nullptr)
+            firstChild->clearParent(true);
+        //detach from parent
+        clearParentNoPropagate(false);
+
+        //take over the data of other
+        translation=other.translation;
+        rotation=other.rotation;
+        scaling=other.scaling;
+        transformationMatrix=other.transformationMatrix;
+        globalTrans=other.globalTrans;
+        dirty=other.dirty;
+        parent=other.parent;
+        firstChild=other.firstChild;
+        nextSibling=other.nextSibling;
+        prevSibling=other.prevSibling;
+
+        //set pointers of other to nullptr
+        other.parent=other.firstChild=other.nextSibling=other.prevSibling=nullptr;
+
+        //update pointers of siblings, children and parent
+        if(prevSibling!=nullptr)
+            prevSibling->nextSibling = this;
+        if(nextSibling!=nullptr)
+            nextSibling->prevSibling=this;
+        if(parent!=nullptr && parent->firstChild==&other)
+            parent->firstChild=this;
+        for(TransformComponent* child = firstChild;child!= nullptr;child=child->nextSibling)
+            child->parent=this;
+
+        //clear other
+        other.cleanup();
+    }
+
+    return *this;
+}*/
+
 void TransformComponent::makeDirty()
 {
 	dirty|=(DIRTY_LOCAL|DIRTY_GLOBAL);
@@ -140,6 +238,14 @@ TransformComponent *TransformComponent::getParent() const
 	return parent;
 }
 
+TransformComponent& TransformComponent::getRoot()
+{
+    TransformComponent* t = this;
+    while(t->parent!=nullptr)
+        t = t->parent;
+    return *t;
+}
+
 void TransformComponent::setParent(TransformComponent &newParent, bool keepGlobalPos)
 {
 	//remove from old parent
@@ -218,18 +324,7 @@ TransformComponent *TransformComponent::getPrevSibling() const
 
 void TransformComponent::cleanup(Game &game)
 {
-    //detach children
-    while(firstChild!=nullptr)
-        firstChild->clearParent(true);
-    //detach from parent
-    clearParentNoPropagate(false);
-
-    //clear vectors and matrices
-    translation = {0,0,0};
-    rotation={0,0,0};
-    scaling = {1,1,1};
-    globalTrans=transformationMatrix=glm::mat4(1);
-    dirty = 0;
+    cleanup();
 }
 
 void TransformComponent::decomposeLocalTrans()
@@ -246,4 +341,20 @@ void TransformComponent::decomposeLocalTrans()
         //convert quaternion to euler angles
         rotation = glm::eulerAngles(q);
     }
+}
+
+void TransformComponent::cleanup()
+{
+    //detach children
+    while(firstChild!=nullptr)
+        firstChild->clearParent(true);
+    //detach from parent
+    clearParentNoPropagate(false);
+
+    //clear vectors and matrices
+    translation = {0,0,0};
+    rotation={0,0,0};
+    scaling = {1,1,1};
+    globalTrans=transformationMatrix=glm::mat4(1);
+    dirty = 0;
 }

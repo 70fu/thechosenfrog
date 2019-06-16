@@ -31,7 +31,7 @@
 class GLFWwindow;
 
 
-class Game : public IObjectFactoryListener {
+class Game : public IObjectFactoryListener,public physx::PxSimulationEventCallback,public physx::PxUserControllerHitReport {
 public:
 	/**
 	 * members every component store should have
@@ -138,8 +138,12 @@ public:
             if(numActive>0)
             {
                 T& filler = components[--numActive];
-                components[pos] = filler;//TODO think about moving component instead of copying
                 game.entities[filler.entity].components[TYPE_ID]=pos;
+                //components[pos] = std::move(components[numActive]);//TODO everything breaks when move is used, but WHY
+                //TODO these two lines should be replaced with move
+                components[pos]=filler;
+                components[numActive]=T();//reset values
+                //std::swap(components[pos],filler);
             }
 
             return true;
@@ -408,6 +412,26 @@ public:
 	 * apply the currently configured settings
 	 */
 	void applySettings();
+
+    void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) override;
+
+    void onWake(physx::PxActor **actors, physx::PxU32 count) override;
+
+    void onSleep(physx::PxActor **actors, physx::PxU32 count) override;
+
+    void onContact(const physx::PxContactPairHeader &pairHeader, const physx::PxContactPair *pairs,
+                   physx::PxU32 nbPairs) override;
+
+    void onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count) override;
+
+    void onAdvance(const physx::PxRigidBody *const *bodyBuffer, const physx::PxTransform *poseBuffer,
+                   const physx::PxU32 count) override;
+
+    void onShapeHit(const physx::PxControllerShapeHit &hit) override;
+
+    void onControllerHit(const physx::PxControllersHit &hit) override;
+
+    void onObstacleHit(const physx::PxControllerObstacleHit &hit) override;
 };
 
 

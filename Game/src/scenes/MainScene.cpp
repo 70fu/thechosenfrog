@@ -147,7 +147,7 @@ public:
             cDesc.position = GLMPXConversion::glmToPxExtVec(pTrans.getTranslation());
             cDesc.maxJumpHeight = controller.maxJumpHeight;
             cDesc.contactOffset=0.01f;
-            cDesc.reportCallback = game.getEventManager();
+            cDesc.reportCallback = &game;
             cDesc.material = game.getPhysics().getNullMaterial();
             //cDesc.isValid();
             controller.setController(game.getPhysics().getControllerManager()->createController(cDesc));
