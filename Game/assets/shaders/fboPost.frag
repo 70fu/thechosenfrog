@@ -70,27 +70,31 @@ void main()
 {
 	//inspired by https://roystan.net/articles/outline-shader.html
 	//and https://gamedev.stackexchange.com/questions/68401/how-can-i-draw-outlines-around-3d-models
+	float depth = linearizeDepth(texture(depthTexture,uv).r)/far;
 
 	vec3[2] diffs = diffValues(normalTexture,normalSampleSize);
 	float nEdge = sqrt(dot(diffs[0], diffs[0])+dot(diffs[1], diffs[1]));
-	nEdge = nEdge>=normalThreshold?1:0;
+	float modulatedNormalThreshold=normalThreshold;
+	nEdge = nEdge>=modulatedNormalThreshold?1:0;
+
+	//determine alpha of normal edge based on distance
+	float nEdgeAlpha = 1-clamp((depth-0.2)*25,0,1);
 
 	//calculate normal edge value if there is no depth edge
 	float dEdge = 0;
-	if(nEdge<1)
+	if(nEdge<1||nEdgeAlpha<1)
 	{
 		//calculate depth edge value
 		float[2] dDiffs = dDiffValues(depthTexture,depthSampleSize);
 		dEdge = sqrt(pow(dDiffs[0], 2) + pow(dDiffs[1], 2));
 
 		vec3 normal = texture(normalTexture,uv).rgb;
-		float depth = linearizeDepth(texture(depthTexture,uv).r);
 		float normalDepthThresholdMultiplier = 1*clamp(((1-normal.z) - 0.5) / (1 - 0.5),0,1)+1;
-		float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier*(10*depth/far);
+		float modulatedThreshold = depthThreshold*normalDepthThresholdMultiplier*(10*depth);
 		dEdge = dEdge>=modulatedThreshold?1:0;
 	}
 
-	vec4 edgeColor = dEdge*depthOutlineColor + nEdge*normalOutlineColor;
+	vec4 edgeColor = dEdge*depthOutlineColor + nEdge*normalOutlineColor*vec4(1,1,1,nEdgeAlpha);
 
 	fragColor = vec4(edgeColor.rgb*brightness,edgeColor.a);
 
