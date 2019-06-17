@@ -123,7 +123,7 @@ public:
             //init player object
             EntityId playerId = game.createEntity();
             TransformComponent& pTrans = game.transformComps.addComp(playerId);
-            pTrans.setTranslation({0,5,8});
+            pTrans.setTranslation({0,5,5});
             game.playerComps.addComp(playerId);
 
             //create character controller
@@ -158,11 +158,6 @@ public:
 
             //set camera as child of player
             camTrans.setParent(pTrans,false);
-        }
-
-        //make initialPlatform
-        {
-            makePlatform(game,{{0,-1,0},0,{20,20}});
         }
 
         //make some platforms
@@ -223,9 +218,20 @@ public:
             }
         }*/
 
-        makeSign(game,{{-1.5,-1,4},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"});
-        makeSign(game,{{1.5,-1,4},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"});
-        makeSign(game,{{1,-1,-3},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"});
+        //make initialPlatform
+        {
+            CloudPlatformParameter params;
+            params.translation={0,-1,0};
+            params.scale={1,0.5,1};
+            params.size = {5,5};
+            //params.color={100,150,30,255};
+            TransformComponent& startPlatform = cloudPlatforms.makeCloudPlatform(game,params,SQUARE);
+
+            makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"}).setParent(startPlatform,false);
+            makeSign(game,{{1.5,0,2},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"}).setParent(startPlatform,false);
+            makeSign(game,{{1,0,-4},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"}).setParent(startPlatform,false);
+        }
+
     }
 };
 REGISTERCLASS(MainScene)
