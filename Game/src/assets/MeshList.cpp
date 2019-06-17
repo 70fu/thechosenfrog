@@ -258,6 +258,9 @@ protected:
         //make cloud sphere
         genSphere(assets[MeshIds::CLOUD_SPHERE],16,16,0.5);
         assets[MeshIds::CLOUD_SPHERE].allocateOnGPU(GL_STATIC_DRAW);
+        //make cylinder
+        genCylinder(assets[MeshIds::UNIT_CYLINDER],1,0.5,16);
+        assets[MeshIds::UNIT_CYLINDER].allocateOnGPU(GL_STATIC_DRAW);
         //...
     }
 
@@ -466,5 +469,81 @@ private:
             asset.surface.indices[ii + 2] = bottomVertI;
         }
     }
+
+    static void genCylinder(MeshAsset& asset, double height, double radius, unsigned int segments)
+    {
+        //indices per iteration
+        static constexpr int IPIT = 12;
+
+        asset.surface.dataFormatBitmask = Surface::POSITIONS_FORMAT|Surface::NORMALS_FORMAT|Surface::INDICES_FORMAT|Surface::UVS_FORMAT;
+
+
+        unsigned int vertexCount = (2 * segments * 2 + 2);
+        asset.surface.positions=std::vector<glm::vec3>(vertexCount);
+        asset.surface.normals=std::vector<glm::vec3>(vertexCount);
+        asset.surface.indices = std::vector<unsigned int>(4 * segments * 3);
+        asset.surface.uvs=std::vector<glm::vec2>(vertexCount);
+        unsigned int topVertI = 2 * segments * 2;
+        unsigned int bottomVertI = topVertI + 1;
+
+        double h = height / 2;
+        //top and bottom center
+        glm::vec3 topCenter = asset.surface.positions[topVertI] = { 0,h,0 };
+        glm::vec3 bottomCenter = asset.surface.positions[bottomVertI] = { 0,-h,0 };
+        asset.surface.normals[topVertI] = { 0,1,0 };
+        asset.surface.normals[bottomVertI] = { 0,-1,0 };
+        asset.surface.uvs[topVertI] = asset.surface.uvs[bottomVertI] = { 0.5f,0.5f };
+        for (unsigned int i = 0; i < topVertI; i += 4)
+        {
+            //vertices
+            double angle = 2*PI*i / topVertI;
+
+            double x = std::cos(angle);
+            double z = -std::sin(angle);
+            asset.surface.positions[i] = asset.surface.positions[i+2] = { x*radius,h, z*radius };
+            asset.surface.positions[i + 1] = asset.surface.positions[i+3] = { x*radius,-h,z*radius };
+            //normals
+            asset.surface.normals[i] = asset.surface.normals[i + 1] = { x,0,z };// glm::normalize(glm::vec3(x, h, z) - topCenter);
+            asset.surface.normals[i + 2] = { 0,1,0 };
+            asset.surface.normals[i + 3] = { 0,-1,0 };
+
+            //uvs
+            double uCoordMantle = static_cast<double>(i) / topVertI;
+            asset.surface.uvs[i] = { uCoordMantle ,1 };//top mantle
+            asset.surface.uvs[i + 1] = { uCoordMantle,0 };//bottom mantle
+            asset.surface.uvs[i + 2] = asset.surface.uvs[i + 3] = { (x+1)/2,(z+1)/2 };//top & bottom
+
+
+            //indices
+            unsigned int ii = IPIT * i / 4;
+            unsigned int top = i;
+            unsigned int bottom = top + 1;
+            unsigned int circleTop = top + 2;
+            unsigned int circleBottom = bottom + 2;
+            unsigned int lastTop = (i - 4) % topVertI;
+            unsigned int lastBottom = lastTop + 1;
+            unsigned int lastCircleTop = lastTop + 2;
+            unsigned int lastCircleBottom = lastBottom + 2;
+            //top
+            asset.surface.indices[ii] = circleTop;
+            asset.surface.indices[ii +1] = topVertI;
+            asset.surface.indices[ii + 2] = lastCircleTop;
+
+            //bottom
+            asset.surface.indices[ii + 3] = circleBottom;
+            asset.surface.indices[ii + 4] = lastCircleBottom;
+            asset.surface.indices[ii + 5] = bottomVertI;
+
+            //mantle faces
+            asset.surface.indices[ii + 6] = top;
+            asset.surface.indices[ii + 7] = lastTop;
+            asset.surface.indices[ii + 8] = bottom;
+
+            asset.surface.indices[ii + 9] = lastTop;
+            asset.surface.indices[ii + 10] = lastBottom;
+            asset.surface.indices[ii + 11] = bottom;
+        }
+
+    }
 };
-REGISTERCLASS(MeshList);
+REGISTERCLASS(MeshList)

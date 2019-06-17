@@ -16,6 +16,7 @@ namespace MeshIds {
         SIGNPOST,
         SCREEN_QUAD,
         CLOUD_SPHERE,
+        UNIT_CYLINDER,//height=1, radius=0.5f
 
         MESH_COUNT
     };

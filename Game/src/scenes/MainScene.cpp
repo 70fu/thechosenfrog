@@ -219,3 +219,17 @@ public:
     }
 };
 REGISTERCLASS(MainScene)
+
+//test cylinder
+/*{
+    EntityId id = game.createEntity();
+    TransformComponent &transform = game.transformComps.addComp(id);
+    transform.setTranslation({0,2,0});
+
+    game.meshComps.addComp(id).mesh = game.getAssetManager().getMesh(MeshIds::UNIT_CYLINDER);
+
+    MaterialComponent &material = game.materialComps.addComp(id);
+    material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
+    material.instanceProp.setTexture("diffuseTex",game.getAssetManager().getTexture(TextureIds::DEFAULT));
+    material.retrieveUniformLocations();
+}*/
