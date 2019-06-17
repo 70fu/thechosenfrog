@@ -37,6 +37,11 @@ void Physics::init()
 
     //init null material
     nullMaterial = physics->createMaterial(0,0,0);
+
+    //init cooking
+    cooking = PxCreateCooking(PX_PHYSICS_VERSION,*foundation,PxCookingParams(PxTolerancesScale()));
+    if(!cooking)
+        Log::getInstance().Error("Could not initialize physx Cooking");
 }
 
 void Physics::step()
@@ -52,6 +57,7 @@ void Physics::cleanup()
     PxCloseExtensions();
     physics->release();
     foundation->release();
+    cooking->release();
 }
 
 PxScene *Physics::getScene() const
@@ -62,6 +68,16 @@ PxScene *Physics::getScene() const
 physx::PxControllerManager *Physics::getControllerManager() const
 {
     return controllerManager;
+}
+
+physx::PxCooking *Physics::getCooking() const
+{
+    return cooking;
+}
+
+physx::PxTolerancesScale Physics::getTolerancesScale() const
+{
+    return PxTolerancesScale();
 }
 
 physx::PxMaterial *Physics::getNullMaterial() const

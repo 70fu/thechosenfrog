@@ -12,6 +12,8 @@ namespace physx
     class PxDefaultCpuDispatcher;
     class PxControllerManager;
     class PxMaterial;
+    class PxCooking;
+    class PxTolerancesScale;
 }
 
 class Physics : public physx::PxErrorCallback
@@ -24,6 +26,7 @@ private:
     physx::PxControllerManager* controllerManager;
     //material, with all values set to 0
     physx::PxMaterial* nullMaterial;
+    physx::PxCooking* cooking;
 public:
     void init();
     void step();
@@ -33,7 +36,10 @@ public:
 
     physx::PxScene* getScene() const;
     physx::PxControllerManager* getControllerManager() const;
+    physx::PxCooking* getCooking() const;
     physx::PxMaterial* getNullMaterial() const;
+    //TODO dont return by value
+    physx::PxTolerancesScale getTolerancesScale() const;
 
     void reportError(physx::PxErrorCode::Enum code, const char *message, const char *file, int line) override;
 };

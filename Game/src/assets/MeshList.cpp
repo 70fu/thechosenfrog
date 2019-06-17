@@ -259,7 +259,7 @@ protected:
         genSphere(assets[MeshIds::CLOUD_SPHERE],16,16,0.5);
         assets[MeshIds::CLOUD_SPHERE].allocateOnGPU(GL_STATIC_DRAW);
         //make cylinder
-        genCylinder(assets[MeshIds::UNIT_CYLINDER],1,0.5,16);
+        genCylinder(assets[MeshIds::UNIT_CYLINDER],1,1,16);
         assets[MeshIds::UNIT_CYLINDER].allocateOnGPU(GL_STATIC_DRAW);
         //...
     }

@@ -92,12 +92,12 @@ public:
     void Init(bool isFirstInit) override
     {
         IObject::Init(isFirstInit);
-
-        cloudPlatforms = CloudPlatforms();
     }
 
     void init(Game& game) override
     {
+        cloudPlatforms.init(game);
+
         //set skybox
         game.activeSkybox = game.getAssetManager().getCubeMap(CubeMapIds::DEFAULT);
 
@@ -175,8 +175,9 @@ public:
                 CloudPlatformParameter params;
                 params.translation={((i%2)*2-1)*8*(i&1), 7 * (i + 1), -(i + 1) * 15};
                 params.size={size,size};
+                params.scale={1,0.8f,1};
 
-                TransformComponent &transform = cloudPlatforms.makeSquaredCloudPlatform(game,params);
+                TransformComponent &transform = cloudPlatforms.makeCloudPlatform(game, params, CloudType::SQUARE);
 
                 //place winning sign on last platform
                 if(i==PLATFORM_COUNT-1)
@@ -187,6 +188,14 @@ public:
                     signTrans.setRotation({0,45*TO_RADIANS,0});
                 }
             }
+        }
+
+        {
+            CloudPlatformParameter params;
+            params.translation={15,20,-20};
+            params.scale={1.5f,1,1.5f};
+
+            cloudPlatforms.makeCloudPlatform(game, params, CloudType::CIRCLE);
         }
 
         /*{
