@@ -27,7 +27,7 @@ struct CloudPlatformParameter {
 class CloudPlatforms
 {
 private:
-    static constexpr float SPHERE_DIST = 0.6f;
+    static constexpr float SPHERE_DIST = 0.55f;
     static constexpr float SPHERE_RADIUS = 0.5f;
     static constexpr float SQUARE_PLATFORM_SIZE = SPHERE_DIST*3;
     static constexpr unsigned int CIRCLE_CLOUD_RING_COUNT = 2;
