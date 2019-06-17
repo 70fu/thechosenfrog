@@ -435,6 +435,9 @@ public:
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+                //dont write to depth buffer to prevent outlines
+                glDepthMask(GL_FALSE);
+
                 //bind shader,textVao and texture unit
                 glUseProgram(game.getAssetManager().getShaderProgram(ShaderProgramIds::FONT)->getProgramHandle());
                 glBindVertexArray(textVao);
@@ -471,9 +474,6 @@ public:
 
                         //fill buffer with quads
                         charBufferSize = text.font->fillQuadBuffer(text.text,&charBuffer[0],MAX_CHAR_PER_TEXT,0,0,1,text.wrapWidth);
-
-                        //dont write to depth buffer if text is in screen space
-                        glDepthMask(!text.inScreenspace);
 
                         //update the vbo
                         int writeSize = std::min(charBufferSize,maxTextQuads);
