@@ -548,7 +548,7 @@ public:
                             glUniform1f(MAX_X,controller.cachedJumpDuration);//TODO make a physics query to stop at the first impact of the parabola
                             glUniform1f(JUMP_DISTANCE,controller.cachedJumpDistance);
                             glUniform2fv(PARABOLA,1,glm::value_ptr(parabolaComponents));
-                            glm::mat4 inverseViewModel = glm::inverse(view*transform.getGlobalTransform());
+                            glm::mat4 inverseViewModel = glm::inverse(view*transform.getTransformationMatrix());
                             glUniformMatrix4fv(CommonShaderUniforms::NORMAL_VIEW_MODEL_MAT,1,GL_FALSE,glm::value_ptr(glm::transpose(inverseViewModel)));
 
                             //set parabola points

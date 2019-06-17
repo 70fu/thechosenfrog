@@ -97,7 +97,7 @@ void main()
 	//debug outputs
 	//fragColor=vec4(nEdge,nEdge,nEdge,1);
 	//fragColor=vec4(vec3((dEdge)*brightness),1);
-	//fragColor=vec4(texture(normalTexture,uv).zzz,1);
+	//fragColor=vec4(texture(normalTexture,uv).rgb,1);
 	//fragColor=vec4(vec3(dotViewNormal),1);
 	//fragColor=vec4(vec3(position.x,-position.y,position.z),1);
 }

@@ -94,10 +94,10 @@ void main() {
         segmentNormals[i]=vec4(0,normal.y,-normal.x,0);
         viewSegmentNormals[i]=vec3(normalViewModel*segmentNormals[i]);
     }
-    vec3 leftViewNormal = vec3(normalViewModel*vec4(-1,0,0,0));
+    vec3 leftViewNormal = abs(vec3(normalViewModel*vec4(-1,0,0,0)));//TODO remove abs hack, actually the left side can only be seen via perpective proj
     vec3 rightViewNormal = vec3(normalViewModel*vec4(1,0,0,0));
     vec3 frontViewNormal = vec3(normalViewModel*vec4(0,segmentNormals[0].z,-segmentNormals[0].y,0));
-    vec3 backViewNormal = vec3(normalViewModel*vec4(0,-segmentNormals[0].z,segmentNormals[0].y,0));
+    vec3 backViewNormal = vec3(normalViewModel*vec4(0,-segmentNormals[patchSegments].z,segmentNormals[patchSegments].y,0));
 
     //create triangle strip
     mat4 pvm = pv * model;
@@ -122,6 +122,11 @@ void main() {
     viewNormal = rightViewNormal;
     for(int i = patchSegments-1;i>=0;--i)
     {
+        //TODO normal hack, this is done since sometimes you would actually need to set more than one normal for a vertex, with this the outline looks better
+        if(i==0)
+        {
+            viewNormal=frontViewNormal;
+        }
         gl_Position = pvm * (segmentPoints[i]+halfWidth+segmentNormals[i]);
         EmitVertex();
         gl_Position = pvm * (segmentPoints[i]+halfWidth-segmentNormals[i]);
@@ -139,8 +144,14 @@ void main() {
     viewNormal=leftViewNormal;
     for(int i = 1;i<=patchSegments;++i)
     {
+
         gl_Position = pvm * (segmentPoints[i]-halfWidth+segmentNormals[i]);
         EmitVertex();
+        //TODO normal hack, this is done since sometimes you would actually need to set more than one normal for a vertex, with this the outline looks better
+        if(i==patchSegments)
+        {
+            viewNormal=backViewNormal;
+        }
         gl_Position = pvm * (segmentPoints[i]-halfWidth-segmentNormals[i]);
         EmitVertex();
     }
@@ -153,7 +164,7 @@ void main() {
     //bottom side
     for(int i = patchSegments-1;i>=0;--i)
     {
-        viewNormal=-viewSegmentNormals[i];
+        viewNormal=-viewSegmentNormals[i]+vec3(normalViewModel*vec4(0,0,0.5,0));//TODO this additional vector is a hack since normal transformation should actually take projection into account as well
 
         gl_Position = pvm * (segmentPoints[i]-halfWidth-segmentNormals[i]);
         EmitVertex();
