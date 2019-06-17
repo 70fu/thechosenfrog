@@ -5,6 +5,7 @@
 #include <geometry/PxTriangleMesh.h>
 #include "components/TransformComponent.h"
 #include "components/CloudComponent.h"
+#include "util/Color.h"
 
 enum CloudType {
     SQUARE,
@@ -16,6 +17,7 @@ struct CloudPlatformParameter {
     glm::vec3 scale={1,1,1};
     float yRotation = 0;
     glm::ivec2 size={1,1};//x and z size
+    Color color={255,255,255,255};
 };
 
 /**

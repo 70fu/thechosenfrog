@@ -120,6 +120,9 @@ TransformComponent& CloudPlatforms::makeCloudPlatform(Game &game, CloudPlatformP
 
                 CloudComponent &cloudComp = game.cloudComps.addComp(cloud);
                 std::copy(std::begin(squareCloudOffsets), std::end(squareCloudOffsets),std::begin(cloudComp.renderData->sphereData));
+
+                for(auto it = std::begin(cloudComp.renderData->sphereData);it!=std::end(cloudComp.renderData->sphereData);++it)
+                    it->color = glm::vec4(params.color)/255.0f;
             }
         }
     }
@@ -132,6 +135,8 @@ TransformComponent& CloudPlatforms::makeCloudPlatform(Game &game, CloudPlatformP
 
         CloudComponent &cloudComp = game.cloudComps.addComp(cloud);
         std::copy(std::begin(circleCloudOffsets), std::end(circleCloudOffsets),std::begin(cloudComp.renderData->sphereData));
+        for(auto it = std::begin(cloudComp.renderData->sphereData);it!=std::end(cloudComp.renderData->sphereData);++it)
+            it->color = glm::vec4(params.color)/255.0f;
     }
 
     return transform;

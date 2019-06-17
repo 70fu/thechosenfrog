@@ -194,6 +194,7 @@ public:
             CloudPlatformParameter params;
             params.translation={15,20,-20};
             params.scale={1.5f,1,1.5f};
+            params.color={100,150,30,255};
 
             cloudPlatforms.makeCloudPlatform(game, params, CloudType::CIRCLE);
         }
