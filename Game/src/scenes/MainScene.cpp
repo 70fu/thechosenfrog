@@ -4,6 +4,7 @@
 #include "../RuntimeClasses.h"
 #include "../util/GLMPXConversion.h"
 #include "../CloudPlatforms.h"
+#include "../SignGenerator.h"
 #include <ObjectInterfacePerModule.h>
 #include <characterkinematic/PxControllerManager.h>
 #include <PxPhysicsAPI.h>
@@ -14,46 +15,6 @@
 class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
 {
 private:
-    struct SignParameters
-    {
-        glm::vec3 translation={0,0,0};
-        glm::vec3 rotation={0,0,0};
-        std::string text="";
-    };
-
-    TransformComponent& makeSign(Game& game, SignParameters params)
-    {
-        EntityId id = game.createEntity();
-        TransformComponent& trans = game.transformComps.addComp(id);
-        trans.setTranslation(params.translation);
-        trans.setRotation(params.rotation);
-        trans.setScaling({1,1,1});
-
-        game.meshComps.addComp(id).mesh=game.getAssetManager().getMesh(MeshIds::SIGNPOST);
-
-        MaterialComponent& material = game.materialComps.addComp(id);
-        material.material = game.getAssetManager().getMaterial(MaterialIds::UNLIT);
-        material.instanceProp.setColor("colorMultiply",{200,160,70,255});
-        material.retrieveUniformLocations();
-
-        //create world space text
-        EntityId textId = game.createEntity();
-        TransformComponent& textTrans = game.transformComps.addComp(textId);
-        textTrans.setTranslation({-0.45,1.1,-0.25});
-        static constexpr float TEXT_SCALE = 1/768.0f;
-        textTrans.setScaling({TEXT_SCALE,TEXT_SCALE,TEXT_SCALE});
-        textTrans.setParent(trans,false);
-
-        TextComponent& text = game.textComps.addComp(textId);
-        text.text = params.text;
-        text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);
-        text.inScreenspace = false;
-        text.wrapWidth = 768;
-        text.color = {0,0,0,255};
-
-        return trans;
-    }
-
     struct PlatformParameters
     {
         glm::vec3 translation={0,0,0};
@@ -218,9 +179,9 @@ public:
 
             game.generateNextLevel(startPlatform,params);
 
-            makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"}).setParent(startPlatform,false);
-            makeSign(game,{{1.5,0,2},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"}).setParent(startPlatform,false);
-            makeSign(game,{{1,0,-4},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{1.5,0,2},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{1,0,-4},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"}).setParent(startPlatform,false);
         }
 
     }

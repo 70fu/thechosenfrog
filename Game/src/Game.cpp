@@ -4,6 +4,8 @@
 #include "Constants.h"
 #include "util/RuntimeCompileUtils.h"
 #include "RuntimeClasses.h"
+#include "SignGenerator.h"
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include <PxScene.h>
@@ -444,6 +446,11 @@ void Game::generateNextLevel(TransformComponent &from, CloudPlatformParameter fr
     {
         cloudGenerator.setParameter(LEVEL_PARAMS[currentLevel]);
         cloudGenerator.generateCloudPlatforms(*this, from, fromParams, 2, PLAYER_CONFIG);
+    }
+    else
+    {
+        TransformComponent& signTrans = SignGenerator::makeSign(*this,{{0,0,0},{0,0,0},"Wow you did it!\n\nYOU WIN!"});
+        signTrans.setParent(from,false);
     }
 }
 
