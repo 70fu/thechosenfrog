@@ -146,6 +146,9 @@ void Game::init(GLFWwindow* window)
     //apply settings
     applySettings();
 
+    //init cloud generator
+    cloudGenerator.init(*this);
+
     //init scene
     mainScene->init(*this);
 }
@@ -176,6 +179,9 @@ bool Game::update(){
         for(EntityId i = endActives-1;i>=0;--i)
             deleteEntity(i);
         deleteMarkedEntities();
+
+        //reset level
+        currentLevel = -1;
 
         //load scene
         mainScene->init(*this);
@@ -226,6 +232,8 @@ void Game::cleanup()
     assetManager.cleanup();
     soloud.deinit();
     physics.cleanup();
+
+    cloudGenerator.cleanup(*this);
 
     if(runtimeObjectSystem!= nullptr) {
         runtimeObjectSystem->CleanObjectFiles();
@@ -422,6 +430,21 @@ void Game::applySettings()
     glfwSetWindowMonitor(window,settings.display.fullScreen?glfwGetPrimaryMonitor():nullptr,0,0,settings.display.windowWidth,settings.display.windowHeight,settings.display.refreshRate);
 
     eventManager->settingsChanged(*this);
+}
+
+CloudPlatforms &Game::getCloudGenerator()
+{
+    return cloudGenerator;
+}
+
+void Game::generateNextLevel(TransformComponent &from, CloudPlatformParameter fromParams)
+{
+    ++currentLevel;
+    if (currentLevel<std::size(LEVEL_PARAMS))
+    {
+        cloudGenerator.setParameter(LEVEL_PARAMS[currentLevel]);
+        cloudGenerator.generateCloudPlatforms(*this, from, fromParams, 2, PLAYER_CONFIG);
+    }
 }
 
 void Game::onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count)

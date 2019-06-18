@@ -209,7 +209,60 @@ public:
     {
         //TODO if platform, set platform of character controller component
         //set grounded on
-        //game.charControllerComps[*((EntityId*)hit.controller->getUserData())].groundedOn = hit.actor;
+        EntityId controllerEntity = (intptr_t)hit.controller->getUserData();
+        EntityId hitEntity = (intptr_t)hit.actor->userData;
+        game.charControllerComps[controllerEntity].groundedOn = hit.actor;
+
+        //checkpoint cloud?
+        if(game.hasComponents(hitEntity,Components::TRANSFORM_BIT))
+        {
+            TransformComponent& hitTransform = game.transformComps[hitEntity];
+
+            if(hitTransform.getFirstChild()!=nullptr)
+            {
+                EntityId cloudId = hitTransform.getFirstChild()->entity;
+                if(game.hasComponents(cloudId,Components::CLOUD_BIT))
+                {
+                    CloudComponent& cloud = game.cloudComps[cloudId];
+                    if (cloud.isCheckpoint)
+                    {
+                        //delete all clouds except the checkpoint cloud currently standing on
+                        for(CloudComponent& otherCloud: game.cloudComps)
+                        {
+                            EntityId otherId = otherCloud.entity;
+
+                            //check for transform component
+                            //TODO only in debug
+                            if(!game.hasComponents(otherId,Components::TRANSFORM_BIT))
+                            {
+                                continue;
+                            }
+
+                            //assume a cloud has a transform
+                            TransformComponent& otherTransformRoot = game.transformComps[otherId].getRoot();
+
+                            if(hitTransform.entity!=otherTransformRoot.entity)
+                            {
+                                //TODO trigger cool disappear animation
+                                game.deleteEntity(otherTransformRoot.entity);
+                            }
+                        }
+
+                        //add color transition
+                        //TODO
+
+                        //generate next level
+                        CloudPlatformParameter params = CHECKPOINT_CLOUD_PARAMETER;
+                        params.translation = hitTransform.getGlobalTranslation();
+                        game.generateNextLevel(hitTransform,params);
+
+                        //disable checkpoint status
+                        cloud.isCheckpoint = false;
+                    }
+                }
+            }
+        }
+
     }
 
     void onControllerHit(Game &game, const physx::PxControllersHit &hit) override

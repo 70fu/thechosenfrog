@@ -14,8 +14,6 @@
 class MainScene : public TInterface<RuntimeClassIds::MAIN_SCENE,IScene>
 {
 private:
-    CloudPlatforms cloudPlatforms;
-
     struct SignParameters
     {
         glm::vec3 translation={0,0,0};
@@ -96,8 +94,6 @@ public:
 
     void init(Game& game) override
     {
-        cloudPlatforms.init(game);
-
         //set skybox
         game.activeSkybox = game.getAssetManager().getCubeMap(CubeMapIds::DEFAULT);
 
@@ -128,24 +124,14 @@ public:
 
             //create character controller
             CharControllerComponent& controller = game.charControllerComps.addComp(playerId);
-            controller.minJumpHeight=0.5f;
-            controller.maxJumpHeight=10;
-            controller.minJumpDistance=2;
-            controller.maxJumpDistance=20;
-            controller.minJumpDuration=0.5;
-            controller.maxJumpDuration=2;
-            controller.airWalkSpeed = 1;
-            controller.groundWalkForce = 15;
-            controller.maxGroundSpeed = 3;
-            controller.maxHeightLookingFactor=controller.maxDistLookingFactor=1;
-            controller.minHeightLookingFactor=controller.minDistLookingFactor=0.1f;
+            controller.config=PLAYER_CONFIG;
 
             physx::PxCapsuleControllerDesc cDesc;
             //player is 1.5 meters tall
             cDesc.radius=0.25f;
             cDesc.height=1;
             cDesc.position = GLMPXConversion::glmToPxExtVec(pTrans.getTranslation());
-            cDesc.maxJumpHeight = controller.maxJumpHeight;
+            cDesc.maxJumpHeight = PLAYER_CONFIG.maxJumpHeight;
             cDesc.contactOffset=0.01f;
             cDesc.reportCallback = &game;
             cDesc.material = game.getPhysics().getNullMaterial();
@@ -161,7 +147,7 @@ public:
         }
 
         //make some platforms
-        {
+        /*{
             static constexpr unsigned int PLATFORM_COUNT = 5;
             for (int i = 0; i < PLATFORM_COUNT; ++i)
             {
@@ -171,8 +157,9 @@ public:
                 params.translation={((i%2)*2-1)*8*(i&1), 7 * (i + 1), -(i + 1) * 15};
                 params.size={size,size};
                 params.scale={1,0.8f,1};
+                params.type=CloudType::SQUARE;
 
-                TransformComponent &transform = cloudPlatforms.makeCloudPlatform(game, params, CloudType::SQUARE);
+                TransformComponent &transform = cloudPlatforms.makeCloudPlatform(game, params);
 
                 //place winning sign on last platform
                 if(i==PLATFORM_COUNT-1)
@@ -190,9 +177,10 @@ public:
             params.translation={15,20,-20};
             params.scale={1.5f,1,1.5f};
             params.color={100,150,30,255};
+            params.type = CloudType::CIRCLE;
 
-            cloudPlatforms.makeCloudPlatform(game, params, CloudType::CIRCLE);
-        }
+            cloudPlatforms.makeCloudPlatform(game, params);
+        }*/
 
         /*{
             for(int x = 0;x<14;++x)
@@ -224,8 +212,11 @@ public:
             params.translation={0,-1,0};
             params.scale={1,0.5,1};
             params.size = {5,5};
+            params.type=CloudType::SQUARE;
             //params.color={100,150,30,255};
-            TransformComponent& startPlatform = cloudPlatforms.makeCloudPlatform(game,params,SQUARE);
+            TransformComponent& startPlatform = game.getCloudGenerator().makeCloudPlatform(game,params);
+
+            game.generateNextLevel(startPlatform,params);
 
             makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"}).setParent(startPlatform,false);
             makeSign(game,{{1.5,0,2},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"}).setParent(startPlatform,false);

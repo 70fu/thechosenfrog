@@ -27,6 +27,7 @@
 #include "components/TextComponent.h"
 #include "AppSettings.h"
 #include "components/CloudComponent.h"
+#include "CloudPlatforms.h"
 
 class GLFWwindow;
 
@@ -263,6 +264,30 @@ private:
 	glm::vec2 mouseScrollDelta;
 	bool cursorEnteredWindowThisFrame = false;
 
+    /* --------------------------------------------- */
+    // Level generator and data
+    /* --------------------------------------------- */
+    CloudPlatforms cloudGenerator;
+    unsigned int currentLevel = -1;
+    static constexpr CloudGeneratorParameter LEVEL_PARAMS[]={
+            {
+                0.5,    //cloudAngleDeviation
+                0.75,   //fromPointRadiusMin
+                0.95,   //fromPointRadiusMax
+                60,     //heightTillEnd
+                0.5,    //jumpStrengthMin
+                1       //jumpStrengthMax
+            },
+            {
+                    0.5,    //cloudAngleDeviation
+                    0.75,   //fromPointRadiusMin
+                    0.95,   //fromPointRadiusMax
+                    60,     //heightTillEnd
+                    0.5,    //jumpStrengthMin
+                    1       //jumpStrengthMax
+            }
+    };
+
 	/**
 	 * Deletes all entities marked for deletion
 	 */
@@ -412,6 +437,10 @@ public:
 	 * apply the currently configured settings
 	 */
 	void applySettings();
+
+	CloudPlatforms& getCloudGenerator();
+
+	void generateNextLevel(TransformComponent& from,CloudPlatformParameter fromParams);
 
     void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count) override;
 

@@ -21,22 +21,7 @@ public:
     /* --------------------------------------------- */
     // Configuration
     /* --------------------------------------------- */
-    //speeds are always given in units/s
-    float groundWalkForce=0;
-    float airWalkSpeed=0;
-    float minJumpDistance=0;
-    float maxJumpDistance=0;
-    float minJumpHeight=0;
-    float maxJumpHeight=0;
-    float minJumpDuration = 0;
-    float maxJumpDuration = 0;
-    float maxGroundSpeed = 0;
-
-    //see doc on distanceHeightRatio
-    float maxDistLookingFactor = 1;
-    float minDistLookingFactor = 1;
-    float maxHeightLookingFactor=1;
-    float minHeightLookingFactor=1;
+    CharControllerConfiguration config;
 
     /* --------------------------------------------- */
     // State
@@ -137,6 +122,21 @@ public:
      * @return {horizontal initial speed,vertical initial speed, gravity}
      */
     static glm::vec3 calculateGravityAndSpeed(float jumpDistance, float jumpHeight, float jumpDuration);
+    /**
+     * @param jumpDistance
+     * @param jumpHeight
+     * @param jumpDuration
+     * @return a and b of parabola formula
+     */
+    static glm::vec2 calculateParabola(float jumpDistance,float jumpHeight,float jumpDuration);
+
+    /**
+     * @param gravityAndSpeed
+     * @return a and b of parabola formula
+     */
+    static glm::vec2 calculateParabola(glm::vec3 gravityAndSpeed);
+
+    static void calculateJump(float jumpStrength,float distanceHeightRatio,CharControllerConfiguration conf,float& outJumpDistance,float& outJumpHeight, float& outJumpDuration);
 };
 
 

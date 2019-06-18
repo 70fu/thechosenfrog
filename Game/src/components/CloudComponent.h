@@ -33,6 +33,8 @@ public://TODO should not be public to prevent misuse
      * never null after initialization
      */
     CloudRenderData* renderData = nullptr;
+
+    bool isCheckpoint = false;
 };
 
 

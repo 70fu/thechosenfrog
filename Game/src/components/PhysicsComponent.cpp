@@ -87,5 +87,5 @@ void PhysicsComponent::setActor(physx::PxRigidActor *a)
 #endif
 
     actor = a;
-    actor->userData = &entity;
+    actor->userData = (void*)entity;
 }

@@ -229,7 +229,7 @@ private:
                 {
                     dir = glm::normalize(
                             glm::rotateY(glm::vec3(c.direction.x, 0, c.direction.y), transform.getRotation().y));
-                    dir *= (c.grounded ? c.groundWalkForce : c.airWalkSpeed);
+                    dir *= (c.grounded ? c.config.groundWalkForce : c.config.airWalkSpeed);
                 }
                 else
                 {
@@ -262,8 +262,8 @@ private:
                 c.vel = c.vel+(oldAcc+c.acc)*(FIXED_DELTA/2.0f);
 
                 //cap velocity if grounded
-                if(c.grounded && !c.jumping && glm::length(c.vel)>c.maxGroundSpeed)
-                    c.vel = glm::normalize(c.vel)*c.maxGroundSpeed;
+                if(c.grounded && !c.jumping && glm::length(c.vel)>c.config.maxGroundSpeed)
+                    c.vel = glm::normalize(c.vel)*c.config.maxGroundSpeed;
 
                 //move using character controller from physx
                 physx::PxControllerCollisionFlags flags = c.getController()->move(glmToPx(c.vel*FIXED_DELTA+airMove),MIN_DIST,FIXED_DELTA,physx::PxControllerFilters());//TODO set controller filters

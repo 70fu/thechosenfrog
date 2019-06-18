@@ -401,19 +401,19 @@ public:
                         //render config
                         if(CollapsingHeader("Config"))
                         {
-                            InputFloat("Ground Walk Force",&con.groundWalkForce);
-                            InputFloat("Air Walk Speed",&con.airWalkSpeed);
-                            InputFloat("Min Jump Distance",&con.minJumpDistance);
-                            InputFloat("Max Jump Distance",&con.maxJumpDistance);
-                            InputFloat("Min Jump Height",&con.minJumpHeight);
-                            InputFloat("Max Jump Height",&con.maxJumpHeight);
-                            InputFloat("Min Jump Duration",&con.minJumpDuration);
-                            InputFloat("Max Jump Duration",&con.maxJumpDuration);
-                            InputFloat("Max Ground Speed",&con.maxGroundSpeed);
-                            InputFloat("Min Dist Looking Factor",&con.minDistLookingFactor);
-                            InputFloat("Max Dist Looking Factor",&con.maxDistLookingFactor);
-                            InputFloat("Min Height Looking Factor",&con.minHeightLookingFactor);
-                            InputFloat("Max Height Looking Factor",&con.maxHeightLookingFactor);
+                            InputFloat("Ground Walk Force",&con.config.groundWalkForce);
+                            InputFloat("Air Walk Speed",&con.config.airWalkSpeed);
+                            InputFloat("Min Jump Distance",&con.config.minJumpDistance);
+                            InputFloat("Max Jump Distance",&con.config.maxJumpDistance);
+                            InputFloat("Min Jump Height",&con.config.minJumpHeight);
+                            InputFloat("Max Jump Height",&con.config.maxJumpHeight);
+                            InputFloat("Min Jump Duration",&con.config.minJumpDuration);
+                            InputFloat("Max Jump Duration",&con.config.maxJumpDuration);
+                            InputFloat("Max Ground Speed",&con.config.maxGroundSpeed);
+                            InputFloat("Min Dist Looking Factor",&con.config.minDistLookingFactor);
+                            InputFloat("Max Dist Looking Factor",&con.config.maxDistLookingFactor);
+                            InputFloat("Min Height Looking Factor",&con.config.minHeightLookingFactor);
+                            InputFloat("Max Height Looking Factor",&con.config.maxHeightLookingFactor);
                         }
                     }
 

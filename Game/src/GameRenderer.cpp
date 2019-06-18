@@ -540,8 +540,7 @@ public:
                             TransformComponent& transform = game.transformComps[player.entity];
 
                             //calculate parabola components
-                            glm::vec3 jump = controller.calculateJump();
-                            glm::vec2 parabolaComponents = {0.5f*jump.z,jump.y};//calculate parabola components
+                            glm::vec2 parabolaComponents = CharControllerComponent::calculateParabola(controller.calculateJump());
 
                             //bind uniforms
                             glUniformMatrix4fv(CommonShaderUniforms::MODEL_MAT, 1, GL_FALSE, glm::value_ptr(transform.getGlobalTransform()));

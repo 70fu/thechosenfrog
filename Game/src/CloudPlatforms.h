@@ -5,20 +5,8 @@
 #include <geometry/PxTriangleMesh.h>
 #include "components/TransformComponent.h"
 #include "components/CloudComponent.h"
-#include "util/Color.h"
-
-enum CloudType {
-    SQUARE,
-    CIRCLE
-};
-
-struct CloudPlatformParameter {
-    glm::vec3 translation={0,0,0};
-    glm::vec3 scale={1,1,1};
-    float yRotation = 0;
-    glm::ivec2 size={1,1};//x and z size
-    Color color={255,255,255,255};
-};
+#include "components/CharControllerComponent.h"
+#include <random>
 
 /**
  * Generator class for individual platforms
@@ -41,18 +29,35 @@ private:
     bool initialized = false;
 
     Game* game = nullptr;
+
+    CloudGeneratorParameter genParams;
+
+    //random number engine and distribution
+    std::default_random_engine rEngine;
+    std::uniform_real_distribution<float> rFloat;
+    std::normal_distribution<float> rCloudAngleVariance;
+    std::uniform_real_distribution<float> rAngle;
+    std::uniform_real_distribution<float> rCloudParabolaPlacement;
+    std::uniform_int_distribution<int> rBool;
+    std::uniform_real_distribution<float> rFromPointRadius;
+    std::uniform_real_distribution<float> rJumpStrength;
+
+    static glm::vec3 getSquareCloudSize(CloudPlatformParameter params);
+    void generateCloudPath(Game& game, const TransformComponent& from,CloudPlatformParameter fromParams,  const CharControllerConfiguration& charConf, float angle,float maxHeight);
 public:
 
     CloudPlatforms()=default;
-    ~CloudPlatforms();
 
     void init(Game& game);
+    void cleanup(Game& game);
+    void setParameter(const CloudGeneratorParameter& generatorParameter);
 
     CloudPlatforms(const CloudPlatforms&) = delete;
     CloudPlatforms& operator=(const CloudPlatforms&) = delete;
 
     //these methods should not be called before initialization
-    TransformComponent& makeCloudPlatform(Game &game, CloudPlatformParameter params,CloudType type);
+    TransformComponent& makeCloudPlatform(Game &game, CloudPlatformParameter params);
+    void generateCloudPlatforms(Game& game, const TransformComponent& from,CloudPlatformParameter fromParams, unsigned int cloudAmount, const CharControllerConfiguration& charConf);
 };
 
 

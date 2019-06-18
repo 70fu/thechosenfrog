@@ -91,7 +91,7 @@ add_executable(thechosenfrog src/main.cpp src/StdioLogSystem.cpp src/StdioLogSys
 		src/components/CharControllerComponent.cpp src/components/CharControllerComponent.h
 		src/components/PlayerComponent.cpp src/components/PlayerComponent.h
 		src/components/PlatformComponent.cpp src/components/PlatformComponent.h
-		src/util/GLMPXConversion.cpp src/util/GLMPXConversion.h src/assets/BitmapFont.cpp src/assets/BitmapFont.h src/assets/BitmapFontList.cpp src/assets/BitmapFontIds.h src/components/TextComponent.cpp src/components/TextComponent.h src/AppSettings.cpp src/AppSettings.h src/assets/Framebuffer.cpp src/assets/Framebuffer.h src/assets/FramebufferList.cpp src/assets/FramebufferIds.h src/components/CloudComponent.cpp src/components/CloudComponent.h src/CloudPlatforms.cpp src/CloudPlatforms.h)
+		src/util/GLMPXConversion.cpp src/util/GLMPXConversion.h src/assets/BitmapFont.cpp src/assets/BitmapFont.h src/assets/BitmapFontList.cpp src/assets/BitmapFontIds.h src/components/TextComponent.cpp src/components/TextComponent.h src/AppSettings.cpp src/AppSettings.h src/assets/Framebuffer.cpp src/assets/Framebuffer.h src/assets/FramebufferList.cpp src/assets/FramebufferIds.h src/components/CloudComponent.cpp src/components/CloudComponent.h src/CloudPlatforms.cpp src/CloudPlatforms.h src/CharControllerConfiguration.cpp src/CharControllerConfiguration.h src/CloudGen.h)
 
 #imgui
 target_include_directories(thechosenfrog PRIVATE libs/imgui)

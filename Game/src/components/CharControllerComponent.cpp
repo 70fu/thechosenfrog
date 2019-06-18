@@ -23,8 +23,8 @@ void CharControllerComponent::setController(physx::PxController *c)
     controller = c;
 
     //set user data to entity id
-    controller->setUserData(&entity);
-    controller->getActor()->userData = &entity;
+    controller->setUserData((void*)entity);
+    controller->getActor()->userData = (void*)entity;
 }
 
 void CharControllerComponent::cleanup(Game &game)
@@ -42,17 +42,7 @@ glm::vec3 CharControllerComponent::calculateJump()
 {
     //TODO move these calculations where jump strength is charged up, such that these can be hot reloaded (I could imagine, that the interpolation needs much tweaking)
 
-    //clamp jump strength
-    jumpStrength = std::clamp(jumpStrength,0.0f,1.0f);
-
-    //calculate properties of jump from jump strength and parameters
-    cachedJumpDistance = (maxJumpDistance-minJumpDistance)*jumpStrength+minJumpDistance;
-    cachedJumpHeight = (maxJumpHeight-minJumpHeight)*jumpStrength+minJumpHeight;
-    cachedJumpDuration = (maxJumpDuration-minJumpDuration)*jumpStrength+minJumpDuration;
-
-    //apply distance height ratio
-    cachedJumpDistance *= (maxDistLookingFactor-minDistLookingFactor)*glm::cubicEaseOut(1-distanceHeightRatio)+minDistLookingFactor;
-    cachedJumpHeight *= (maxHeightLookingFactor-minHeightLookingFactor)*glm::cubicEaseOut(distanceHeightRatio)+minHeightLookingFactor;
+    calculateJump(jumpStrength,distanceHeightRatio,config,cachedJumpDistance,cachedJumpHeight,cachedJumpDuration);
 
     return calculateGravityAndSpeed(cachedJumpDistance,cachedJumpHeight,cachedJumpDuration);
 }
@@ -64,4 +54,31 @@ glm::vec3 CharControllerComponent::calculateGravityAndSpeed(float jumpDistance, 
         (4*jumpHeight)/jumpDuration,//vertical initial speed
         -(8*jumpHeight)/(jumpDuration*jumpDuration)//gravity
     };
+}
+
+glm::vec2 CharControllerComponent::calculateParabola(float jumpDistance, float jumpHeight, float jumpDuration)
+{
+    return calculateParabola(calculateGravityAndSpeed(jumpDistance,jumpHeight,jumpDuration));
+}
+
+glm::vec2 CharControllerComponent::calculateParabola(glm::vec3 gravityAndSpeed)
+{
+    return {0.5f*gravityAndSpeed.z,gravityAndSpeed.y};
+}
+
+void CharControllerComponent::calculateJump(float jumpStrength, float distanceHeightRatio,
+                                            CharControllerConfiguration config,
+                                            float &outJumpDistance, float &outJumpHeight, float &outJumpDuration)
+{
+    //clamp jump strength
+    jumpStrength = std::clamp(jumpStrength,0.0f,1.0f);
+
+    //calculate properties of jump from jump strength and parameters
+    outJumpDistance = (config.maxJumpDistance-config.minJumpDistance)*jumpStrength+config.minJumpDistance;
+    outJumpHeight = (config.maxJumpHeight-config.minJumpHeight)*jumpStrength+config.minJumpHeight;
+    outJumpDuration = (config.maxJumpDuration-config.minJumpDuration)*jumpStrength+config.minJumpDuration;
+
+    //apply distance height ratio
+    outJumpDistance *= (config.maxDistLookingFactor-config.minDistLookingFactor)*glm::cubicEaseOut(1-distanceHeightRatio)+config.minDistLookingFactor;
+    outJumpHeight *= (config.maxHeightLookingFactor-config.minHeightLookingFactor)*glm::cubicEaseOut(distanceHeightRatio)+config.minHeightLookingFactor;
 }
