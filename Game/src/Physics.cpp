@@ -56,8 +56,8 @@ void Physics::cleanup()
     controllerManager->release();
     PxCloseExtensions();
     physics->release();
-    foundation->release();
     cooking->release();
+    foundation->release();
 }
 
 PxScene *Physics::getScene() const

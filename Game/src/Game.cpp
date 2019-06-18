@@ -231,9 +231,9 @@ void Game::cleanup()
 
     assetManager.cleanup();
     soloud.deinit();
+    cloudGenerator.cleanup(*this);
     physics.cleanup();
 
-    cloudGenerator.cleanup(*this);
 
     if(runtimeObjectSystem!= nullptr) {
         runtimeObjectSystem->CleanObjectFiles();
