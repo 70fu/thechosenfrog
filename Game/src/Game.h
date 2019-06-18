@@ -28,6 +28,7 @@
 #include "AppSettings.h"
 #include "components/CloudComponent.h"
 #include "CloudPlatforms.h"
+#include "components/PlayerHUDComponent.h"
 
 class GLFWwindow;
 
@@ -274,17 +275,17 @@ private:
                 0.5,    //cloudAngleDeviation
                 0.75,   //fromPointRadiusMin
                 0.95,   //fromPointRadiusMax
-                60,     //heightTillEnd
+                40,     //heightTillEnd
                 0.5,    //jumpStrengthMin
                 1       //jumpStrengthMax
             },
             {
-                    0.5,    //cloudAngleDeviation
-                    0.75,   //fromPointRadiusMin
-                    0.95,   //fromPointRadiusMax
-                    60,     //heightTillEnd
-                    0.5,    //jumpStrengthMin
-                    1       //jumpStrengthMax
+                0.5,    //cloudAngleDeviation
+                0.75,   //fromPointRadiusMin
+                0.95,   //fromPointRadiusMax
+                40,     //heightTillEnd
+                0.5,    //jumpStrengthMin
+                1       //jumpStrengthMax
             }
     };
 
@@ -307,6 +308,7 @@ public:
     ComponentStore<PlayerComponent,Components::PLAYER> playerComps;
     ComponentStore<TextComponent,Components::TEXT> textComps;
     CloudComponentStore cloudComps;
+    ComponentStore<PlayerHUDComponent,Components::PLAYER_HUD> playerHUDComps;
 
 
     //Global Skybox, must never be nullptr
@@ -335,7 +337,8 @@ private:
                     &charControllerComps,
                     &playerComps,
                     &textComps,
-                    &cloudComps
+                    &cloudComps,
+                    &playerHUDComps
             };
 
 public:
@@ -439,6 +442,8 @@ public:
 	void applySettings();
 
 	CloudPlatforms& getCloudGenerator();
+
+	bool lastLevelReached() const;
 
 	void generateNextLevel(TransformComponent& from,CloudPlatformParameter fromParams);
 

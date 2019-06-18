@@ -23,13 +23,13 @@ static constexpr float CLOUD_DISAPPEAR_DIST = 5;
 static constexpr CharControllerConfiguration PLAYER_CONFIG =
         {
             15,     //groundWalkForce
-            1,      //airWalkSpeed
+            2,      //airWalkSpeed
             2,      //minJumpDistance
             20,     //maxJumpDistance
             0.5f,   //minJumpHeight
             10,     //maxJumpHeight
             0.5f,   //minJumpDuration
-            2,      //maxJumpDuration
+            1.5f,      //maxJumpDuration
             3,      //maxGroundSpeed
             1,      //maxDistLookingFactor
             0.1f,   //minDistLookingFactor
@@ -40,7 +40,7 @@ static const Color CHECKPOINT_CLOUD_COLOR = {200,30,30,255};
 static const CloudPlatformParameter CHECKPOINT_CLOUD_PARAMETER =
         {
                 {0,0,0},    //translation
-                {1,1,1},    //scale
+                {1,0.75,1},    //scale
                 0,          //rotation
                 {3,3},      //size
                 CHECKPOINT_CLOUD_COLOR, //color

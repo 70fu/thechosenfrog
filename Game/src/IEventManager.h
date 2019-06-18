@@ -66,6 +66,13 @@ public:
      */
     virtual void groundedChanged(Game &game, CharControllerComponent &charController)=0;
 
+    /**
+     * Called when a character controller jumps
+     * @param game
+     * @param charController
+     */
+    virtual void jumped(Game& game, CharControllerComponent& charController)=0;
+
     virtual void onConstraintBreak(Game& game, physx::PxConstraintInfo *constraints, physx::PxU32 count)=0;
     virtual void onWake(Game& game,physx::PxActor **actors, physx::PxU32 count)=0;
     virtual void onSleep(Game& game,physx::PxActor **actors, physx::PxU32 count)=0;

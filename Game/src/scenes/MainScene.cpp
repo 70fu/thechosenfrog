@@ -105,6 +105,21 @@ public:
 
             //set camera as child of player
             camTrans.setParent(pTrans,false);
+
+            //Create player hud
+            EntityId hudId = game.createEntity();
+            TransformComponent &textTrans = game.transformComps.addComp(hudId);
+            textTrans.setScaling({0.6f,0.6f,1});
+            //textTrans.setTranslation({game.settings.display.windowWidth/2-200,game.settings.display.windowHeight/2,0});
+            textTrans.setTranslation({20,60,0});
+
+            TextComponent& text = game.textComps.addComp(hudId);
+            text.inScreenspace = true;
+            text.font = game.getAssetManager().getBitmapFont(BitmapFontIds::DEFAULT);
+            text.color = {0,0,0,255};
+
+            PlayerHUDComponent& hud = game.playerHUDComps.addComp(hudId);
+            hud.playerId=playerId;
         }
 
         //make some platforms
@@ -179,9 +194,10 @@ public:
 
             game.generateNextLevel(startPlatform,params);
 
-            SignGenerator::makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"TEST COURSE\n\n Make it to the highest platform!"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{-1.5,0,2},{0,45*TO_RADIANS,0},"Make it to a red cloud!"}).setParent(startPlatform,false);
             SignGenerator::makeSign(game,{{1.5,0,2},{0,-45*TO_RADIANS,0},"Move with WASD\n\n Look around with Mouse"}).setParent(startPlatform,false);
-            SignGenerator::makeSign(game,{{1,0,-4},{0,-30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{-1,0,-4},{0,30*TO_RADIANS,0},"Press SPACE to charge a jump.\n\n Release to jump"}).setParent(startPlatform,false);
+            SignGenerator::makeSign(game,{{1,0,-4},{0,-30*TO_RADIANS,0},"Look up/down to \njump higher or farther \n\n RIGHT CLICK to cancel jump."}).setParent(startPlatform,false);
         }
 
     }

@@ -28,7 +28,7 @@ public:
 
         checkLooseCondition(game);
 
-
+        updatePlayerHUD(game);
     }
 
 private:
@@ -41,6 +41,12 @@ private:
         for(PlayerComponent& player : game.playerComps)
         {
             updatePlayerCharController(game,player);
+
+            //forward time
+            if(!player.onCheckpoint)
+            {
+                ++player.time;
+            }
         }
     }
 
@@ -219,7 +225,11 @@ private:
                     c.jumpedFrom=c.landedOn=transform.getTranslation();
                     c.lastJumpHeight = 0;
 
-                    //TODO emit jump event
+                    //increase jump count
+                    ++c.jumpCount;
+
+                    //emit jump event
+                    game.getEventManager()->jumped(game,c);
                 }
 
                 //movement is the only force except gravity that is applied to controllers
@@ -348,6 +358,23 @@ private:
                     text.color = {0,0,0,255};
                 }
             }
+        }
+    }
+
+    inline void updatePlayerHUD(Game& game)
+    {
+        for(PlayerHUDComponent& hud : game.playerHUDComps)
+        {
+            if(game.hasComponents(hud.entity,Components::TEXT_BIT) && game.hasComponents(hud.playerId,Components::PLAYER_BIT | Components::CHAR_CONTROLLER_BIT))
+            {
+                TextComponent& text = game.textComps[hud.entity];
+                PlayerComponent& player = game.playerComps[hud.playerId];
+                CharControllerComponent& controller = game.charControllerComps[hud.playerId];
+
+                //TODO dont create string every frame
+                text.text = "Time: "+std::to_string(static_cast<unsigned int>(std::floor(player.time*FIXED_DELTA)))+"s\n"+"Jumps: "+std::to_string(controller.jumpCount);
+            }
+            //TODO remove hud entity when player is removed
         }
     }
 };

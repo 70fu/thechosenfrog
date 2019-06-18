@@ -69,6 +69,13 @@ public:
     glm::vec3 landedOn={0,0,0};
     float lastJumpHeight = 0;
 
+    /* --------------------------------------------- */
+    // Statistics
+    /* --------------------------------------------- */
+    //TODO debug gui
+    unsigned int jumpCount = 0;
+
+
     /**
      * calculateJump needs to be called before
      * @return the height of the jump if a jump is performed with current jumpStrength, linear interpolation of min and max jump heights

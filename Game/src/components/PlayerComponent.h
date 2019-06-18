@@ -54,6 +54,9 @@ public:
 
     //set to true when the jump cancel key/button is pressed, set to false when jump key is released, no jump can be performed when this is true
     bool jumpCancelled = false;
+
+    unsigned int time = 0;//in frames
+    bool onCheckpoint = true;
 };
 
 

@@ -22,7 +22,7 @@ TransformComponent &SignGenerator::makeSign(Game &game, SignGenerator::SignParam
     //create world space text
     EntityId textId = game.createEntity();
     TransformComponent& textTrans = game.transformComps.addComp(textId);
-    textTrans.setTranslation({-0.45,1.1,-0.25});
+    textTrans.setTranslation({-0.45,1.2,-0.25});
     static constexpr float TEXT_SCALE = 1/768.0f;
     textTrans.setScaling({TEXT_SCALE,TEXT_SCALE,TEXT_SCALE});
     textTrans.setParent(trans,false);

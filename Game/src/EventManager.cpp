@@ -173,6 +173,15 @@ public:
         }
     }
 
+    void jumped(Game &game, CharControllerComponent &charController) override
+    {
+	    //player is not on checkpoint anymore
+        if(game.hasComponents(charController.entity,Components::PLAYER_BIT))
+        {
+            game.playerComps[charController.entity].onCheckpoint = false;
+        }
+    }
+
     void onConstraintBreak(Game &game, physx::PxConstraintInfo *constraints, physx::PxU32 count) override
     {
 
@@ -214,7 +223,7 @@ public:
         game.charControllerComps[controllerEntity].groundedOn = hit.actor;
 
         //checkpoint cloud?
-        if(game.hasComponents(hitEntity,Components::TRANSFORM_BIT))
+        if(game.hasComponents(hitEntity,Components::TRANSFORM_BIT) && game.hasComponents(controllerEntity,Components::PLAYER_BIT))
         {
             TransformComponent& hitTransform = game.transformComps[hitEntity];
 
@@ -258,6 +267,9 @@ public:
 
                         //disable checkpoint status
                         cloud.isCheckpoint = false;
+
+                        //set on checkpoint to true
+                        game.playerComps[controllerEntity].onCheckpoint = true;
                     }
                 }
             }

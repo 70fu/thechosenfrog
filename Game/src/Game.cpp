@@ -63,7 +63,7 @@ const CloudComponent &Game::CloudComponentStore::operator[](EntityId entity) con
     return store[entity];
 }
 
-Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this),textComps(*this),cloudComps(*this)
+Game::Game():assetManager(),soloud(),meshComps(*this),transformComps(*this),materialComps(*this),cameraComps(*this),cameraControllerComps(*this),physicsComps(*this),charControllerComps(*this),playerComps(*this),textComps(*this),cloudComps(*this),playerHUDComps(*this)
 {
     //assert correctness of component store array
     //TODO only in debug mode?
@@ -187,6 +187,9 @@ bool Game::update(){
 
         //load scene
         mainScene->init(*this);
+
+        //TODO this is a workaround to fix an issue with viewport
+        applySettings();
 
         reloadSceneOnNextFrame = false;
     }
@@ -446,12 +449,35 @@ void Game::generateNextLevel(TransformComponent &from, CloudPlatformParameter fr
     {
         cloudGenerator.setParameter(LEVEL_PARAMS[currentLevel]);
         cloudGenerator.generateCloudPlatforms(*this, from, fromParams, 2, PLAYER_CONFIG);
+
+        if(currentLevel!=0)
+        {
+            SignGenerator::makeSign(*this,{{-1.5, 0, -1},{0,45*TO_RADIANS,0}, "Halfway!!! \n\nTime stops on red clouds"}).setParent(from,false);
+            SignGenerator::makeSign(*this,{{1.5, 0, -1},{0,-45*TO_RADIANS,0}, "You can also move a bit in the air."}).setParent(from,false);
+        }
     }
     else
     {
-        TransformComponent& signTrans = SignGenerator::makeSign(*this,{{0,0,0},{0,0,0},"Wow you did it!\n\nYOU WIN!"});
+        //TODO this access is not super safe
+        unsigned int jumps = 0;
+        unsigned int time = 0;
+        if(playerComps.getNumActive()>0)
+        {
+            PlayerComponent& player =(*playerComps.begin()) ;
+            time = player.time;
+            if(hasComponents(player.entity,Components::CHAR_CONTROLLER_BIT))
+                jumps = charControllerComps[player.entity].jumpCount;
+        }
+        unsigned int seconds = static_cast<unsigned int>(std::floor(time*FIXED_DELTA));
+        unsigned int ms = static_cast<unsigned int>(std::floor((time*FIXED_DELTA-seconds)*100));
+        TransformComponent& signTrans = SignGenerator::makeSign(*this,{{0,0,-1},{0,0,0},"     YOU WIN!\n\n     Time: "+std::to_string(seconds)+":"+(ms<10?"0":"")+std::to_string(ms)+"\n\n     Jumps: "+std::to_string(jumps)});
         signTrans.setParent(from,false);
     }
+}
+
+bool Game::lastLevelReached() const
+{
+    return currentLevel>=std::size(LEVEL_PARAMS);
 }
 
 void Game::onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count)
