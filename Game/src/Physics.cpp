@@ -39,7 +39,13 @@ void Physics::init()
     nullMaterial = physics->createMaterial(0,0,0);
 
     //init cooking
-    cooking = PxCreateCooking(PX_PHYSICS_VERSION,*foundation,PxCookingParams(PxTolerancesScale()));
+    physx::PxCookingParams params(getTolerancesScale());
+// disable mesh cleaning - perform mesh validation on development configurations
+    params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+// disable edge precompute, edges are set for each triangle, slows contact generation
+    //params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
+// lower hierarchy for internal mesh
+    cooking = PxCreateCooking(PX_PHYSICS_VERSION,*foundation,params);
     if(!cooking)
         Log::getInstance().Error("Could not initialize physx Cooking");
 }

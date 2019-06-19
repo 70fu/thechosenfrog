@@ -350,6 +350,10 @@ private:
                 int mode = glfwGetInputMode(game.getWindow(),GLFW_CURSOR);
                 glfwSetInputMode(game.getWindow(),GLFW_CURSOR,mode==GLFW_CURSOR_DISABLED?GLFW_CURSOR_NORMAL:GLFW_CURSOR_DISABLED);
             }
+	        else if(key==GLFW_KEY_ESCAPE)
+            {
+	            glfwSetWindowShouldClose(game.getWindow(),GLFW_TRUE);
+            }
         }
     }
 

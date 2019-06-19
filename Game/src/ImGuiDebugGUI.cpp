@@ -442,12 +442,12 @@ public:
                         float fov = camera.getFov()*TO_DEGREES;
                         if(InputFloat("FOV",&fov,1))
                             camera.setFov(fov*TO_RADIANS);
-                        float near = camera.getFov();
-                        if(InputFloat("Near",&near))
-                            camera.setNear(near);
-                        float far = camera.getFar();
-                        if(InputFloat("Far",&far))
-                            camera.setFar(far);
+                        float nPlane = camera.getNear();
+                        if(InputFloat("Near",&nPlane))
+                            camera.setNear(nPlane);
+                        float fPlane = camera.getFar();
+                        if(InputFloat("Far",&fPlane))
+                            camera.setFar(fPlane);
 
                         Text("Projection Matrix");
                         drawCMat(camera.getProjectionMatrix());

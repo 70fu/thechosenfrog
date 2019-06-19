@@ -3,6 +3,7 @@
 #include <PxPhysicsAPI.h>
 #include <gtx/rotate_vector.hpp>
 #include "util/GLMPXConversion.h"
+#include <ctime>
 
 
 glm::vec3 CloudPlatforms::getSquareCloudSize(CloudPlatformParameter params)
@@ -49,15 +50,6 @@ void CloudPlatforms::init(Game &game)
 
     //init cylinder collider
     {
-        physx::PxCookingParams params(game.getPhysics().getTolerancesScale());
-// disable mesh cleaning - perform mesh validation on development configurations
-        params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
-// disable edge precompute, edges are set for each triangle, slows contact generation
-        params.meshPreprocessParams |= physx::PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
-// lower hierarchy for internal mesh
-
-        game.getPhysics().getCooking()->setParams(params);
-
         //generate mesh
         MeshAsset& cylinderMesh = *game.getAssetManager().getMesh(MeshIds::UNIT_CYLINDER);
         physx::PxVec3* verts = new physx::PxVec3[cylinderMesh.surface.positions.size()];
@@ -70,16 +62,22 @@ void CloudPlatforms::init(Game &game)
         physx::PxTriangleMeshDesc meshDesc;
         meshDesc.points.count           = cylinderMesh.surface.positions.size();
         meshDesc.points.stride          = sizeof(physx::PxVec3);
-        meshDesc.points.data            = verts;
+        meshDesc.points.data            = &verts[0];
 
         meshDesc.triangles.count        = cylinderMesh.surface.indices.size()/3;
         meshDesc.triangles.stride       = 3*sizeof(physx::PxU32);
-        meshDesc.triangles.data         = indices;
+        meshDesc.triangles.data         = &indices[0];
+
+
+        ImGuiAl::Log::getInstance().Debug("Mesh Desc Valid: %d",meshDesc.isValid());
+        ImGuiAl::Log::getInstance().Debug("Triangle Mesh Validation: %d",game.getPhysics().getCooking()->validateTriangleMesh(meshDesc));
+
+        physx::PxTriangleMeshCookingResult::Enum result;
+        cylinder = game.getPhysics().getCooking()->createTriangleMesh(meshDesc,game.getPhysics().getPhysics()->getPhysicsInsertionCallback(),&result);
+        ImGuiAl::Log::getInstance().Debug("Cooking result: %d",result);
 
         delete[] verts;
         delete[] indices;
-
-        cylinder = game.getPhysics().getCooking()->createTriangleMesh(meshDesc,game.getPhysics().getPhysics()->getPhysicsInsertionCallback());
     }
 
 }
@@ -97,7 +95,7 @@ void CloudPlatforms::setParameter(const CloudGeneratorParameter &generatorParame
     genParams = generatorParameter;
 
     //setup random engine and distributions
-    rEngine.seed(time(0));
+    rEngine.seed(std::time(0));
     rFloat = std::uniform_real_distribution<float>(0,1);
     rCloudAngleVariance = std::normal_distribution<float>(0,genParams.cloudAngleDeviation);
     rAngle = std::uniform_real_distribution<float>(0,2*PI);
