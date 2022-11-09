@@ -1,6 +1,14 @@
 # The Chosen Frog
 The Chosen Frog is a 3D platformer developed during the _Computer Graphics_ course at _Vienna University of Technology_. The main goal was to develop a small game engine using C++ and OpenGL. No helper graphics libraries and frameworks were allowed. A small game using the custom game engine including a set of visual effects had to be implemented.
 
+## Technical Highlights
+- Custom game engine using C++ and OpenGL, all rendering and visual effects are coded without additional libraries
+- Shader and asset reloading during runtime
+- Procedural vertex animation in GLSL
+- Outline effect using Roberts-Cross edge detection
+- Custom Entity-Component system and scene graph 
+
+
 ## Background Story
 In the world of frogs there are a lot of these casual bedtime stories and fairy tales about frogs, which traveled to distant places about frogs, which could eat more than any other frog, about frogs, which saved an entire pond, etc. But, there is one story every frog knows.
 The legend says that once every 100 years (10 frog lives for comparison) **ONE**, only one frog gets chosen to leave its beloved terrain and start a journey of no return to *the heavenly pond of the gods*.
@@ -12,11 +20,6 @@ Since the primary focus of the course was developing a game engine and implement
 The goal of the The Chosen Frog is to reach the heavenly pond of the gods by jumping from cloud to cloud.
 The faster the player reaches the heavenly pond, the higher the score.
 
-## Technical Highlights
-- Custom game engine using C++ and OpenGL, all rendering and visual effects are coded without additional libraries
-- Shader and asset reloading during runtime
-- Procedural vertex animation in GLSL
-- Custom Entity-Component system and scene graph 
 
 ## Controls
 ### Gameplay
