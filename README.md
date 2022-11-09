@@ -7,6 +7,7 @@ The Chosen Frog is a 3D platformer developed during the _Computer Graphics_ cour
 - Procedural vertex animation in GLSL
 - Outline effect using Roberts-Cross edge detection
 - Custom Entity-Component system and scene graph 
+- Custom First-Person player controller using NVIDIA PhysX
 
 
 ## Background Story
@@ -51,3 +52,4 @@ Upon holding the space key, the jump, that will be performed, is visualized with
 - [stb_image](https://github.com/nothings/stb) - Disk Image loading
 - [stb_truetype](https://github.com/nothings/stb) - True Type Fonts
 - [cute_filewatch](https://github.com/RandyGaul/cute_headers) - File change watcher used for runtime asset reloading.
+- [physx](https://developer.nvidia.com/physx-sdk) - 3D Physics
