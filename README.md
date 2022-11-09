@@ -1,5 +1,5 @@
 # The Chosen Frog
-The Chosen Frog is a 3D platformer developed during the _Computer Graphics_ course. The main goal was to develop a small game engine using C++ and OpenGL. No helper graphics libraries and frameworks were allowed. A small game using the custom game engine including a set of visual effects had to be implemented.
+The Chosen Frog is a 3D platformer developed during the _Computer Graphics_ course at _Vienna University of Technology_. The main goal was to develop a small game engine using C++ and OpenGL. No helper graphics libraries and frameworks were allowed. A small game using the custom game engine including a set of visual effects had to be implemented.
 
 ## Background Story
 In the world of frogs there are a lot of these casual bedtime stories and fairy tales about frogs, which traveled to distant places about frogs, which could eat more than any other frog, about frogs, which saved an entire pond, etc. But, there is one story every frog knows.
